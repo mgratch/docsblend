@@ -1,0 +1,20 @@
+Here is where you should place 1 Click demo import fies. 1 Click Demo import is a feature which will allow customers to setup his theme with just a 1 click.
+Please note that if customer would like to import onepager version, he will use different set of files than multipage. That's why for every demo site, separate
+1 Click needs to be generated.
+
+How it works:
+1. On production server you should create a working demo page - these pages are browsed by our customers
+2. Once everything is done you need to generate 1 Click Demo import. To do that:
+   - make sure in demo folder (here) you've created empty folders ex. onepager, multipage - that's where proper files will go into. Once done, commit it and update theme on production.
+   - login into wp-admin on production server
+   - go to Appearance - Theme Options. Url should be similar to: /wp-admin/themes.php?page=_options.
+   - add &ct_dev=1 to url like: /wp-admin/themes.php?page=_options&ct_dev=1 and press enter.
+   - go to General - 1-Click Demo Import - buttons should have a text "REBUILD XXX"
+   - click proper button - if you are currently browsing multipage version, click REBUILD MULTIPAGE
+   - after few seconds, "Rebuild successful" should appear. If not - please contact your Team Leader - it's likely that server has invalid permissions
+   and it's unable to create 1 click demo files
+3. 1 Click will be automatically added to SVN on production build stage so you don't need to worry about that
+
+Notes:
+- Any changes of pages/posts/custom post types/widgets/menus will require rebuilding 1 Click
+- Revolution slider, LayerSlider and Contact Form 7 are also automatically exported

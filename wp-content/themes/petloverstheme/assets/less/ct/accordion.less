@@ -1,0 +1,187 @@
+.panel{
+  background-color: transparent;
+  .ct-m-boxShadow(none);
+  .ct-m-borderRadius(0,0,0,0);
+}
+
+.panel-group{
+  margin-bottom: 0;
+  .panel{
+    border: none;
+    > .panel-heading{
+      background-color: transparent;
+      border: none;
+    }
+  }
+  .panel-body{
+    background-color:@motiveLight2;
+    margin-bottom:12px;
+  }
+}
+
+.panel-heading{
+  padding: 0;
+  margin-top:10px;
+}
+
+.panel-title{
+  font-size: 16px;
+  text-transform: lowercase;
+  > a{
+    display: block;
+    padding: 15px 20px 15px 60px;
+    position: relative;
+    border-width: 1px;
+    border-style: solid;
+    &.collapsed{
+      .ct-Diamond {
+        &:before {
+          content: "\f067";
+        }
+      }
+    }
+  }
+}
+
+// --- Accordion Button (+/-) -------------------------------------------------------------------------------------------------------------
+.ct-Diamond{
+  position: absolute;
+  left: 19px;
+  top:50%;
+  margin-top:-12.5px;
+  width:25px;
+  height:25px;
+  background-color:@body-bg;
+  .ct-m-rotation(@deg:45deg);
+  &:before{
+    font-family: fontawesome;
+    content: "\f068";
+    position: absolute;
+    width:25px;
+    height:25px;
+//    background-color:@motive;
+    font-size:8px;
+    line-height:25px;
+    text-align:center;
+    color:@body-bg;
+    z-index:2;
+    .ct-m-rotation(@deg:-45deg);
+  }
+
+  &--motive{
+    background-color:@motive;
+    &:before{
+      color:@body-bg;
+    }
+  }
+
+  &--default:before{color:@motiveDark}
+  &--success:before{color:@brand-success}
+  &--danger:before{color:@brand-danger}
+  &--warning:before{color:@brand-warning}
+  &--info:before{color:@brand-info}
+  &--motive-inverse:before{color:@motive}
+
+}
+
+
+.panel-default{
+ .panel-title{
+    > a{
+      border-color: @motiveDark;
+      background-color: @motiveDark;
+      color: #ffffff;
+      &.collapsed{
+        border-color: #d3d3d3;
+        background-color: transparent;
+        color: #222222;
+      }
+    }
+  }
+}
+.panel-primary{
+ .panel-title{
+    > a{
+      border-color: #222222;
+      background-color: #222222;
+      color: #ffffff;
+
+    }
+  }
+}
+.panel-success{
+ .panel-title{
+    > a{
+      border-color: @brand-success;
+      background-color: @brand-success;
+      color: #ffffff;
+    }
+  }
+}
+.panel-warning{
+ .panel-title{
+    > a{
+      border-color: #f0ad4e;
+      background-color: #f0ad4e;
+      color: #ffffff;
+    }
+  }
+}
+.panel-danger{
+ .panel-title{
+    > a{
+      border-color: @brand-danger;
+      background-color: @brand-danger;
+      color: #ffffff;
+    }
+  }
+}
+.panel-info{
+ .panel-title{
+    > a{
+      border-color: #5bc0de;
+      background-color: #5bc0de;
+      color: #ffffff;
+    }
+  }
+}
+.panel-motive{
+  .panel-title{
+    > a{
+      border-color: @motive;
+      background-color: @motive;
+      color: #ffffff;
+    }
+  }
+}
+
+
+@media(max-width: @screen-xs-max){
+  .panel-group{
+    .panel-body{
+      margin-left: 0px;
+    }
+  }
+
+  .panel-title{
+    > a{
+      padding: 20px 20px 20px 20px;
+      &:before{
+        color: #222222;
+        left: 50%;
+        margin-left: -15px;
+        top: -15px;
+      }
+    }
+    .ct-Diamond{
+      position: absolute;
+      left: 50%;
+      margin-left:-12.5px;
+      margin-top:0;
+      top:-13px;
+      width:25px;
+      height:25px;
+      .ct-m-rotation(@deg:45deg);
+    }
+  }
+}

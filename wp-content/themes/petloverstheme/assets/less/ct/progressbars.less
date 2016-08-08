@@ -1,0 +1,61 @@
+.progress{
+  background-color:@motiveDark;
+  height:62px;
+  border: 11px solid @gray-lighter;
+
+  .progress-bar{
+    text-align:left;
+    position:relative;
+
+    span{
+      color:@body-bg;
+      font-size:24px;
+      font-weight:300;
+      line-height:40px;
+      padding-left: 20px;
+    }
+
+    &:after{
+      content:"";
+      position:absolute;
+      right:-20px;
+      top:50%;
+      margin-top:-14.5px;
+      height:29px;
+      width:49px;
+      background-image: url("@{assets-path}/images/demo-content/FISHtank/logo2.png");
+      transform: rotateY(-180deg);
+    }
+  }
+
+
+  &-motive{
+    .progress-bar{background-color:@motive;}
+  }
+  &-default{
+    background-color:@gray-lighter;
+    box-shadow:none;
+    .progress-bar{
+      background-color:@body-bg;
+      span{
+        color:@motiveDark;
+      }
+      &:after{
+        transform: rotateY(-180deg);
+        background-image: url("@{assets-path}/images/demo-content/FISHtank/logo.png");
+      }
+    }
+  }
+  &-success{
+    .progress-bar{background-color:@brand-success;}
+  }
+  &-warning{
+    .progress-bar{background-color:@brand-warning;}
+  }
+  &-info{
+    .progress-bar{background-color:@brand-info;}
+  }
+  &-danger{
+    .progress-bar{background-color:@brand-danger;}
+  }
+}
