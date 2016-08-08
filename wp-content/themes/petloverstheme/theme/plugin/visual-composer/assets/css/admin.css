@@ -1,0 +1,81 @@
+@import "./../fontpicker/css/jquery.fonticonpicker.min.css";
+
+#vc_logo {
+    background-image: url('../images/ct.png');
+}
+
+/*.wpb-elements-list-modal i.vc_element-icon, span.vc_element-icon {
+    background: url('../images/ct.png') no-repeat scroll center center transparent;
+}*/
+
+.vc_panel-body .vc_spinner {
+    background: url('../images/ct.png') no-repeat scroll center center #FFF;
+    -webkit-animation: rotation .9s infinite linear;
+    -moz-animation: rotation .9s infinite linear;
+    -o-animation: rotation .9s infinite linear;
+    animation: rotation .9s infinite linear;
+
+    width: 55px;
+    height: 65px;
+}
+
+.vc_row.vc_css-editor .color-group {
+    display: none;
+}
+
+.vc_element-icon:before {
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+
+    color: #000;
+    font-size: 24px;
+    padding-right: 0.5em;
+    position: absolute;
+    top: 18px;
+    left: 11px;
+}
+
+
+/*Switched plugin*/
+.ct-select-switched {
+    font-weight: bold;
+    background-color: yellow;
+}
+
+@-webkit-keyframes rotation {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(359deg);
+    }
+}
+
+@-moz-keyframes rotation {
+    from {
+        -moz-transform: rotate(0deg);
+    }
+    to {
+        -moz-transform: rotate(359deg);
+    }
+}
+
+@-o-keyframes rotation {
+    from {
+        -o-transform: rotate(0deg);
+    }
+    to {
+        -o-transform: rotate(359deg);
+    }
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}
