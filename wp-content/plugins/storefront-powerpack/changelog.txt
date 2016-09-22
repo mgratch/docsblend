@@ -1,0 +1,16 @@
+*** Storefront Powerpack Changelog ***
+
+2016.09.08 - version 1.0.3
+* Fix - Content frame background color when using Storefront Powerpack without WooCommerce.
+* Fix - Storefront Powerpack is now loaded into the init hook with priority 0 (was 10) to ensure that all setting defaults are set.
+
+2016.09.07 - version 1.0.2
+* Fix - Fatal error when using Storefront Powerpack without WooCommerce.
+* Fix - Homepage settings not taking effect.
+
+2016.09.06 - version 1.0.1
+* Fix - Checkboxes not saving in the Customizer.
+* Fix - Customizer setting defaults not being set.
+
+2016.09.06 - version 1.0.0
+* Initial release
