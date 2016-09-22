@@ -1613,7 +1613,7 @@ final class Theme_Customisations {
 	 * @return mixed
 	 */
 	public function pep_update_telephone_field( $enq_fields ) {
-		$enq_fields['value'] = ! empty( WC()->checkout()->get_value( "billing_phone" ) ) ? sanitize_text_field( WC()->checkout()->get_value( "billing_phone" ) ) : '';
+		$enq_fields['value'] = WC()->checkout()->get_value( "billing_phone" ) ? sanitize_text_field( WC()->checkout()->get_value( "billing_phone" ) ) : '';
 
 		return $enq_fields;
 	}
@@ -1626,7 +1626,7 @@ final class Theme_Customisations {
 	 * @return mixed
 	 */
 	public function pep_update_email_field( $enq_fields ) {
-		$enq_fields['value'] = ! empty( WC()->checkout()->get_value( "billing_email" ) ) ? sanitize_text_field( WC()->checkout()->get_value( "billing_email" ) ) : '';
+		$enq_fields['value'] = WC()->checkout()->get_value( "billing_email" ) ? sanitize_text_field( WC()->checkout()->get_value( "billing_email" ) ) : '';
 
 		return $enq_fields;
 	}
@@ -1639,8 +1639,8 @@ final class Theme_Customisations {
 	 * @return mixed
 	 */
 	public function pep_update_custname_field( $enq_fields ) {
-		$first_name          = ! empty( WC()->checkout()->get_value( "billing_first_name" ) ) ? sanitize_text_field( WC()->checkout()->get_value( "billing_first_name" ) ) : '';
-		$last_name           = ! empty( WC()->checkout()->get_value( "billing_last_name" ) ) ? sanitize_text_field( WC()->checkout()->get_value( "billing_last_name" ) ) : '';
+		$first_name          = WC()->checkout()->get_value( "billing_first_name" ) ? sanitize_text_field( WC()->checkout()->get_value( "billing_first_name" ) ) : '';
+		$last_name           = WC()->checkout()->get_value( "billing_last_name" ) ? sanitize_text_field( WC()->checkout()->get_value( "billing_last_name" ) ) : '';
 		$enq_fields['value'] = ! empty( $first_name ) && ! empty( $last_name ) ? $first_name . " " . $last_name : $first_name . $last_name;
 
 		return $enq_fields;
