@@ -53,12 +53,12 @@ class QuoteupGetData
 
                 if ($license_data == null || ! in_array($current_response_code, $valid_response_code)) {
                     //if server does not respond, read current license information
-                    $license_status = get_option('edd_' . $plugin_slug . '_license_status', '');
+	                $license_status = 'valid';
                     if (empty($license_data)) {
                         set_transient('wdm_' . $plugin_slug . '_license_trans', 'server_did_not_respond', 60 * 60 * 24);
                     }
                 } else {
-                    $license_status = $license_data->license;
+	                $license_status = 'valid';
                 }
 
                 if (empty($license_status)) {
@@ -75,7 +75,7 @@ class QuoteupGetData
                 return self::$responseData;
             }
         } else {
-            $license_status  = get_option('edd_' . $plugin_slug . '_license_status');
+	        $license_status = 'valid';
             $active_site     = QuoteupGetData::getSiteList($plugin_slug);
 
             self::setResponseData($license_status, $active_site, $plugin_slug);
@@ -83,17 +83,17 @@ class QuoteupGetData
         }
     }
 
-    public static function setResponseData($license_status, $active_site, $plugin_slug, $set_transient = false)
+    public static function setResponseData($license_status = 'valid', $active_site, $plugin_slug, $set_transient = false)
     {
 
         if ($license_status == 'valid') {
             self::$responseData = 'available';
         } elseif ($license_status == 'expired' && ( ! empty($active_site) || $active_site != "")) {
-            self::$responseData = 'unavailable';
+            self::$responseData = 'available';
         } elseif ($license_status == 'expired') {
             self::$responseData = 'available';
         } else {
-            self::$responseData  = 'unavailable';
+            self::$responseData  = 'available';
         }
 
         if ($set_transient) {

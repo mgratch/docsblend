@@ -46,8 +46,9 @@ final class Theme_Customisations {
 	 */
 	public function theme_customisations_setup() {
 
-		add_action('register_post_status', array($this, 'register_post_status'));
-		add_filter('views_edit-product', array($this, 'remove_views'));
+		add_action( 'register_post_status', array( $this, 'register_post_status' ) );
+		add_action( 'wp_loaded', array( $this, 'hidden_product_purchase' ), 9 );
+		add_filter( 'views_edit-product', array( $this, 'remove_views' ) );
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'theme_customisations_css' ), 999 );
 		add_filter( 'template_include', array( $this, 'theme_customisations_template' ), 11 );
@@ -58,11 +59,10 @@ final class Theme_Customisations {
 		add_filter( 'quoteup/show_shipping', '__return_false' );
 
 		//change product archive redirect if there is only 1 product
-		add_filter( 'woocommerce_return_to_shop_redirect', array($this,'maybe_change_empty_cart_button_url' ));
+		add_filter( 'woocommerce_return_to_shop_redirect', array( $this, 'maybe_change_empty_cart_button_url' ) );
 
 		//remove the storefront credit link
 		remove_action( 'storefront_footer', 'storefront_credit', 20 );
-
 
 		//Ajax for submitting enquiry form
 		add_action( 'wp_ajax_quoteup_shipping_submit', array(
@@ -94,7 +94,16 @@ final class Theme_Customisations {
 
 	}
 
-	public function register_post_status(){
+	public function hidden_product_purchase() {
+		add_filter( 'woocommerce_is_purchasable', function ( $purchasable, $product ) {
+			$purchasable = 'hidden' == $product->post->post_status &&
+			               'shipping' == strtolower( $product->post->post_title ) ? true : $purchasable;
+
+			return $purchasable;
+		}, 10, 2 );
+	}
+
+	public function register_post_status() {
 		register_post_status( 'hidden', array(
 			'label'                     => _x( 'Hidden', 'product' ),
 			'public'                    => false,
@@ -106,7 +115,6 @@ final class Theme_Customisations {
 	}
 
 
-
 	public function checkout_update_packages() {
 		global $quoteupPublicManageSesion;
 		$quotationProduct = $quoteupPublicManageSesion->get( 'quotationProducts' );
@@ -116,18 +124,19 @@ final class Theme_Customisations {
 	}
 
 	public function remove_views( $views ) {
-		unset($views['hidden']);
+		unset( $views['hidden'] );
+
 		return $views;
 	}
 
-	public function maybe_change_empty_cart_button_url($url) {
+	public function maybe_change_empty_cart_button_url( $url ) {
 
-		$count = wp_count_posts('product');
+		$count = wp_count_posts( 'product' );
 
 
-		if (2 > absint($count->publish)){
-			$products = get_posts(array("post_type"=>"product","status"=>"publish"));
-			$url = get_permalink($products[0]->ID);
+		if ( 2 > absint( $count->publish ) ) {
+			$products = get_posts( array( "post_type" => "product", "status" => "publish" ) );
+			$url      = get_permalink( $products[0]->ID );
 		}
 
 		return $url;
@@ -488,9 +497,13 @@ final class Theme_Customisations {
 			wp_localize_script( 'modal_validate', 'wdm_data', $data );
 		} elseif ( is_checkout() && ( ! empty( $quotationProduct ) && false !== $quotationProduct ) ) {
 			wp_enqueue_script( 'custom-checkout', plugins_url( '/custom/custom-checkout.js', __FILE__ ), array( 'wc-checkout' ), false, true );
+
 			//add_action( 'woocommerce_cart_calculate_fees', array($this, 'add_shipping_fee') );
+
 			$this->add_shipping_fee();
+
 			//add_filter( 'woocommerce_cart_subtotal', array( $this, 'get_shipping_price' ) );
+
 			add_filter( 'woocommerce_form_field_country', array( $this, 'custom_override_checkout_fields' ), 10, 4 );
 			add_filter( 'woocommerce_form_field_state', array( $this, 'custom_override_checkout_fields' ), 10, 4 );
 			add_filter( 'woocommerce_form_field_text', array( $this, 'custom_override_checkout_fields' ), 10, 4 );
@@ -1238,8 +1251,8 @@ final class Theme_Customisations {
 				$product = $product->create_product( $data, $product );
 			}
 
-			if (is_wp_error($product)){
-				exit($product->get_error_message);
+			if ( is_wp_error( $product ) ) {
+				exit( $product->get_error_message );
 			}
 
 			add_post_meta( $product['product']['id'], '_qu_shipping_product', $product['product']['id'], true );

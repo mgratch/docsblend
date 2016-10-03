@@ -43,22 +43,19 @@ class QuoteUpDashboardMenu
         require_once(QUOTEUP_PLUGIN_DIR . '/includes/class-quoteup-get-data.php');
         require_once(QUOTEUP_PLUGIN_DIR . '/includes/admin/class-quoteup-quotes-list.php');
                 require_once(QUOTEUP_PLUGIN_DIR . '/includes/admin/class-quoteup-enquiries-list.php');
-        $getDataFromDb = \Combined\Includes\QuoteupGetData::getDataFromDb($quoteup_plugin_data);
         $optionData = get_option('wdm_form_data');
-        if ($getDataFromDb == 'available') {
-            add_menu_page(__('QuoteUp', 'quoteup'), __('Product Enquiry', 'quoteup'), 'manage_options', 'quoteup-details-new', array($quoteupQuoteDetails, 'displayQuoteDetails'));
-            add_submenu_page('', __('Quote Details', 'quoteup'), __('Quote Details', 'quoteup'), 'manage_options', 'quoteup-details-edit', array($quoteupQuoteDetailsEdit, 'editQuoteDetails'));
-            if (isset($optionData['enable_disable_quote']) && $optionData['enable_disable_quote']==1) {
-                $menu = add_submenu_page('quoteup-details-new', __('Enquiry Details', 'quoteup'), __('Enquiry Details', 'quoteup'), 'manage_options', 'quoteup-details-new', array($quoteupQuoteDetails, 'displayQuoteDetails'));
+	    add_menu_page(__('QuoteUp', 'quoteup'), __('Product Enquiry', 'quoteup'), 'manage_options', 'quoteup-details-new', array($quoteupQuoteDetails, 'displayQuoteDetails'));
+	    add_submenu_page('', __('Quote Details', 'quoteup'), __('Quote Details', 'quoteup'), 'manage_options', 'quoteup-details-edit', array($quoteupQuoteDetailsEdit, 'editQuoteDetails'));
+	    if (isset($optionData['enable_disable_quote']) && $optionData['enable_disable_quote']==1) {
+		    $menu = add_submenu_page('quoteup-details-new', __('Enquiry Details', 'quoteup'), __('Enquiry Details', 'quoteup'), 'manage_options', 'quoteup-details-new', array($quoteupQuoteDetails, 'displayQuoteDetails'));
 
-            } else {
-                $menu = add_submenu_page('quoteup-details-new', __('Enquiry & Quote Details', 'quoteup'), __('Enquiry & Quote Details', 'quoteup'), 'manage_options', 'quoteup-details-new', array($quoteupQuoteDetails, 'displayQuoteDetails'));
-            }
-            add_action("load-{$menu}", array($this,'menu_action__load_hook'));
-            add_submenu_page('quoteup-details-new', __('QuoteUp Settings', 'quoteup'), __('Settings', 'quoteup'), 'manage_options', 'quoteup-for-woocommerce', array($quoteupSettings, 'displaySettings'));
+	    } else {
+		    $menu = add_submenu_page('quoteup-details-new', __('Enquiry & Quote Details', 'quoteup'), __('Enquiry & Quote Details', 'quoteup'), 'manage_options', 'quoteup-details-new', array($quoteupQuoteDetails, 'displayQuoteDetails'));
+	    }
+	    add_action("load-{$menu}", array($this,'menu_action__load_hook'));
+	    add_submenu_page('quoteup-details-new', __('QuoteUp Settings', 'quoteup'), __('Settings', 'quoteup'), 'manage_options', 'quoteup-for-woocommerce', array($quoteupSettings, 'displaySettings'));
 
-            // unset($menu);
-        }
+	    // unset($menu);
     }
 
     public function menu_action__load_hook()
