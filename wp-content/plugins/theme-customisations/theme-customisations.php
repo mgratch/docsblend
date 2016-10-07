@@ -47,6 +47,20 @@ final class Theme_Customisations {
 	public function theme_customisations_setup() {
 
 		add_action( 'register_post_status', array( $this, 'register_post_status' ) );
+		add_action( 'init', array( $this, 'register_awaiting_shipment_order_status' ) );
+		add_filter( 'woocommerce_order_actions', array( $this, 'add_order_meta_box_actions' ) );
+		add_action( 'woocommerce_order_action_wc_awaiting_shipment', array( $this, 'order_shipped_callback' ), 10, 1 );
+
+		add_filter( 'wc_order_statuses', array( $this, 'add_awaiting_shipment_to_order_statuses' ) );
+		add_action( 'woocommerce_order_status_wc-awaiting-shipment', array(
+			$this,
+			'order_status_shipped_callback'
+		), 10, 1 );
+
+		add_action( 'wp_print_scripts', array( $this, 'add_custom_order_status_icon') );
+		add_action( 'load-edit.php', array( $this, 'bulk_action_shipping_callback' ) );
+		add_action( 'admin_footer', array( $this, 'add_shipped_in_bulk_action'),11);
+
 		add_action( 'wp_loaded', array( $this, 'hidden_product_purchase' ), 9 );
 		add_filter( 'views_edit-product', array( $this, 'remove_views' ) );
 
@@ -1657,6 +1671,140 @@ final class Theme_Customisations {
 		$enq_fields['value'] = ! empty( $first_name ) && ! empty( $last_name ) ? $first_name . " " . $last_name : $first_name . $last_name;
 
 		return $enq_fields;
+	}
+
+	public function register_awaiting_shipment_order_status() {
+		register_post_status( 'wc-awaiting-shipment', array(
+			'label'                     => 'Awaiting shipment',
+			'public'                    => true,
+			'exclude_from_search'       => false,
+			'show_in_admin_all_list'    => true,
+			'show_in_admin_status_list' => true,
+			'label_count'               => _n_noop( 'Awaiting shipment <span class="count">(%s)</span>', 'Awaiting shipment <span class="count">(%s)</span>' )
+		) );
+	}
+
+	// Add to list of WC Order statuses
+	public function add_awaiting_shipment_to_order_statuses( $order_statuses ) {
+
+		$new_order_statuses = array();
+
+		// add new order status after processing
+		foreach ( $order_statuses as $key => $status ) {
+
+			$new_order_statuses[ $key ] = $status;
+
+			if ( 'wc-processing' === $key ) {
+				$new_order_statuses['wc-awaiting-shipment'] = 'Awaiting shipment';
+			}
+		}
+
+		return $new_order_statuses;
+	}
+
+	// Add Order action to Order action meta box
+	public function add_order_meta_box_actions( $actions ) {
+		$actions['wc_awaiting_shipment'] = __( 'Awaiting shipment', 'theme-customisations' );
+
+		return $actions;
+	}
+
+	//Add callback if Shipped action called
+	public function order_shipped_callback( $order ) {
+		//Here order object is sent as parameter
+
+		//Add code for processing here
+	}
+
+	//Add callback if Status changed to Shipping
+	public function order_status_shipped_callback( $order_id ) {
+		//Here order id is sent as parameter
+		//Add code for processing here
+	}
+
+	public function add_shipped_in_bulk_action() {
+		global $post_type;
+
+		if ( 'shop_order' == $post_type ) { ?>
+			<script type="text/javascript">
+
+				jQuery(function () {
+
+					jQuery('<option>').val('mark_shipped').text('<?php _e( 'Awaiting shipment', 'woocommerce' )?>').appendTo("select[name='action']");
+					jQuery('<option>').val('mark_shipped').text('<?php _e( 'Awaiting shipment', 'woocommerce' )?>').appendTo("select[name='action2']");
+
+					//Add icon
+
+					title_text = jQuery('.column-order_status .shipped').html();
+					jQuery('.column-order_status .shipped').attr('alt', title_text);
+					jQuery('.column-order_status .shipped').empty();
+					jQuery('.column-order_status .shipped').append('<icon class="icon-local-shipping"></icon>')
+					jQuery('.column-order_status .shipped').css('text-indent', '0');
+
+				});
+			</script>
+
+			<?php
+
+		}
+
+	}
+
+	public function bulk_action_shipping_callback() {
+		$wp_list_table = _get_list_table( 'WP_Posts_List_Table' );
+		$action        = $wp_list_table->current_action(); //wc-shipped
+
+		switch ( $action ) {
+
+			case 'mark_shipped' :
+
+				$new_status    = 'shipped';
+				$report_action = 'marked_shipped';
+				break;
+
+			default :
+				return;
+		}
+
+		$post_ids = array_map( 'absint', (array) $_REQUEST['post'] );
+
+		$changed = 0;
+		foreach ( $post_ids as $post_id ) {
+			$order = wc_get_order( $post_id );
+			$order->update_status( $new_status, __( 'Order status changed by bulk edit:', 'woocommerce' ) );
+			$changed ++;
+		}
+
+		$sendback = add_query_arg( array(
+			'post_type'    => 'shop_order',
+			$report_action => true,
+			'changed'      => $changed,
+			'ids'          => join( ',', $post_ids )
+		), '' );
+
+		wp_redirect( $sendback );
+		exit();
+
+	}
+
+	public function add_custom_order_status_icon() {
+
+		if ( ! is_admin() ) {
+			return;
+		}
+
+		?>
+		<style>
+			/* Add custom status order icons */
+			icon.icon-local-shipping,
+			.column-order_status mark.wc-awaiting-shipment,
+			.column-order_status mark.building {
+				content: url(<?php echo plugin_dir_url(__FILE__) . '/assetts/CustomOrderStatus.png'; ?>);
+			}
+
+			/* Repeat for each different icon; tie to the correct status */
+
+		</style> <?php
 	}
 
 
