@@ -60,6 +60,7 @@ final class Theme_Customisations {
 		add_action( 'wp_print_scripts', array( $this, 'add_custom_order_status_icon') );
 		add_action( 'load-edit.php', array( $this, 'bulk_action_shipping_callback' ) );
 		add_action( 'admin_footer', array( $this, 'add_shipped_in_bulk_action'),11);
+		add_filter( 'woocommerce_admin_order_actions', array($this,'add_awaiting_shipping_action'), 10, 2  );
 
 		add_action( 'wp_loaded', array( $this, 'hidden_product_purchase' ), 9 );
 		add_filter( 'views_edit-product', array( $this, 'remove_views' ) );
@@ -92,7 +93,7 @@ final class Theme_Customisations {
 		add_action( 'wp_enqueue_scripts', array( $this, 'theme_customisations_js' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'theme_customisations_js_shipping' ) );
 		//add_action( 'woocommerce_cart_calculate_fees', array($this, 'update_shipping_fee') );
-		add_action( 'woocommerce_order_status_changed', array( $this, 'delete_shipping_fee' ) );
+		add_action( 'woocommerce_new_order', array( $this, 'delete_shipping_fee' ) );
 
 		add_action( 'woocommerce_checkout_update_order_review', array( $this, 'shipping_quote_button' ), 9999 );
 		add_action( 'woocommerce_checkout_process', array( $this, 'checkout_update_packages' ), 9999 );
@@ -1735,11 +1736,11 @@ final class Theme_Customisations {
 
 					//Add icon
 
-					title_text = jQuery('.column-order_status .shipped').html();
-					jQuery('.column-order_status .shipped').attr('alt', title_text);
-					jQuery('.column-order_status .shipped').empty();
-					jQuery('.column-order_status .shipped').append('<icon class="icon-local-shipping"></icon>')
-					jQuery('.column-order_status .shipped').css('text-indent', '0');
+					title_text = jQuery('.column-order_status .awaiting-shipment').html();
+					jQuery('.column-order_status .awaiting-shipment').attr('alt', title_text);
+					jQuery('.column-order_status .awaiting-shipment').empty();
+					jQuery('.column-order_status .awaiting-shipment').append('<icon class="icon-local-shipping"></icon>')
+					jQuery('.column-order_status .awaiting-shipment').css('text-indent', '0');
 
 				});
 			</script>
@@ -1758,7 +1759,7 @@ final class Theme_Customisations {
 
 			case 'mark_shipped' :
 
-				$new_status    = 'shipped';
+				$new_status    = 'wc-awaiting-shipment';
 				$report_action = 'marked_shipped';
 				break;
 
@@ -1797,14 +1798,70 @@ final class Theme_Customisations {
 		<style>
 			/* Add custom status order icons */
 			icon.icon-local-shipping,
-			.column-order_status mark.wc-awaiting-shipment,
+			.column-order_status mark.awaiting-shipment,
 			.column-order_status mark.building {
 				content: url(<?php echo plugin_dir_url(__FILE__) . '/assetts/CustomOrderStatus.png'; ?>);
+			}
+			.order_actions .awaiting-shipment {
+				display: block;
+				text-indent: -9999px;
+				position: relative;
+				padding: 0!important;
+				height: 2em!important;
+				width: 2em;
+			}
+			.order_actions .awaiting-shipment:after {
+				font-family: Dashicons;
+				text-indent: 0;
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				left: 0;
+				line-height: 1.85;
+				margin: 0;
+				text-align: center;
+				speak: none;
+				font-variant: normal;
+				text-transform: none;
+				-webkit-font-smoothing: antialiased;
+				top: 0;
+				font-weight: 400;
+				content: "\f466";
 			}
 
 			/* Repeat for each different icon; tie to the correct status */
 
 		</style> <?php
+	}
+
+	public function add_awaiting_shipping_action($actions, $the_order){
+		global $post;
+
+		if ( $the_order->has_status( array( 'pending', 'on-hold', 'processing' ) ) ) {
+
+			$actions['awaiting-shipment'] = array(
+				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=awaiting-shipment&order_id=' . $post->ID ), 'woocommerce-mark-order-status' ),
+				'name'   => __( 'Awaiting Shipment', 'woocommerce' ),
+				'action' => "awaiting-shipment"
+			);
+		}
+		if ( $the_order->has_status( array( 'awaiting-shipment' ) ) ) {
+
+			$actions['complete'] = array(
+				'url'       => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=completed&order_id=' . $post->ID ), 'woocommerce-mark-order-status' ),
+				'name'      => __( 'Complete', 'woocommerce' ),
+				'action'    => "complete"
+			);
+			$actions['processing'] = array(
+				'url'       => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=processing&order_id=' . $post->ID ), 'woocommerce-mark-order-status' ),
+				'name'      => __( 'Processing', 'woocommerce' ),
+				'action'    => "processing"
+			);
+		}
+
+
+		return $actions;
+
 	}
 
 
