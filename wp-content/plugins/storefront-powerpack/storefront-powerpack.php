@@ -3,7 +3,7 @@
  * Plugin Name: Storefront Powerpack
  * Plugin URI: http://woothemes.com/products/storefront-powerpack/
  * Description: Up your game with Storefront Powerpack and get access to host of neat gadgets that enable effortless customisation of your Storefront.
- * Version: 1.0.3
+ * Version: 1.1.0
  * Author: WooThemes
  * Author URI: http://woothemes.com/
  * Requires at least: 4.4
@@ -86,7 +86,7 @@ final class Storefront_Powerpack {
 	 */
 	public function __construct() {
 		$this->token   = 'storefront-powerpack';
-		$this->version = '1.0.3';
+		$this->version = '1.1.0';
 
 		/**
 		 * If Storefront is the active theme, and the extension hasn't been disabled via filter, load all the things.
@@ -131,7 +131,7 @@ final class Storefront_Powerpack {
 		// Integrations
 		include_once( 'includes/class-sp-integrations.php' );
 
-		if ( is_woocommerce_activated() ) {
+		if ( class_exists( 'WooCommerce' ) ) {
 			// Checkout
 			include_once( 'includes/customizer/checkout/customizer.php' );
 			include_once( 'includes/customizer/checkout/frontend.php' );

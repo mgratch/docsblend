@@ -802,7 +802,7 @@
 		}
 
 		// Transparent?
-		if ( rgb === 'rgba(0, 0, 0, 0)' ) {
+		if ( rgb === 'rgba(0, 0, 0, 0)' || rgb === 'transparent' ) {
 			return '';
 		}
 

@@ -27,7 +27,7 @@ if ( ! class_exists( 'SP_Admin' ) ) :
 			add_filter( 'plugin_action_links_' . SP_PLUGIN_BASENAME, array( $this, 'plugin_links' ) );
 			add_action( 'admin_notices', array( $this, 'activation_notice' ) );
 
-			if ( is_woocommerce_activated() ) {
+			if ( is_admin() && class_exists( 'WooCommerce' ) ) {
 				add_filter( 'woocommerce_product_data_tabs', array( $this, 'custom_product_data_tab' ) );
 				add_action( 'woocommerce_product_data_panels', array( $this, 'custom_product_data_panel' ) );
 				add_action( 'woocommerce_process_product_meta', array( $this, 'single_product_layout_override_admin_process' ) );

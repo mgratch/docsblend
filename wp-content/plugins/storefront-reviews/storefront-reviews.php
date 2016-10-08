@@ -3,7 +3,7 @@
  * Plugin Name:			Storefront Reviews
  * Plugin URI:			http://woothemes.com/products/storefront-reviews/
  * Description:			Display product reviews on the across your Storefront powered WooCommerce shop.
- * Version:				1.0.1
+ * Version:				1.0.2
  * Author:				WooThemes
  * Author URI:			http://woothemes.com/
  * Requires at least:	4.2.0
@@ -103,7 +103,7 @@ final class Storefront_Reviews {
 		$this->token 			= 'storefront-reviews';
 		$this->plugin_url 		= plugin_dir_url( __FILE__ );
 		$this->plugin_path 		= plugin_dir_path( __FILE__ );
-		$this->version 			= '1.0.1';
+		$this->version 			= '1.0.2';
 
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 
@@ -568,10 +568,10 @@ final class Storefront_Reviews {
 	public function styles() {
 		wp_enqueue_style( 'sr-styles', plugins_url( '/assets/css/style.css', __FILE__ ) );
 
-		$content_bg_color				= storefront_sanitize_hex_color( get_theme_mod( 'sd_content_background_color' ) );
+		$content_bg_color				= get_theme_mod( 'sd_content_background_color' );
 		$content_frame 					= get_theme_mod( 'sd_fixed_width' );
-		$star_color 					= storefront_sanitize_hex_color( get_theme_mod( 'storefront_reviews_star_color', apply_filters( 'storefront_default_accent_color', '#96588a' ) ) );
-		$accent_color 					= storefront_sanitize_hex_color( get_theme_mod( 'storefront_accent_color' ) );
+		$star_color 					= get_theme_mod( 'storefront_reviews_star_color', apply_filters( 'storefront_default_accent_color', '#96588a' ) );
+		$accent_color 					= get_theme_mod( 'storefront_accent_color' );
 
 		if ( $content_bg_color && 'true' == $content_frame && class_exists( 'Storefront_Designer' ) ) {
 			$bg_color 	= str_replace( '#', '', $content_bg_color );

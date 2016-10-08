@@ -93,7 +93,7 @@ final class Theme_Customisations {
 		add_action( 'wp_enqueue_scripts', array( $this, 'theme_customisations_js' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'theme_customisations_js_shipping' ) );
 		//add_action( 'woocommerce_cart_calculate_fees', array($this, 'update_shipping_fee') );
-		add_action( 'woocommerce_new_order', array( $this, 'delete_shipping_fee' ) );
+		//add_action( 'woocommerce_new_order', array( $this, 'delete_shipping_fee' ) );
 
 		add_action( 'woocommerce_checkout_update_order_review', array( $this, 'shipping_quote_button' ), 9999 );
 		add_action( 'woocommerce_checkout_process', array( $this, 'checkout_update_packages' ), 9999 );

@@ -165,7 +165,7 @@ if ( ! class_exists( 'SP_Customizer_Header' ) ) :
 				),
 			);
 
-			if ( is_woocommerce_activated() ) {
+			if ( class_exists( 'WooCommerce' ) ) {
 				$components['search'] = array(
 					'title' => __( 'Search', 'storefront-powerpack' ),
 					'hook'  => 'storefront_product_search'

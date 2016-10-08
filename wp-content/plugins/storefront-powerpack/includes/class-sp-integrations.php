@@ -27,7 +27,7 @@ if ( ! class_exists( 'SP_Integrations' ) ) :
 			/**
 			 * Composite Products integration
 			 */
-			if ( is_woocommerce_activated() && class_exists( 'WC_Composite_Products' ) ) {
+			if ( class_exists( 'WooCommerce' ) && class_exists( 'WC_Composite_Products' ) ) {
 				global $woocommerce_composite_products;
 
 				if ( isset( $woocommerce_composite_products->version ) && version_compare( $woocommerce_composite_products->version, '3.0', '>=' ) ) {

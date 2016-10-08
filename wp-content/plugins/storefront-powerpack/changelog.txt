@@ -1,5 +1,10 @@
 *** Storefront Powerpack Changelog ***
 
+2016.09.27 - version 1.1.0
+* New - Footer text and footer credit options.
+* Fix - Parsing of transparent colors in the Designer on browsers other than Chrome.
+* Fix - Fatal error when using the Jetpack mobile theme.
+
 2016.09.08 - version 1.0.3
 * Fix - Content frame background color when using Storefront Powerpack without WooCommerce.
 * Fix - Storefront Powerpack is now loaded into the init hook with priority 0 (was 10) to ensure that all setting defaults are set.
