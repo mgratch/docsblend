@@ -57,10 +57,10 @@ final class Theme_Customisations {
 			'order_status_shipped_callback'
 		), 10, 1 );
 
-		add_action( 'wp_print_scripts', array( $this, 'add_custom_order_status_icon') );
+		add_action( 'wp_print_scripts', array( $this, 'add_custom_order_status_icon' ) );
 		add_action( 'load-edit.php', array( $this, 'bulk_action_shipping_callback' ) );
-		add_action( 'admin_footer', array( $this, 'add_shipped_in_bulk_action'),11);
-		add_filter( 'woocommerce_admin_order_actions', array($this,'add_awaiting_shipping_action'), 10, 2  );
+		add_action( 'admin_footer', array( $this, 'add_shipped_in_bulk_action' ), 11 );
+		add_filter( 'woocommerce_admin_order_actions', array( $this, 'add_awaiting_shipping_action' ), 10, 2 );
 
 		add_action( 'wp_loaded', array( $this, 'hidden_product_purchase' ), 9 );
 		add_filter( 'views_edit-product', array( $this, 'remove_views' ) );
@@ -106,6 +106,80 @@ final class Theme_Customisations {
 		add_action( 'woocommerce_variation_options', array( &$this, 'variation_options' ), 10, 3 );
 		add_action( 'woocommerce_process_product_meta', array( &$this, 'write_panel_save' ) );
 		add_filter( 'woocommerce_available_variation', array( $this, 'available_variation' ), 10, 3 );
+
+		//add fields
+		add_filter( 'pep_fields_txtsubject', array( $this, 'pep_remove_shipping_fields' ), 10, 1 );
+		add_filter( 'pep_fields_custname', array( $this, 'pep_update_custname_field' ), 10, 1 );
+		add_filter( 'pep_fields_txtemail', array( $this, 'pep_update_email_field' ), 10, 1 );
+		add_filter( 'pep_fields_txtphone', array( $this, 'pep_update_telephone_field' ), 10, 1 );
+		add_action( 'pep_fields_txtmsg', array( $this, 'pep_add_shipping_fields' ), 10, 1 );
+		add_action( 'pep_add_custom_field_in_form', array( $this, 'add_woo_shipping_fields' ) );
+	}
+
+	public function add_woo_shipping_fields() {
+
+		if ( ! is_checkout() ) {
+
+
+			wp_enqueue_script( 'wc-country-select' );
+			WC_Frontend_Scripts::localize_printed_scripts();
+
+			?>
+
+			<section class="shipping-calculator-form">
+				<p class="form-row form-row-wide form-wrap-inner" id="calc_shipping_country_field">
+					<select name="country" id="calc_shipping_country" class="country_to_state"
+					        rel="calc_shipping_state">
+						<option value="">
+							<?php _e( 'Select a country&hellip;', 'woocommerce' ); ?>
+						</option>
+						<?php
+						foreach ( WC()->countries->get_shipping_countries() as $key => $value ) {
+							echo '<option value="' . esc_attr( $key ) . '"' . selected( WC()->customer->get_shipping_country(), esc_attr( $key ), false ) . '>' . esc_html( $value ) . '</option>';
+						}
+						?>
+					</select>
+				</p>
+				<p class="form-row form-row-wide form-wrap-inner" id="calc_shipping_state_field">
+					<?php
+					$current_cc = WC()->customer->get_shipping_country();
+					$current_r  = WC()->customer->get_shipping_state();
+					$states     = WC()->countries->get_states( $current_cc );
+
+					// Hidden Input
+					if ( is_array( $states ) && empty( $states ) ) {
+
+						?><input type="hidden" name="calc_shipping_state" id="calc_shipping_state"
+						         placeholder="<?php esc_attr_e( 'State / county', 'woocommerce' ); ?>" /><?php
+
+						// Dropdown Input
+					} elseif ( is_array( $states ) ) {
+
+						?><span>
+						<select name="state" id="calc_shipping_state"
+						        placeholder="<?php esc_attr_e( 'State / county', 'woocommerce' ); ?>">
+							<option value=""><?php _e( 'Select a state&hellip;', 'woocommerce' ); ?></option>
+							<?php
+							foreach ( $states as $ckey => $cvalue ) {
+								echo '<option value="' . esc_attr( $ckey ) . '" ' . selected( $current_r, $ckey, false ) . '>' . __( esc_html( $cvalue ), 'woocommerce' ) . '</option>';
+							}
+							?>
+						</select>
+						</span><?php
+
+						// Standard Input
+					} else {
+
+						?><input type="text" class="input-text" value="<?php echo esc_attr( $current_r ); ?>"
+						         placeholder="<?php esc_attr_e( 'State / county', 'woocommerce' ); ?>"
+						         name="calc_shipping_state" id="calc_shipping_state" /><?php
+
+					}
+					?>
+				</p>
+			</section>
+			<?php
+		}
 
 	}
 
@@ -412,9 +486,17 @@ final class Theme_Customisations {
 	public function update_packages( $packages ) {
 		if ( 0 < count( $packages ) ) {
 			for ( $i = 0, $count = count( $packages ); $i < $count; $i ++ ) {
-				if ( empty( $packages[ $i ]['rates'] ) ) {
-					$shipping_method                                   = new WC_Shipping_Rate( 'flat_rate_shipping_fee', 'Flat Rate Shipping', WC()->session->get( 'custom_shipping_fee' ), array(), 'flat_rate' );
-					$packages[ $i ]['rates']['flat_rate_shipping_fee'] = $shipping_method;
+				if ( WC()->session->get( 'custom_shipping_fee' ) ) {
+					if (empty( $packages[ $i ]['rates'] )){
+						$shipping_method                                   = new WC_Shipping_Rate( 'flat_rate_shipping_fee', 'Flat Rate Shipping', WC()->session->get( 'custom_shipping_fee' ), array(), 'flat_rate' );
+						$packages[ $i ]['rates']['flat_rate_shipping_fee'] = $shipping_method;
+					} else {
+						foreach ($packages[ $i ]['rates'] as $key => $rate){
+							if ('flat_rate' === $rate->method_id){
+								$packages[ $i ]['rates'][$key]->cost = abs(WC()->session->get( 'custom_shipping_fee' ));
+							}
+						}
+					}
 				}
 			}
 		}
@@ -441,6 +523,35 @@ final class Theme_Customisations {
 
 		if ( ! is_checkout() ) {
 			wp_enqueue_script( 'custom-js', plugins_url( '/custom/custom.js', __FILE__ ), array( 'wc-add-to-cart-variation' ), false, true );
+			wp_dequeue_script( 'modal_validate' );
+
+			global $quoteupDisplayQuoteButton;
+			$form_data = get_option( 'wdm_form_data' );
+
+			// jQuery based MutationObserver library to monitor changes in attributes, nodes, subtrees etc
+			wp_enqueue_script( 'quoteup-jquery-mutation-observer', QUOTEUP_PLUGIN_URL . '/js/admin/jquery-observer.js', array( 'jquery' ) );
+
+			wp_enqueue_script( 'qu-placeholder', plugins_url( '/custom/qoute-up-placeholder.js', __FILE__ ), array(
+				'jquery',
+				'phone_validate'
+			), false, true );
+			wp_enqueue_script( 'modal_validate', plugins_url( '/custom/shipping-quote.js', __FILE__ ), array(
+				'qu-placeholder',
+				'quoteup-jquery-mutation-observer'
+			), false, true );
+
+			$redirect_url = $quoteupDisplayQuoteButton->getRedirectUrl( $form_data );
+
+			if ( isset( $form_data['phone_country'] ) ) {
+				$country = $form_data['phone_country'];
+			} else {
+				$country = '';
+			}
+			//echo "qwqww <pre>";print_r($p);echo "</pre>";exit;
+			$data = getLocalizationDataForJs( $redirect_url, $country );
+
+			wp_localize_script( 'modal_validate', 'wdm_data', $data );
+
 		} else {
 			wp_enqueue_script( 'custom-shipping-js', plugins_url( '/custom/custom-shipping.js', __FILE__ ), array( 'wc-add-to-cart-variation' ), false, true );
 		}
@@ -577,8 +688,15 @@ final class Theme_Customisations {
 			if ( ! empty( $variation_detail ) ) {
 				$newVariation = array();
 				foreach ( $variation_detail as $key => $value ) {
-					$key                          = str_replace( "attribute_", "", $key );
-					$newVariation[ trim( $key ) ] = trim( $value );
+
+					if (!is_numeric($key)){
+						$key                          = str_replace( "attribute_", "", $key );
+						$newVariation[ trim( $key ) ] = trim( $value );
+					} else {
+						$var = explode(":",$value);
+						$newVariation[trim($var[0])] = trim($var[1]);
+					}
+
 				}
 				$variation_detail = $newVariation;
 			} else {
@@ -1275,6 +1393,19 @@ final class Theme_Customisations {
 			$shipping_product_id = $product['product']['id'];
 		}
 
+		if ( isset( $_POST['product_id'] ) && is_numeric($_POST['product_id']) ) {
+
+			$cart['product_id']     = abs( $_POST['product_id'] );
+			$cart['quantity']       = isset( $_POST['quantity'] ) ? $_POST['quantity'] : 1;
+			$cart['variation']      = isset( $_POST['variation_detail'] ) ? $_POST['variation_detail'] : array();
+			$cart['product_var_id'] = isset( $_POST['variation_id'] ) ? $_POST['variation_id'] : null;
+			$cart['author_email']   = null;
+
+			$this->quoteup_add_product_in_enq_cart( $cart );
+			$this->quoteup_update_enq_cart_session( $cart );
+
+		};
+
 		$cart             = array();
 		$shipping_address = array();
 
@@ -1441,7 +1572,7 @@ final class Theme_Customisations {
 		$this->delete_shipping_fee();
 		exit( json_encode( array(
 			"completed" => true,
-			"redirect"  => get_permalink( $this->insert_thankyou_page() )
+			"redirect"  => wp_get_referer() === wc_get_checkout_url() || wc_get_cart_url() === wc_get_checkout_url() ? get_permalink( $this->insert_thankyou_page() ) : false
 		) ) );
 		//wp_safe_redirect("")
 	}
@@ -1589,11 +1720,18 @@ final class Theme_Customisations {
 			'label'                    => 'Zip / Postal Code',
 			'value'                    => isset( $_POST['s_postcode'] ) && ! empty( $_POST['s_postcode'] ) ? sanitize_text_field( $_POST['s_postcode'] ) : ''
 		);
-		$country     = array(
+
+		if ( is_checkout() ) {
+			$css = "";
+		} else {
+			$css = "hidden";
+		}
+
+		$country = array(
 			'id'                       => 'country',
-			'class'                    => 'wdm-modal_text disabled',
+			'class'                    => "wdm-modal_text disabled $css",
 			'type'                     => 'text',
-			'placeholder'              => '',
+			'placeholder'              => 'Country',
 			'required'                 => 'no',
 			'required_message'         => '',
 			'validation'               => '',
@@ -1603,11 +1741,11 @@ final class Theme_Customisations {
 			'label'                    => 'Country',
 			'value'                    => isset( $_POST['s_country'] ) && ! empty( $_POST['s_country'] ) ? sanitize_text_field( $_POST['s_country'] ) : ''
 		);
-		$state       = array(
+		$state   = array(
 			'id'                       => 'state',
-			'class'                    => 'wdm-modal_text disabled',
+			'class'                    => "wdm-modal_text disabled $css",
 			'type'                     => 'text',
-			'placeholder'              => '',
+			'placeholder'              => 'State',
 			'required'                 => 'no',
 			'required_message'         => '',
 			'validation'               => '',
@@ -1618,9 +1756,11 @@ final class Theme_Customisations {
 			'value'                    => isset( $_POST['s_state'] ) && ! empty( $_POST['s_state'] ) ? sanitize_text_field( $_POST['s_state'] ) : ''
 		);
 
+
 		// ****** IMPORTANT********
 		// the order of the fields specified will be decide the order in which fields will be displayed
-		$enq_fields['value'] = ! empty( $street['value'] ) ? $street['value'] . "\n" : '';
+		$enq_fields['required'] = 'no';
+		$enq_fields['value']    = ! empty( $street['value'] ) ? $street['value'] . "\n" : '';
 		$enq_fields['value'] .= ! empty( $street_2['value'] ) ? $street_2['value'] . "\n" : '';
 		$enq_fields['value'] .= ! empty( $city['value'] ) ? $city['value'] . ", " : '';
 		$enq_fields['value'] .= ! empty( $state['value'] ) ? $state['value'] . "\n" : '';
@@ -1628,7 +1768,7 @@ final class Theme_Customisations {
 		$enq_fields['value'] .= ! empty( $postal_code['value'] ) ? $postal_code['value'] : '';
 		$enq_fields['class'] = $enq_fields['class'] . ' hidden';
 
-		$enq_fields = array( $street, $street_2, $city, $country, $state, $postal_code, $enq_fields );
+		$enq_fields = array( $street, $street_2, $city, $postal_code, $enq_fields, $country, $state );
 
 		return $enq_fields;
 	}
@@ -1802,14 +1942,16 @@ final class Theme_Customisations {
 			.column-order_status mark.building {
 				content: url(<?php echo plugin_dir_url(__FILE__) . '/assetts/CustomOrderStatus.png'; ?>);
 			}
+
 			.order_actions .awaiting-shipment {
 				display: block;
 				text-indent: -9999px;
 				position: relative;
-				padding: 0!important;
-				height: 2em!important;
+				padding: 0 !important;
+				height: 2em !important;
 				width: 2em;
 			}
+
 			.order_actions .awaiting-shipment:after {
 				font-family: Dashicons;
 				text-indent: 0;
@@ -1834,7 +1976,7 @@ final class Theme_Customisations {
 		</style> <?php
 	}
 
-	public function add_awaiting_shipping_action($actions, $the_order){
+	public function add_awaiting_shipping_action( $actions, $the_order ) {
 		global $post;
 
 		if ( $the_order->has_status( array( 'pending', 'on-hold', 'processing' ) ) ) {
@@ -1847,15 +1989,15 @@ final class Theme_Customisations {
 		}
 		if ( $the_order->has_status( array( 'awaiting-shipment' ) ) ) {
 
-			$actions['complete'] = array(
-				'url'       => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=completed&order_id=' . $post->ID ), 'woocommerce-mark-order-status' ),
-				'name'      => __( 'Complete', 'woocommerce' ),
-				'action'    => "complete"
+			$actions['complete']   = array(
+				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=completed&order_id=' . $post->ID ), 'woocommerce-mark-order-status' ),
+				'name'   => __( 'Complete', 'woocommerce' ),
+				'action' => "complete"
 			);
 			$actions['processing'] = array(
-				'url'       => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=processing&order_id=' . $post->ID ), 'woocommerce-mark-order-status' ),
-				'name'      => __( 'Processing', 'woocommerce' ),
-				'action'    => "processing"
+				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=processing&order_id=' . $post->ID ), 'woocommerce-mark-order-status' ),
+				'name'   => __( 'Processing', 'woocommerce' ),
+				'action' => "processing"
 			);
 		}
 

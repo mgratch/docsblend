@@ -96,7 +96,7 @@ jQuery(document).ready(function () {
             jQuery('.wdm-error').removeClass('wdm-error');
             for (i = 0; i < fields.length; i++) {
 
-                enquiry_field = $this.closest('.form_input').siblings('.wdm-quoteup-form-inner').find('#' + fields[i].id);
+                enquiry_field = $this.closest('.form_input').siblings('.wdm-quoteup-form-inner').find('[name|="' + fields[i].id + '"]');
                 var temp = enquiry_field.val();
 
                 var required = fields[i].required;
@@ -135,10 +135,10 @@ jQuery(document).ready(function () {
                         if (flag == 0) {
 
                             error_val = 1;
-                            $this.closest('.form_input').siblings('.wdm-quoteup-form-inner').find('#' + fields[i].id).parent().css("cssText", "background:#FCC !important;");
+                            $this.closest('.form_input').siblings('.wdm-quoteup-form-inner').find('[name|="' + fields[i].id + '"]').parent().css("cssText", "background:#FCC !important;");
                             err_string += '<li class="error-list-item">' + fields[i].required_message + '</li>';
                         } else {
-                            $this.closest('.form_input').siblings('.wdm-quoteup-form-inner').find('#' + fields[i].id).parent().css("cssText", "background:white !important;");
+                            $this.closest('.form_input').siblings('.wdm-quoteup-form-inner').find('[name|="' + fields[i].id + '"]').parent().css("cssText", "background:white !important;");
                         }
 
                     }//radio
@@ -156,10 +156,10 @@ jQuery(document).ready(function () {
                         if (flag == 0) {
 
                             error_val = 1;
-                            $this.closest('.form_input').siblings('.wdm-quoteup-form-inner').find('#' + fields[i].id).parent().css("cssText", "background:#FCC !important;");
+                            $this.closest('.form_input').siblings('.wdm-quoteup-form-inner').find('[name|="' + fields[i].id + '"]').parent().css("cssText", "background:#FCC !important;");
                             err_string += '<li class="error-list-item">' + fields[i].required_message + '</li>';
                         } else {
-                            $this.parent().siblings().find('#' + fields[i].id).parent().css("cssText", "background:white !important;");
+                            $this.parent().siblings().find('[name|="' + fields[i].id + '"]').parent().css("cssText", "background:white !important;");
                         }
 
                     }//checkbox
@@ -173,10 +173,10 @@ jQuery(document).ready(function () {
                         });
                         if (flag == 0) {
                             error_val = 1;
-                            $this.closest('.form_input').siblings('.wdm-pep-form-inner').find('#' + fields[i].id).parent().css("cssText", "background:#FCC !important;");
+                            $this.closest('.form_input').siblings('.wdm-pep-form-inner').find('[name|="' + fields[i].id + '"]').parent().css("cssText", "background:#FCC !important;");
                             err_string += '<li class="error-list-item">' + fields[i].required_message + '</li>';
                         } else {
-                            $this.closest('.form_input').siblings('.wdm-pep-form-inner').find('#' + fields[i].id).parent().css("cssText", "background:white !important;");
+                            $this.closest('.form_input').siblings('.wdm-pep-form-inner').find('[name|="' + fields[i].id + '"]').parent().css("cssText", "background:white !important;");
                         }
                     }
                 }//required
@@ -263,12 +263,21 @@ jQuery(document).ready(function () {
                     });
                     if (fields.length > 0) {
 
-                        for (i = 0; i < fields.length; i++) {
+                        for (var i = 0; i < fields.length; i++) {
 
                             if (fields[i].type == 'text' || fields[i].type == 'textarea' || fields[i].type == 'select') {
-
-                                mydatavar[fields[i].id] = $this.closest('.form_input').siblings('.wdm-quoteup-form-inner').find("#" + fields[i].id).val();
-
+                                var msg_value = $this.closest('.form_input').siblings('.wdm-quoteup-form-inner').find('[name|="' + fields[i].id + '"]').val();
+                                if ('' == msg_value) {
+                                    if ('txtmsg' === fields[i].id) {
+                                        mydatavar[fields[i].id] = get_address($this.parents('form')[0]);
+                                    } else if ('state' === fields[i].id) {
+                                        mydatavar[fields[i].id] = get_address($this.parents('form')[0], 'state');
+                                    } else if ('country' === fields[i].id) {
+                                        mydatavar[fields[i].id] = get_address($this.parents('form')[0], 'country');
+                                    }
+                                } else {
+                                    mydatavar[fields[i].id] = $this.closest('.form_input').siblings('.wdm-quoteup-form-inner').find('[name|="' + fields[i].id + '"]').val();
+                                }
 
                             }
                             else if (fields[i].type == 'radio') {
@@ -290,12 +299,13 @@ jQuery(document).ready(function () {
                             }
                             else if (fields[i].type == 'multiple') {
                                 var selected = "";
-                                selected = $this.closest('.form_input').siblings('.wdm-quoteup-form-inner').find("#" + fields[i].id).multipleSelect('getSelects').join(',');
+                                selected = $this.closest('.form_input').siblings('.wdm-quoteup-form-inner').find('[name|="' + fields[i].id + '"]').multipleSelect('getSelects').join(',');
 
                                 mydatavar[fields[i].id] = selected;
                             }
 
                         }
+
                     }
                     jQuery('.wdm-quoteup-form').hide();
 
@@ -303,9 +313,9 @@ jQuery(document).ready(function () {
 
                     jQuery.post(wdm_data.ajax_admin_url, mydatavar, function (response) {
 
-                        response = JSON.parse(response);
+                        response = jQuery.parseJSON(response);
 
-                        if (true == response.completed) {
+                        if (true == response.completed && false !== response.redirect) {
                             window.location = response.redirect;
                         }
                     });
@@ -673,3 +683,89 @@ if (typeof jQuery === 'undefined') {
 jQuery('.sku').observe('childlist subtree', function () {
     jQuery('#product_sku').val(jQuery(this).text());
 });
+
+var get_address = function get_address(form, return_field) {
+    return_field = !return_field ? false : return_field;
+    var address = "<span data-shipping='$shipping_address_data'>";
+    var street = '';
+    var street2 = '';
+    var city = '';
+    var postal_code = '';
+    var state = '';
+    var country = '';
+
+    for (var i = 0; i < form.elements.length; i++) {
+        var e = form.elements[i];
+        if (!e.name || !e.value || false === e.value) continue;
+
+        if (return_field == e.name && '' !== e.value){
+            return e.value;
+        }
+
+        switch (e.type) {
+            case 'text':
+            case 'textarea':
+            case 'password':
+            case 'hidden':
+            case 'select-one':
+                if ('street' === e.name) {
+                    street = e.value;
+                }
+                else if ('street2' === e.name) {
+                    street2 = e.value;
+                }
+                else if ('city' === e.name) {
+                    city = e.value;
+                }
+                else if ('postal_code' === e.name) {
+                    postal_code = e.value;
+                }
+                else if ('state' === e.name) {
+                    state = !state ? e.value : state;
+                }
+                else if ('country' === e.name) {
+                    country = !country ? e.value : country;
+                }
+                break;
+            case 'radio':
+            case 'checkbox':
+                if (e.checked) {
+                    if ('street' === e.name) {
+                        street = e.value;
+                    }
+                    else if ('street2' === e.name) {
+                        street2 = e.value;
+                    }
+                    else if ('city' === e.name) {
+                        city = e.value;
+                    }
+                    else if ('postal_code' === e.name) {
+                        postal_code = e.value;
+                    }
+                    else if ('state' === e.name) {
+                        state = !state ? e.value : state;
+                    }
+                    else if ('country' === e.name) {
+                        country = !country ? e.value : country;
+                    }
+                }
+                break;
+        }
+    }
+
+    var shipping_label = 'undefined' != typeof street && '' != street ? street + "\n" : '';
+    shipping_label += 'undefined' != typeof street2 && '' != street2 ? street2 + "\n" : '';
+    shipping_label += 'undefined' !== typeof city && '' != city ? city + ", " : '';
+    shipping_label += 'undefined' !== typeof state && '' != state ? state + "\n" : '';
+    shipping_label += 'undefined' !== typeof country && '' != country ? country + "\n" : '';
+    shipping_label += 'undefined' !== typeof postal_code && '' != postal_code ? postal_code : '';
+
+    address += shipping_label + "</span>";
+
+    if (return_field){
+        return false;
+    }
+
+    return address;
+}
+

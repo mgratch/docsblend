@@ -62,8 +62,10 @@ function getLocalizationDataForJs($redirect_url, $country)
     $quoteCartLink   = "";
     $mpe             = 'no';
     if (is_product()) {
-        global $product;
-        $product_id = $product->id;
+        global $post;
+	    if (is_object($post) && wc_get_product($post->ID)){
+		    $product_id = $post->ID;
+	    }
     }
     $form_data = get_option("wdm_form_data");
     if (isset($form_data[ 'enable_disable_mpe' ]) && $form_data[ 'enable_disable_mpe' ] == 1) {

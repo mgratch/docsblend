@@ -33,3 +33,10 @@ button.single_add_to_cart_button.disabled {
     position: absolute;
     height: 0;
 }
+
+.form-wrap-inner .hidden {
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
