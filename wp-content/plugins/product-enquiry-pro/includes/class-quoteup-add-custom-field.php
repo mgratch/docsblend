@@ -772,7 +772,7 @@ class QuoteUpAddCustomField
                 $email .= "
            <tr >
             <th style='width:25%;text-align:left'>".__($val[ 'label' ], 'quoteup')."</th>
-            <td style='width:75%'>: ".stripslashes($_POST[ $val[ 'id' ] ]).'</td>
+            <td style='width:75%'>: ".stripslashes(isset($_POST[ $val[ 'id' ] ]) ? $_POST[ $val[ 'id' ] ] : '').'</td>
            </tr>';
             }
         }
