@@ -47,20 +47,6 @@ final class Theme_Customisations {
 	public function theme_customisations_setup() {
 
 		add_action( 'register_post_status', array( $this, 'register_post_status' ) );
-		add_action( 'init', array( $this, 'register_awaiting_shipment_order_status' ) );
-		add_filter( 'woocommerce_order_actions', array( $this, 'add_order_meta_box_actions' ) );
-		add_action( 'woocommerce_order_action_wc_awaiting_shipment', array( $this, 'order_shipped_callback' ), 10, 1 );
-
-		add_filter( 'wc_order_statuses', array( $this, 'add_awaiting_shipment_to_order_statuses' ) );
-		add_action( 'woocommerce_order_status_wc-awaiting-shipment', array(
-			$this,
-			'order_status_shipped_callback'
-		), 10, 1 );
-
-		add_action( 'wp_print_scripts', array( $this, 'add_custom_order_status_icon' ) );
-		add_action( 'load-edit.php', array( $this, 'bulk_action_shipping_callback' ) );
-		add_action( 'admin_footer', array( $this, 'add_shipped_in_bulk_action' ), 11 );
-		add_filter( 'woocommerce_admin_order_actions', array( $this, 'add_awaiting_shipping_action' ), 10, 2 );
 
 		add_action( 'wp_loaded', array( $this, 'hidden_product_purchase' ), 9 );
 		add_filter( 'views_edit-product', array( $this, 'remove_views' ) );
@@ -241,6 +227,12 @@ final class Theme_Customisations {
 		$enquiry_details = $this->get_enquiry_details();
 		$address         = ! empty( $enquiry_details ) && isset( $enquiry_details['message'] ) ? $enquiry_details['message'] : '';
 		$name            = ! empty( $enquiry_details ) && isset( $enquiry_details['name'] ) ? explode( " ", $enquiry_details['name'], 2 ) : array();
+		$street          = false;
+		$street_2        = false;
+		$state           = false;
+		$city            = false;
+		$country         = false;
+		$postal_code     = false;
 
 		if ( ! empty( $address ) ) {
 
@@ -254,15 +246,13 @@ final class Theme_Customisations {
 
 			$address_array = maybe_unserialize( $value );
 
-			$street      = $address_array['street'];
-			$street_2    = $address_array['street_2'];
-			$state       = $address_array['state'];
-			$city        = $address_array['city'];
-			$country     = $address_array['country'];
-			$postal_code = $address_array['postal_code'];
-		}
-
-		if ( ! empty( $name ) ) {
+			$street      = isset( $address_array['street'] ) ? $address_array['street'] : false;
+			$street_2    = isset( $address_array['street_2'] ) ? $address_array['street_2'] : false;
+			$state       = isset( $address_array['state'] ) ? $address_array['state'] : false;
+			$city        = isset( $address_array['city'] ) ? $address_array['city'] : false;
+			$country     = isset( $address_array['country'] ) ? $address_array['country'] : false;
+			$postal_code = isset( $address_array['postal_code'] ) ? $address_array['postal_code'] : false;
+		} else if ( ! empty( $name ) ) {
 			list( $first_name, $last_name ) = $name;
 		}
 
@@ -278,13 +268,13 @@ final class Theme_Customisations {
 					$value = $node->getAttribute( "value" );
 					if ( isset( $country ) && $country == $value ) {
 						$node->setAttribute( "selected", "selected" );
+						$parent_node = $dom->getElementsByTagName('select');
+						if ( 0 < $parent_node->length ) {
+							foreach ( $parent_node as $p_node ) {
+								$p_node->setAttribute( "disabled", "" );
+							}
+						}
 					}
-				}
-
-				$inputs = $dom->getElementsByTagName( "select" );
-
-				foreach ( $inputs as $node ) {
-					$node->setAttribute( "disabled", "" );
 				}
 
 				$field = $dom->saveHtml();
@@ -302,19 +292,21 @@ final class Theme_Customisations {
 						$value = $node->getAttribute( "value" );
 						if ( isset( $state ) && $state == $value ) {
 							$node->setAttribute( "selected", "selected" );
+							$parent_node = $dom->getElementsByTagName('select');
+							if ( 0 < $parent_node->length ) {
+								foreach ( $parent_node as $p_node ) {
+									$p_node->setAttribute( "disabled", "" );
+								}
+							}
 						}
-					}
-
-					$inputs = $dom->getElementsByTagName( "select" );
-
-					foreach ( $inputs as $node ) {
-						$node->setAttribute( "disabled", "" );
 					}
 				} else {
 					$inputs = $dom->getElementsByTagName( "input" );
 					foreach ( $inputs as $node ) {
-						$node->setAttribute( "value", $state );
-						$node->setAttribute( "disabled", "" );
+						if ( $state ) {
+							$node->setAttribute( "value", $state );
+							$node->setAttribute( "disabled", "" );
+						}
 					}
 				}
 
@@ -328,8 +320,10 @@ final class Theme_Customisations {
 				$inputs = $dom->getElementsByTagName( "input" );
 
 				foreach ( $inputs as $node ) {
-					$node->setAttribute( "value", $street );
-					$node->setAttribute( "disabled", "" );
+					if ( $street ) {
+						$node->setAttribute( "value", $street );
+						$node->setAttribute( "disabled", "" );
+					}
 				}
 
 				$field = $dom->saveHtml();
@@ -341,8 +335,10 @@ final class Theme_Customisations {
 				$inputs = $dom->getElementsByTagName( "input" );
 
 				foreach ( $inputs as $node ) {
-					$node->setAttribute( "value", $street_2 );
-					$node->setAttribute( "disabled", "" );
+					if ( $street_2 ) {
+						$node->setAttribute( "value", $street_2 );
+						$node->setAttribute( "disabled", "" );
+					}
 				}
 
 				$field = $dom->saveHtml();
@@ -354,34 +350,10 @@ final class Theme_Customisations {
 				$inputs = $dom->getElementsByTagName( "input" );
 
 				foreach ( $inputs as $node ) {
-					$node->setAttribute( "value", $city );
-					$node->setAttribute( "disabled", "" );
-				}
-
-				$field = $dom->saveHtml();
-
-				break;
-			case 'shipping_first_name':
-				$dom = new DOMDocument;
-				@$dom->loadHTML( $field, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
-				$inputs = $dom->getElementsByTagName( "input" );
-
-				foreach ( $inputs as $node ) {
-					$node->setAttribute( "value", $first_name );
-					$node->setAttribute( "disabled", "" );
-				}
-
-				$field = $dom->saveHtml();
-
-				break;
-			case 'shipping_last_name':
-				$dom = new DOMDocument;
-				@$dom->loadHTML( $field, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
-				$inputs = $dom->getElementsByTagName( "input" );
-
-				foreach ( $inputs as $node ) {
-					$node->setAttribute( "value", $last_name );
-					$node->setAttribute( "disabled", "" );
+					if ( $city ) {
+						$node->setAttribute( "value", $city );
+						$node->setAttribute( "disabled", "" );
+					}
 				}
 
 				$field = $dom->saveHtml();
@@ -394,7 +366,10 @@ final class Theme_Customisations {
 
 				foreach ( $inputs as $node ) {
 					$node->setAttribute( "value", $postal_code );
-					$node->setAttribute( "disabled", "" );
+					if ( $postal_code ) {
+						$node->setAttribute( "value", $postal_code );
+						$node->setAttribute( "disabled", "" );
+					}
 				}
 
 				$field = $dom->saveHtml();
@@ -487,13 +462,13 @@ final class Theme_Customisations {
 		if ( 0 < count( $packages ) ) {
 			for ( $i = 0, $count = count( $packages ); $i < $count; $i ++ ) {
 				if ( WC()->session->get( 'custom_shipping_fee' ) ) {
-					if (empty( $packages[ $i ]['rates'] )){
+					if ( empty( $packages[ $i ]['rates'] ) ) {
 						$shipping_method                                   = new WC_Shipping_Rate( 'flat_rate_shipping_fee', 'Flat Rate Shipping', WC()->session->get( 'custom_shipping_fee' ), array(), 'flat_rate' );
 						$packages[ $i ]['rates']['flat_rate_shipping_fee'] = $shipping_method;
 					} else {
-						foreach ($packages[ $i ]['rates'] as $key => $rate){
-							if ('flat_rate' === $rate->method_id){
-								$packages[ $i ]['rates'][$key]->cost = abs(WC()->session->get( 'custom_shipping_fee' ));
+						foreach ( $packages[ $i ]['rates'] as $key => $rate ) {
+							if ( 'flat_rate' === $rate->method_id ) {
+								$packages[ $i ]['rates'][ $key ]->cost = abs( WC()->session->get( 'custom_shipping_fee' ) );
 							}
 						}
 					}
@@ -689,12 +664,12 @@ final class Theme_Customisations {
 				$newVariation = array();
 				foreach ( $variation_detail as $key => $value ) {
 
-					if (!is_numeric($key)){
+					if ( ! is_numeric( $key ) ) {
 						$key                          = str_replace( "attribute_", "", $key );
 						$newVariation[ trim( $key ) ] = trim( $value );
 					} else {
-						$var = explode(":",$value);
-						$newVariation[trim($var[0])] = trim($var[1]);
+						$var                             = explode( ":", $value );
+						$newVariation[ trim( $var[0] ) ] = trim( $var[1] );
 					}
 
 				}
@@ -1393,7 +1368,7 @@ final class Theme_Customisations {
 			$shipping_product_id = $product['product']['id'];
 		}
 
-		if ( isset( $_POST['product_id'] ) && is_numeric($_POST['product_id']) ) {
+		if ( isset( $_POST['product_id'] ) && is_numeric( $_POST['product_id'] ) ) {
 
 			$cart['product_id']     = abs( $_POST['product_id'] );
 			$cart['quantity']       = isset( $_POST['quantity'] ) ? $_POST['quantity'] : 1;
@@ -1574,6 +1549,7 @@ final class Theme_Customisations {
 			"completed" => true,
 			"redirect"  => wp_get_referer() === wc_get_checkout_url() || wc_get_cart_url() === wc_get_checkout_url() ? get_permalink( $this->insert_thankyou_page() ) : false
 		) ) );
+
 		//wp_safe_redirect("")
 	}
 
@@ -1813,200 +1789,6 @@ final class Theme_Customisations {
 
 		return $enq_fields;
 	}
-
-	public function register_awaiting_shipment_order_status() {
-		register_post_status( 'wc-awaiting-shipment', array(
-			'label'                     => 'Awaiting shipment',
-			'public'                    => true,
-			'exclude_from_search'       => false,
-			'show_in_admin_all_list'    => true,
-			'show_in_admin_status_list' => true,
-			'label_count'               => _n_noop( 'Awaiting shipment <span class="count">(%s)</span>', 'Awaiting shipment <span class="count">(%s)</span>' )
-		) );
-	}
-
-	// Add to list of WC Order statuses
-	public function add_awaiting_shipment_to_order_statuses( $order_statuses ) {
-
-		$new_order_statuses = array();
-
-		// add new order status after processing
-		foreach ( $order_statuses as $key => $status ) {
-
-			$new_order_statuses[ $key ] = $status;
-
-			if ( 'wc-processing' === $key ) {
-				$new_order_statuses['wc-awaiting-shipment'] = 'Awaiting shipment';
-			}
-		}
-
-		return $new_order_statuses;
-	}
-
-	// Add Order action to Order action meta box
-	public function add_order_meta_box_actions( $actions ) {
-		$actions['wc_awaiting_shipment'] = __( 'Awaiting shipment', 'theme-customisations' );
-
-		return $actions;
-	}
-
-	//Add callback if Shipped action called
-	public function order_shipped_callback( $order ) {
-		//Here order object is sent as parameter
-
-		//Add code for processing here
-	}
-
-	//Add callback if Status changed to Shipping
-	public function order_status_shipped_callback( $order_id ) {
-		//Here order id is sent as parameter
-		//Add code for processing here
-	}
-
-	public function add_shipped_in_bulk_action() {
-		global $post_type;
-
-		if ( 'shop_order' == $post_type ) { ?>
-			<script type="text/javascript">
-
-				jQuery(function () {
-
-					jQuery('<option>').val('mark_shipped').text('<?php _e( 'Awaiting shipment', 'woocommerce' )?>').appendTo("select[name='action']");
-					jQuery('<option>').val('mark_shipped').text('<?php _e( 'Awaiting shipment', 'woocommerce' )?>').appendTo("select[name='action2']");
-
-					//Add icon
-
-					title_text = jQuery('.column-order_status .awaiting-shipment').html();
-					jQuery('.column-order_status .awaiting-shipment').attr('alt', title_text);
-					jQuery('.column-order_status .awaiting-shipment').empty();
-					jQuery('.column-order_status .awaiting-shipment').append('<icon class="icon-local-shipping"></icon>')
-					jQuery('.column-order_status .awaiting-shipment').css('text-indent', '0');
-
-				});
-			</script>
-
-			<?php
-
-		}
-
-	}
-
-	public function bulk_action_shipping_callback() {
-		$wp_list_table = _get_list_table( 'WP_Posts_List_Table' );
-		$action        = $wp_list_table->current_action(); //wc-shipped
-
-		switch ( $action ) {
-
-			case 'mark_shipped' :
-
-				$new_status    = 'wc-awaiting-shipment';
-				$report_action = 'marked_shipped';
-				break;
-
-			default :
-				return;
-		}
-
-		$post_ids = array_map( 'absint', (array) $_REQUEST['post'] );
-
-		$changed = 0;
-		foreach ( $post_ids as $post_id ) {
-			$order = wc_get_order( $post_id );
-			$order->update_status( $new_status, __( 'Order status changed by bulk edit:', 'woocommerce' ) );
-			$changed ++;
-		}
-
-		$sendback = add_query_arg( array(
-			'post_type'    => 'shop_order',
-			$report_action => true,
-			'changed'      => $changed,
-			'ids'          => join( ',', $post_ids )
-		), '' );
-
-		wp_redirect( $sendback );
-		exit();
-
-	}
-
-	public function add_custom_order_status_icon() {
-
-		if ( ! is_admin() ) {
-			return;
-		}
-
-		?>
-		<style>
-			/* Add custom status order icons */
-			icon.icon-local-shipping,
-			.column-order_status mark.awaiting-shipment,
-			.column-order_status mark.building {
-				content: url(<?php echo plugin_dir_url(__FILE__) . '/assetts/CustomOrderStatus.png'; ?>);
-			}
-
-			.order_actions .awaiting-shipment {
-				display: block;
-				text-indent: -9999px;
-				position: relative;
-				padding: 0 !important;
-				height: 2em !important;
-				width: 2em;
-			}
-
-			.order_actions .awaiting-shipment:after {
-				font-family: Dashicons;
-				text-indent: 0;
-				position: absolute;
-				width: 100%;
-				height: 100%;
-				left: 0;
-				line-height: 1.85;
-				margin: 0;
-				text-align: center;
-				speak: none;
-				font-variant: normal;
-				text-transform: none;
-				-webkit-font-smoothing: antialiased;
-				top: 0;
-				font-weight: 400;
-				content: "\f466";
-			}
-
-			/* Repeat for each different icon; tie to the correct status */
-
-		</style> <?php
-	}
-
-	public function add_awaiting_shipping_action( $actions, $the_order ) {
-		global $post;
-
-		if ( $the_order->has_status( array( 'pending', 'on-hold', 'processing' ) ) ) {
-
-			$actions['awaiting-shipment'] = array(
-				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=awaiting-shipment&order_id=' . $post->ID ), 'woocommerce-mark-order-status' ),
-				'name'   => __( 'Awaiting Shipment', 'woocommerce' ),
-				'action' => "awaiting-shipment"
-			);
-		}
-		if ( $the_order->has_status( array( 'awaiting-shipment' ) ) ) {
-
-			$actions['complete']   = array(
-				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=completed&order_id=' . $post->ID ), 'woocommerce-mark-order-status' ),
-				'name'   => __( 'Complete', 'woocommerce' ),
-				'action' => "complete"
-			);
-			$actions['processing'] = array(
-				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=processing&order_id=' . $post->ID ), 'woocommerce-mark-order-status' ),
-				'name'   => __( 'Processing', 'woocommerce' ),
-				'action' => "processing"
-			);
-		}
-
-
-		return $actions;
-
-	}
-
-
 } // End Class
 
 /**

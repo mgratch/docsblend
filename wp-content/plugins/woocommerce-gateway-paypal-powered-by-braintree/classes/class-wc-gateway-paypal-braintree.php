@@ -824,7 +824,7 @@ abstract class WC_Gateway_Paypal_Braintree extends WC_Payment_Gateway {
 			'countryCodeAlpha2' => $order->shipping_country
 		);
 
-		$sale_args = array(
+		$sale_args = apply_filters( 'wc_gateway_paypal_braintree_sale_args', array(
 			'amount'              => $order->order_total,
 			'billing'             => $billing,
 			'shipping'            => $shipping,
@@ -832,9 +832,9 @@ abstract class WC_Gateway_Paypal_Braintree extends WC_Payment_Gateway {
 			'channel'             => 'WooThemes_BT', // aka BN tracking code
 			'orderId'             => $order_id,
 			'options'             => array(
-			'submitForSettlement' => $this->capture ? 'true' : 'false'
-			)
-		);
+				'submitForSettlement' => $this->capture ? 'true' : 'false',
+			),
+		) );
 
 		require_once( dirname( __FILE__ ) . '/../braintree_sdk/lib/Braintree.php' );
 		$gateway = new Braintree_Gateway( array(
@@ -1000,6 +1000,11 @@ abstract class WC_Gateway_Paypal_Braintree extends WC_Payment_Gateway {
 		if ( empty( $action_to_take ) ) {
 			$this->log( __FUNCTION__, "Error: The transaction cannot be voided nor refunded in its current state: state = {$transaction->status}" );
 			return false;
+		}
+
+		// Only void transaction when refund amount equals to order's total.
+		if ( 'void' === $action_to_take && $refund_amount != $order->get_total() ) {
+			return new WP_Error( 'unable_to_void', __( 'Unable to void unsettled transaction when refunding partially.', 'woocommerce-gateway-paypal-braintree' ) );
 		}
 
 		try {

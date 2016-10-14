@@ -1,9 +1,9 @@
 === WooCommerce PayPal Powered by Braintree Payment Gateway ===
-Contributors: automattic, akeda, allendav, royho, slash1andy, woosteve, spraveenitpro, mikedmoore, fernashes, shellbeezy, danieldudzic, dsmithweb
+Contributors: automattic, akeda, allendav, royho, slash1andy, woosteve, spraveenitpro, mikedmoore, fernashes, shellbeezy, danieldudzic, dsmithweb, fullysupportedphil, corsonr
 Tags: ecommerce, e-commerce, commerce, woothemes, wordpress ecommerce, store, sales, sell, shop, shopping, cart, checkout, configurable, paypal, braintree
 Requires at least: 4.4
 Tested up to: 4.6.1
-Stable tag: 1.2.4
+Stable tag: 1.2.5
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -109,6 +109,10 @@ New feature requests and bugs reports can be made in the plugin forum.
 4. Checkout with PayPal or Credit and Debit Cards.
 
 == Changelog ==
+
+= 1.2.5 =
+* Fix - Prevent void on unsettled transaction when refunding partially.
+* Tweak - Add filter wc_gateway_paypal_braintree_sale_args to filter arguments passed to sale call.
 
 = 1.2.4 =
 * Fix - Free subscription trails not allowed.

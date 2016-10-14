@@ -266,7 +266,7 @@ abstract class WC_Gateway_Paypal_Braintree_Subscription extends WC_Gateway_Paypa
 			),
 		);
 
-		return $sale_args;
+		return apply_filters( 'wc_gateway_paypal_braintree_sale_args', $sale_args );
 	}
 
 	/**
@@ -303,18 +303,18 @@ abstract class WC_Gateway_Paypal_Braintree_Subscription extends WC_Gateway_Paypa
 		) );
 
 		// Process the sale with the stored token and customer
-		$sale_args = array(
-			'amount' => $amount_to_charge,
+		$sale_args = apply_filters( 'wc_gateway_paypal_braintree_sale_args', array(
+			'amount'             => $amount_to_charge,
 			'paymentMethodToken' => $payment_method_token,
-			'recurring' => true,
-			'customerId' => $braintree_customer_id,
-			'channel' => 'WooThemes_BT', // aka BN tracking code
-			'orderId' => $order->id,
-			'options' => array(
-				'submitForSettlement' => true,
-				'storeInVaultOnSuccess' => true
-			)
-		);
+			'recurring'          => true,
+			'customerId'         => $braintree_customer_id,
+			'channel'            => 'WooThemes_BT', // aka BN tracking code
+			'orderId'            => $order->id,
+			'options'            => array(
+				'submitForSettlement'   => true,
+				'storeInVaultOnSuccess' => true,
+			),
+		) );
 
 		try {
 			$result = $gateway->transaction()->sale( $sale_args );
