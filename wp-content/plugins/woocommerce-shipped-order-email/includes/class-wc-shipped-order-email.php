@@ -39,7 +39,7 @@ class WC_Shipped_Order_Email extends WC_Email {
 		$this->template_plain   = 'emails/plain/customer-order-shipped.php';
 
 		// Trigger on new paid orders
-		add_action( 'woocommerce_order_status_on-hold_to_shipped_notification', array( $this, 'trigger' ) );
+		add_action( 'woocommerce_order_status_shipped_notification', array( $this, 'trigger' ) );
 
 		//add_action( 'woocommerce_order_status_awaiting-shipment_notification', array( $this, 'trigger' ) );
 
