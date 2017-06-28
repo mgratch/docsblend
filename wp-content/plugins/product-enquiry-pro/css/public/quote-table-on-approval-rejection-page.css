@@ -1,4 +1,4 @@
-h2 {
+h2.quote-heading {
     width:85%;
 }
 
@@ -6,7 +6,7 @@ h2 {
     text-align: right;
 }
 
-table{
+table.quote_table, table.quote-pdf-note {
     vertical-align: center;
     border:1%;
     padding: 1%;
@@ -17,9 +17,10 @@ table{
     float: left;
     width: 20%;
     height: auto;
+    text-align: center;
 }
 
-img {
+img.quote-logo {
     display: block;
     max-width:460px;
     max-height:190px;
@@ -32,7 +33,7 @@ img {
 }
 
 #head{
-    margin-left: 6%
+    margin-top: 5%;
 }
 
 .from-data, .to-data, .expiration-data {
@@ -101,4 +102,9 @@ img {
 .sku{
     width: 20%;
     text-align: left;
+}
+
+.final-total{
+    text-align: right !important;
+    padding-right: 7%;
 }

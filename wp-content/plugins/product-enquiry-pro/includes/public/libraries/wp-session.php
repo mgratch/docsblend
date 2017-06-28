@@ -12,9 +12,9 @@
  * @since   3.7.0
  */
 
-namespace Frontend\Includes\Libraries;
+namespace Includes\Frontend\Libraries;
 
-use \Frontend\Includes\Libraries\WP_Session as WP_Session;
+use \Includes\Frontend\Libraries\WP_Session as WP_Session;
 
 // Exit if accessed directly
 if (! defined('ABSPATH')) {

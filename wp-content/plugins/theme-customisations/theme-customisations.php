@@ -171,8 +171,8 @@ final class Theme_Customisations {
 
 	public function hidden_product_purchase() {
 		add_filter( 'woocommerce_is_purchasable', function ( $purchasable, $product ) {
-			$purchasable = 'hidden' == $product->post->post_status &&
-			               'shipping' == strtolower( $product->post->post_title ) ? true : $purchasable;
+			$purchasable = 'hidden' == $product->get_status() &&
+			               'shipping' == strtolower( $product->get_title() ) ? true : $purchasable;
 
 			return $purchasable;
 		}, 10, 2 );
@@ -191,8 +191,8 @@ final class Theme_Customisations {
 
 
 	public function checkout_update_packages() {
-		global $quoteupPublicManageSesion;
-		$quotationProduct = $quoteupPublicManageSesion->get( 'quotationProducts' );
+		global $quoteup;
+		$quotationProduct = $quoteup->wcCartSession->get('quotationProducts');
 		if ( ( ! empty( $quotationProduct ) && false !== $quotationProduct ) ) {
 			$this->add_shipping_fee();
 		}
@@ -388,8 +388,8 @@ final class Theme_Customisations {
 	}
 
 	public function shipping_quote_button() {
-		global $quoteupPublicManageSesion;
-		$quotationProduct = $quoteupPublicManageSesion->get( 'quotationProducts' );
+		global $quoteup;
+		$quotationProduct = $quoteup->wcCartSession->get('quotationProducts');
 		if ( is_checkout() && ( empty( $quotationProduct ) || ! $quotationProduct ) ) {
 			add_filter( 'woocommerce_cart_no_shipping_available_html', array( $this, 'replace_order_button_hooks' ) );
 			add_filter( 'woocommerce_no_shipping_available_html', array( $this, 'replace_order_button_hooks' ) );
@@ -500,9 +500,6 @@ final class Theme_Customisations {
 			wp_enqueue_script( 'custom-js', plugins_url( '/custom/custom.js', __FILE__ ), array( 'wc-add-to-cart-variation' ), false, true );
 			wp_dequeue_script( 'modal_validate' );
 
-			global $quoteupDisplayQuoteButton;
-			$form_data = get_option( 'wdm_form_data' );
-
 			// jQuery based MutationObserver library to monitor changes in attributes, nodes, subtrees etc
 			wp_enqueue_script( 'quoteup-jquery-mutation-observer', QUOTEUP_PLUGIN_URL . '/js/admin/jquery-observer.js', array( 'jquery' ) );
 
@@ -515,17 +512,23 @@ final class Theme_Customisations {
 				'quoteup-jquery-mutation-observer'
 			), false, true );
 
-			$redirect_url = $quoteupDisplayQuoteButton->getRedirectUrl( $form_data );
+			if (class_exists('Includes\Frontend\QuoteUpDisplayQuoteButton')){
+				$quoteupDisplayQuoteButton = Includes\Frontend\QuoteUpDisplayQuoteButton::getInstance();
+				$form_data = get_option( 'wdm_form_data' );
 
-			if ( isset( $form_data['phone_country'] ) ) {
-				$country = $form_data['phone_country'];
-			} else {
-				$country = '';
-			}
-			//echo "qwqww <pre>";print_r($p);echo "</pre>";exit;
-			$data = getLocalizationDataForJs( $redirect_url, $country );
+				$redirect_url = $quoteupDisplayQuoteButton->getRedirectUrl( $form_data );
 
-			wp_localize_script( 'modal_validate', 'wdm_data', $data );
+				if ( isset( $form_data['phone_country'] ) ) {
+					$country = $form_data['phone_country'];
+				} else {
+					$country = '';
+				}
+				//echo "qwqww <pre>";print_r($p);echo "</pre>";exit;
+				$data = getLocalizationDataForJs( $redirect_url, $country );
+
+				wp_localize_script( 'modal_validate', 'wdm_data', $data );
+
+            }
 
 		} else {
 			wp_enqueue_script( 'custom-shipping-js', plugins_url( '/custom/custom-shipping.js', __FILE__ ), array( 'wc-add-to-cart-variation' ), false, true );
@@ -540,8 +543,8 @@ final class Theme_Customisations {
 	 */
 	public function theme_customisations_js_shipping() {
 
-		global $wpdb, $quoteupPublicManageSesion;
-		$quotationProduct = $quoteupPublicManageSesion->get( 'quotationProducts' );
+		global $wpdb, $quoteup;
+		$quotationProduct = $quoteup->wcCartSession->get('quotationProducts');
 
 		if ( is_checkout() && ( empty( $quotationProduct ) || ! $quotationProduct ) ) {
 
@@ -559,16 +562,13 @@ final class Theme_Customisations {
 				$cart['quantity']       = isset( $cart_contents[ $i ]['quantity'] ) ? $cart_contents[ $i ]['quantity'] : null;
 				$cart['variation']      = isset( $cart_contents[ $i ]['variation'] ) ? $cart_contents[ $i ]['variation'] : null;
 				$cart['product_var_id'] = isset( $cart_contents[ $i ]['variation_id'] ) ? $cart_contents[ $i ]['variation_id'] : null;
-				$cart['author_email']   = isset( $cart_contents[ $i ]['data']->post->post_author ) ? get_userdata( $cart_contents[ $i ]['data']->post->post_author )->user_email : null;
+				$cart['author_email']   = isset( $cart_contents[ $i ]['data']) && $cart_contents[ $i ]['data']->get_id() ? get_userdata( get_post_field('post_author',$cart_contents[ $i ]['data']->get_id() ))->user_email : null;
 				$cart['remark']         = isset( $cart_contents[ $i ]['remark'] ) ? $cart_contents[ $i ]['remark'] : null;
 				$this->quoteup_add_product_in_enq_cart( $cart );
 				$this->quoteup_update_enq_cart_session( $cart );
 			}
 
-
-			global $quoteupDisplayQuoteButton;
-			$form_data = get_option( 'wdm_form_data' );
-			do_action( 'quoteup_create_custom_field' );
+            do_action( 'quoteup_create_custom_field' );
 
 			wp_enqueue_style( 'modal_css1', QUOTEUP_PLUGIN_URL . '/css/wdm-bootstrap.css', false, false );
 			wp_enqueue_style( 'wdm-mini-cart-css2', QUOTEUP_PLUGIN_URL . '/css/common.css' );
@@ -585,17 +585,24 @@ final class Theme_Customisations {
 			), false, true );
 			wp_enqueue_script( 'modal_validate', plugins_url( '/custom/shipping-quote.js', __FILE__ ), array( 'qu-placeholder' ), false, true );
 
-			$redirect_url = $quoteupDisplayQuoteButton->getRedirectUrl( $form_data );
+			if (class_exists('Includes\Frontend\QuoteUpDisplayQuoteButton')){
+				$quoteupDisplayQuoteButton = Includes\Frontend\QuoteUpDisplayQuoteButton::getInstance();
+				$form_data = get_option( 'wdm_form_data' );
 
-			if ( isset( $form_data['phone_country'] ) ) {
-				$country = $form_data['phone_country'];
-			} else {
-				$country = '';
+				$redirect_url = $quoteupDisplayQuoteButton->getRedirectUrl( $form_data );
+
+				if ( isset( $form_data['phone_country'] ) ) {
+					$country = $form_data['phone_country'];
+				} else {
+					$country = '';
+				}
+				//echo "qwqww <pre>";print_r($p);echo "</pre>";exit;
+				$data = getLocalizationDataForJs( $redirect_url, $country );
+
+				wp_localize_script( 'modal_validate', 'wdm_data', $data );
+
 			}
-			//echo "qwqww <pre>";print_r($p);echo "</pre>";exit;
-			$data = getLocalizationDataForJs( $redirect_url, $country );
 
-			wp_localize_script( 'modal_validate', 'wdm_data', $data );
 		} elseif ( is_checkout() && ( ! empty( $quotationProduct ) && false !== $quotationProduct ) ) {
 			wp_enqueue_script( 'custom-checkout', plugins_url( '/custom/custom-checkout.js', __FILE__ ), array( 'wc-checkout' ), false, true );
 
@@ -656,7 +663,8 @@ final class Theme_Customisations {
 
 		//Variable Product
 		if ( $variation_id != '' ) {
-			$var_product      = new WC_Product( $variation_id );
+
+			$var_product      = WC()->product_factory->get_product($variation_id );
 			$sku              = $var_product->get_sku();
 			$variation_detail = $cart['variation'];
 
@@ -690,7 +698,7 @@ final class Theme_Customisations {
 			$sku     = 'shipping';
 			$img_url = WC()->plugin_url() . "/assets/images/woocommerce_logo.png";
 		} else {
-			$product = new WC_Product( $product_id );
+			$product = WC()->product_factory->get_product( $product_id );
 			$price   = $product->get_price();
 			$sku     = $product->get_sku();
 			$img_url = wp_get_attachment_url( get_post_thumbnail_id( $product_id ) );
@@ -840,11 +848,11 @@ final class Theme_Customisations {
 	 *                         it is the previously found template.
 	 */
 	public function theme_customisations_wc_get_template( $located, $template_name, $args, $template_path, $default_path ) {
-		global $quoteupPublicManageSesion;
+		global $quoteup;
 
 		$plugin_template_path     = untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/custom/templates/woocommerce/' . $template_name;
 		$plugin_shipping_template = untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/custom/templates/woocommerce/shipping-quote/' . $template_name;
-		$quotationProduct         = $quoteupPublicManageSesion->get( 'quotationProducts' );
+		$quotationProduct = $quoteup->wcCartSession->get('quotationProducts');
 
 		if ( file_exists( $plugin_template_path ) ) {
 			if ( is_checkout() && ( empty( $quotationProduct ) || ! $quotationProduct ) ) {
@@ -982,8 +990,8 @@ final class Theme_Customisations {
 	 * @return array $data
 	 */
 	function available_variation( $data, $product, $variation ) {
-		$show_quote_up    = get_post_meta( $variation->variation_id, 'show_quote_up', true );
-		$hide_add_to_cart = get_post_meta( $variation->variation_id, 'hide_add_to_cart', true );
+		$show_quote_up    = get_post_meta( $variation->get_id(), 'show_quote_up', true );
+		$hide_add_to_cart = get_post_meta( $variation->get_id(), 'hide_add_to_cart', true );
 
 		if ( 'no' === $show_quote_up || empty( $show_quote_up ) ) {
 			$show_quote_up = false;
@@ -1028,7 +1036,7 @@ final class Theme_Customisations {
 			$cart[] = 0 < absint( $cart_contents[ $i ]['variation_id'] ) ? absint( $cart_contents[ $i ]['variation_id'] ) : absint( $cart_contents[ $i ]['product_id'] );
 		}
 
-		$QuoteUpDisplayQuoteButton = \Frontend\Includes\QuoteUpDisplayQuoteButton::getInstance();
+		$QuoteUpDisplayQuoteButton = Includes\Frontend\QuoteUpDisplayQuoteButton::getInstance();
 
 		$html = $this->display_modal( $cart, 'shipping', $QuoteUpDisplayQuoteButton );
 
@@ -1141,7 +1149,7 @@ final class Theme_Customisations {
 					<input type='hidden' name='submit_value' id='submit_value'>";
 
 		foreach ( $prod_ids as $prod_id ) {
-			$product = new WC_Product( $prod_id );
+			$product = WC()->product_factory->get_product( $prod_id );
 			$price   = $product->get_price();
 			$url     = get_permalink( $prod_id );
 			$img_url = wp_get_attachment_url( get_post_thumbnail_id( $prod_id ) );
@@ -1153,7 +1161,7 @@ final class Theme_Customisations {
 
 			$content .= "<input type='hidden' name='product_name_shipping' id='product_name_shipping' value='$title'>";
 			$content .= "<input type='hidden' name='product_type_shipping' id='product_type_shipping'>";
-			$content .= "<input type='hidden' name='variation_shipping' id='variation_shipping' value='$prod_id'>";
+			$content .= "<input type='hidden' name='variation_id_shipping' id='variation_id_shipping' value='$prod_id'>";
 			$content .= "<input type='hidden' name='product_id_shipping' id='product_id_shipping' value='shipping'>";
 			$content .= "<input type='hidden' name='author_email' id='author_email' value='$uemail'>";
 			$content .= "<input type='hidden' name='product_img_shipping' id='product_img_shipping' value='$img_url'>";
@@ -1353,7 +1361,6 @@ final class Theme_Customisations {
 				$author           = get_post_field( 'post_author', $checkout_page_id );
 				wp_set_current_user( $author );
 				$product = $product->create_product( $data, $product );
-
 				wp_set_current_user( $current_user_id );
 			} else {
 				$product = $product->create_product( $data, $product );
@@ -1419,7 +1426,7 @@ final class Theme_Customisations {
 			$form_data_for_mail      = json_encode( $data_obtained_from_form );
 			$name                    = wp_kses( $_POST['custname'], array() );
 			$email                   = sanitize_email( $_POST['txtemail'] );
-			$phone                   = phoneNumber();
+			$phone                   = isset($_POST[ 'txtphone' ]) ? wc_format_phone_number( $_POST[ 'txtphone' ] ) : '';
 			$subject                 = '';
 			$authorEmail             = get_bloginfo( 'admin_email' );
 
@@ -1440,7 +1447,7 @@ final class Theme_Customisations {
 
 			$form_data['enable_disable_mpe'] = "1";
 
-			$product_table_and_details = emailAndDbDataOfProducts( $form_data, $product_table );
+			$product_table_and_details = getEmailAndDbDataOfProducts( $form_data );
 			$product_details           = setProductDetails( $product_table_and_details );
 			if ( isset( $product_table_and_details['product_table'] ) ) {
 				$product_table = $product_table_and_details['product_table'];
@@ -1520,7 +1527,7 @@ final class Theme_Customisations {
 				}
 
 				$wdm_sitename  = '[' . trim( get_bloginfo( 'name' ) ) . '] ';
-				$admin_subject = adminSubject( $subject, $email_data, $wdm_sitename );
+				$admin_subject = getAdminMailSubject( $subject, $email_data, $wdm_sitename );
 				$admin_emails  = array_unique( $admin_emails );
 
 				if ( empty( $admin_emails ) ) {
@@ -1528,11 +1535,11 @@ final class Theme_Customisations {
 				}
 
 				foreach ( $admin_emails as $admin_email ) {
-					forEachAdminEmails( $admin_email, $blg_name, $form_data_for_mail, $product_table, $email, $name, $admin_subject );
+					sendAdminMails( $admin_email, $blg_name, $form_data_for_mail, $email, $name, $admin_subject );
 				}
 				do_action( 'wdm_after_send_admin_email' );
 
-				sendCopyIfChecked( $name, $blg_name, $form_data_for_mail, $admin_subject, $email, $customer_product_table );
+				sendCopyIfChecked( $blg_name, $form_data_for_mail, $admin_subject, $email, $customer_product_table );
 
 				$_SESSION['wdm_product_info']  = '';
 				$_SESSION['wdm_product_count'] = 0;
@@ -1757,7 +1764,7 @@ final class Theme_Customisations {
 	 * @return mixed
 	 */
 	public function pep_update_telephone_field( $enq_fields ) {
-		$enq_fields['value'] = WC()->checkout()->get_value( "billing_phone" ) ? sanitize_text_field( WC()->checkout()->get_value( "billing_phone" ) ) : '';
+		$enq_fields['value'] = WC()->checkout()->get_posted_address_data( "phone" ) ? sanitize_text_field( WC()->checkout()->get_posted_address_data( "phone" ) ) : '';
 
 		return $enq_fields;
 	}
@@ -1770,7 +1777,7 @@ final class Theme_Customisations {
 	 * @return mixed
 	 */
 	public function pep_update_email_field( $enq_fields ) {
-		$enq_fields['value'] = WC()->checkout()->get_value( "billing_email" ) ? sanitize_text_field( WC()->checkout()->get_value( "billing_email" ) ) : '';
+		$enq_fields['value'] = WC()->checkout()->get_posted_address_data( "email" ) ? sanitize_text_field( WC()->checkout()->get_posted_address_data( "email" ) ) : '';
 
 		return $enq_fields;
 	}
@@ -1783,8 +1790,8 @@ final class Theme_Customisations {
 	 * @return mixed
 	 */
 	public function pep_update_custname_field( $enq_fields ) {
-		$first_name          = WC()->checkout()->get_value( "billing_first_name" ) ? sanitize_text_field( WC()->checkout()->get_value( "billing_first_name" ) ) : '';
-		$last_name           = WC()->checkout()->get_value( "billing_last_name" ) ? sanitize_text_field( WC()->checkout()->get_value( "billing_last_name" ) ) : '';
+		$first_name          = WC()->checkout()->get_posted_address_data( "first_name" ) ? sanitize_text_field( WC()->checkout()->get_posted_address_data( "first_name" ) ) : '';
+		$last_name           = WC()->checkout()->get_posted_address_data( "last_name" ) ? sanitize_text_field( WC()->checkout()->get_posted_address_data( "last_name" ) ) : '';
 		$enq_fields['value'] = ! empty( $first_name ) && ! empty( $last_name ) ? $first_name . " " . $last_name : $first_name . $last_name;
 
 		return $enq_fields;

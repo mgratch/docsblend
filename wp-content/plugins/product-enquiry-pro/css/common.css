@@ -2,11 +2,34 @@
 {
     width:50px;
 }
-/*.wdm-remark
-{
-        display: none
+
+.quoteup-error {
+    color: red;
 }
-*/
+
+.quote-button-error{
+    border: 0.1px solid red;
+    color: red;
+    background-color: #fff7f7;
+    padding: 2%;
+    opacity: 0.8;
+    margin : 2% 0;
+}
+
+.ui-widget button {
+    font-size: 14px;
+}
+
+.ui-widget-content {
+    margin-top: 0px !important;
+}
+
+.lbl-char
+{
+    float: right;
+    font-weight: 500;
+    font-size: 14px;
+}
 
 /*# Common Style
 ------------------------------------------------------------------------------------------------- */
@@ -62,7 +85,7 @@
  * Copyright (c) 2015 Daniel Eden
  */
 
-.animated {
+ .animated {
     -webkit-animation-duration: 1s;
     animation-duration: 1s;
     -webkit-animation-fill-mode: both;
@@ -85,12 +108,21 @@
     vertical-align: middle;
 }
 
+.g-recaptcha {
+    margin-bottom: 2%;
+}
+
 .load-ajax, .load-send-quote-ajax
 {
     display: none;
     background:url('../images/ring-alt.gif') ;
     width:24px;
     height: 24px;
+    margin-top: 1%;
+}
+
+input[type="radio"], input[type="checkbox"] {
+    margin: 0 5px 0 10px;
 }
 
 /* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
@@ -328,17 +360,17 @@ div.wdm-enquiry-form > h4.wdm-enquiry-form-title {
 
 .wdm-quoteup-woo > .shop_table.cart input[type='button'].wdm-update,
 .wdm-enquiryform-btn-wrap > .mpe-right > input[type=submit],
+.wdm-quoteform-btn-wrap > .mpe-right > input[type=submit],
+.wdm-quoteform-btn-wrap > .mpe-right > input[type=button],
 .wdm-enquiryform-btn-wrap > .form-wrap > input[type=submit],
 .woocommerce .wdm-remark-form > .wdmquoteup-addRemark-wrap > input.button.btnAddRemark {
-    /*color: #515151 !important;
-    background-color: #ebe9eb !important;*/
     border: 0 !important;
     background-image: none;
     border-radius: 4px !important;
     box-shadow: none !important;
     display: inline-block;
     padding: 7px 20px !important;
-    font-size: 14px !important;
+    font-size: 80% !important;
     font-weight: 400 !important;
     line-height: 1.42857143;
     margin: 0;
@@ -366,10 +398,8 @@ div.wdm-enquiry-form > h4.wdm-enquiry-form-title {
 .wdm-enquiryform-btn-wrap > .mpe-right > input[type=submit]:hover,
 .wdm-enquiryform-btn-wrap > .form-wrap > input[type=submit]:hover,
 .woocommerce .wdm-remark-form > .wdmquoteup-addRemark-wrap > input.button.btnAddRemark:hover {
-    /*background-color: #dad8da;*/
     text-decoration: none;
     background-image: none;
-    /*color: #515151;*/
 }
 .td-btn-update
 {
@@ -382,7 +412,6 @@ div.wdm-enquiry-form > h4.wdm-enquiry-form-title {
 input[type="checkbox"]#contact-cc {
     vertical-align: middle;
     margin: 0 5px 0 0;
-    /* padding: 0 9px; */
     display: inline-block;
 }
 
@@ -412,11 +441,6 @@ span.contact-cc-txt {
     bottom: 0;
     right: 0;
 }
-
-/*.wdm-error:focus + .wdm-err-triangle,
-.wdm-error:focus + .wdm-err-triangle + .wdm-err-inline {
-    display: none;
-}*/
 
 .wdm-modal_textarea {
     resize: vertical;
@@ -448,7 +472,7 @@ span.contact-cc-txt {
     border-radius: 100%;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
     display: inline-block;
-    position: absolute;
+    position: fixed;
     padding: 13px 15px;
     text-align: center;
     z-index: 100000;
@@ -524,10 +548,6 @@ span.contact-cc-txt {
     margin-top: -6px;
 }
 
-/*.form-wrap > .wdm-err-inline {
-    margin-top: 8px;
-}*/
-
 .wdm-err-inline {
     color: #fff;
     margin-bottom: 3px;
@@ -555,12 +575,10 @@ span.contact-cc-txt {
 }
 
 .wdmquoteup-err-display {
-    /*line-height: 1;*/
     display: inline-block;
     background-color: #a94442;
     padding: 4px 8px;
     border-radius: 0 0 2px 2px;
-    /*max-width: 91%;*/
     text-align: center;
 }
 
@@ -601,6 +619,7 @@ textarea.wdm-remark  {
     white-space: normal !important;
     text-transform: none;
     padding: .618em 0.5em;
+    margin: 2% 0;
 }
 
 #wdm-quoteup-trigger,
@@ -667,7 +686,7 @@ body.single-product .quote-form button.wdm_enquiry.loading:after, .quote-form bu
 
 /*.woocommerce.single-product .quote-form {
     margin-bottom: 39px;
-}*/
+    }*/
 
 /*# Form Errors
 ------------------------------------------------------------------------------------------------- */
@@ -733,8 +752,23 @@ th.cart-thumbnail{
     text-align: left;
 }
 
+th.cart-name{
+    width: 15%;
+    text-align: left;
+}
+
+th.quote-cart-price{
+    width: 15%;
+    text-align: left;
+}
+
+th.cart-quantity{
+    width: 15%;
+    text-align: left;
+}
+
 th.cart-subtotal{
-    width: 32%;
+    width: 35%;
     text-align: left;
 }
 
@@ -785,4 +819,14 @@ th.cart-subtotal{
     box-shadow: none;
     -webkit-box-shadow: none;
     text-shadow: none;
+}
+
+
+
+
+@media screen and (max-width: 782px){
+    .wdm-quoteup-woo > .shop_table.cart input[type='button'].wdm-update{
+        margin: 3%;
+    }
+    
 }

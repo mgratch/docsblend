@@ -1,20 +1,20 @@
 <?php
 
-if (! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
 // If uninstall is not called from WordPress, exit
-if (! defined('WP_UNINSTALL_PLUGIN')) {
+if (!defined('WP_UNINSTALL_PLUGIN')) {
     exit();
 }
 
 global $wpdb;
 
-$args        = array(
+$args = array(
     'post_type' => 'product',
 );
-$wp_query    = new WP_Query($args);
+$wp_query = new WP_Query($args);
 
 if ($wp_query->have_posts()) :
     while ($wp_query->have_posts()) :
@@ -36,18 +36,18 @@ delete_transient('wdm_quoteup_license_trans');
 delete_option('wdm_form_data');
 
 //find out pdfs older than an hour and delete them
-$uploadDir   = wp_upload_dir();
-$pdfDir      = $uploadDir[ 'basedir' ] . '/QuoteUp_PDF/';
+$uploadDir = wp_upload_dir();
+$pdfDir = $uploadDir[ 'basedir' ].'/QuoteUp_PDF/';
 
-if (! file_exists($pdfDir)) {
+if (!file_exists($pdfDir)) {
     return;
 }
 /* * * cycle through all files in the directory ** */
-foreach (glob($pdfDir . "*") as $file) {
+foreach (glob($pdfDir.'*') as $file) {
     unlink($file);
 }
 
-/**
+/*
  * Delete all tables
  */
 global $wpdb;
@@ -60,9 +60,13 @@ $tables_to_be_deleted = array(
 );
 
 foreach ($tables_to_be_deleted as $single_table) {
-    quoteupDeleteTable($wpdb->prefix . $single_table);
+    quoteupDeleteTable($wpdb->prefix.$single_table);
 }
 
+/**
+ * This function is used to delete table from database.
+ * @param  [String] $table_name [Name of table to be deleted]
+ */
 function quoteupDeleteTable($table_name)
 {
     global $wpdb;

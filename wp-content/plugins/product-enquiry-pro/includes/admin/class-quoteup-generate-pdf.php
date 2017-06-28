@@ -1,121 +1,47 @@
 <?php
 
-namespace Admin\Includes;
+namespace Includes\Admin;
 
-if (! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
 /**
- * This class is used to genrate pdf file of quotation
+ * This class is used to genrate pdf file of quotation.
  */
 class QuoteupGeneratePdf
 {
-    
     /**
-     * This is header for PDF
-     * @param  [array] $pdfSetting Settings done by admin in settings panel
-     * @param  [string] $mail       [Email id of customer]
-     * @param  [string] $name       [Name of customer]
-     * @return [type]             [description]
+     * Function is used to genrate pdf.
      */
-    public static function header($pdfSetting, $mail, $name)
+    public static function generatePdfAjaxCallback()
     {
-        global $quoteupManageExpiration;
-        ?>
-        <div id='header'>
-            <div class="PDFLogo">
-        <?php if (isset($pdfSetting[ 'company_logo' ]) && $pdfSetting[ 'company_logo' ] != "") { ?>
-                    <img  src='<?php echo $pdfSetting[ 'company_logo' ]; ?>' height="150px" width="150px">
-                <?php } ?>
-            </div>
-            <div class="content">
-                <h2> <?php _e('Quote', 'quoteup'); ?>  </h2>
-        <?php
-        self::fromData($pdfSetting);
-        ?>
-                <div class="clear"></div>
-                <div class="to-info">
-                    <div class="to-title">
-        <?php _e('Quote For', 'quoteup'); ?>
-                    </div>
-                    <div class="to-data">
-                        <?php
-                        echo $name . "<br>";
-                        echo $mail . "<br>";
-                        ?>
-                    </div>
-
-                </div>
-                <div class="clear"></div>
-        <?php
-        $expiration_date = $quoteupManageExpiration->getExpirationDate($_POST[ 'enquiry_id' ]);
-        if (! empty($expiration_date)) {
-            ?>
-                    <div class="expiration-info">
-                        <div class="expiration-title">
-                    <?php _e('Expiration Date', 'quoteup'); ?>
-                        </div>
-                        <div class="expiration-data">
-                            <?php
-                            echo $expiration_date . "<br>";
-                            ?>
-                        </div>
-                    </div>
-                    <div class="clear"></div>
-            <?php
-        }
-        ?>
-            </div>
-        </div>
-                <?php
+        $PDFData  = $_POST;
+        self::generatePdf($PDFData);
+        die;
     }
 
-            /**
-             * This function displays from data in PDF header
-             * @param  [array] $pdfSetting Settings done by admin in settings panel
-             * @return [type]             [description]
-             */
-    public static function fromData($pdfSetting)
+    public static function generatePdf($PDFData)
     {
-        ?>
-        <div class="from-info">
-    <div class="from-title">
-        <?php _e('From', 'quoteup'); ?>
-    </div>
-    <div class="from-data">
-        <?php
-        echo isset($pdfSetting[ 'company_name' ]) ? $pdfSetting[ 'company_name' ] . "<br>" : '';
-        echo isset($pdfSetting[ 'company_address' ]) ? $pdfSetting[ 'company_address' ] . "<br>" : '';
-        echo isset($pdfSetting[ 'company_email' ]) ? $pdfSetting[ 'company_email' ] . "<br>" : '';
-        ?>
-
-    </div>
-        </div>
-        <?php
-    }
-
-            /**
-             * Function is used to genrate pdf
-             */
-    public static function generatePdf()
-    {
-        global $wpdb;
-        $enquiry_tbl     = $wpdb->prefix . 'enquiry_detail_new';
-        $quotation_tbl   = $wpdb->prefix . 'enquiry_quotation';
-        $enquiry_id      = $_POST[ 'enquiry_id' ];
-        $show_price      = isset($_POST[ 'show-price' ]) ? $_POST[ 'show-price' ] : '0';
+        do_action('wdm_before_create_pdf', isset($PDFData['language']) ? $PDFData['language'] : 'all');
+        global $wpdb, $quoteup;
+        $enquiry_tbl = $wpdb->prefix.'enquiry_detail_new';
+        $quotation_tbl = $wpdb->prefix.'enquiry_quotation';
+        $enquiry_id = $PDFData[ 'enquiry_id' ];
+        $show_price = isset($PDFData[ 'show-price' ]) ? $PDFData[ 'show-price' ] : '0';
         //Get data of enquiry details
-        $enquiry_details = $wpdb->get_row($wpdb->prepare("SELECT name, email, product_details FROM $enquiry_tbl WHERE enquiry_id = %s", $enquiry_id));
+        $enquiry_details = $wpdb->get_row($wpdb->prepare("SELECT name, email, product_details FROM $enquiry_tbl WHERE enquiry_id = %d", $enquiry_id));
         //Get data of Quotation(Updated price and Quantity)
-        $quotation       = $wpdb->get_results($wpdb->prepare("SELECT * FROM $quotation_tbl WHERE enquiry_id = %s", $enquiry_id), ARRAY_A);
-        $products        = unserialize($enquiry_details->product_details);
-        $pdfSetting      = get_option("wdm_form_data");
-        // $site_name=get_bloginfo();
-        // $tagline= get_bloginfo('description') ;
-        // $admin_mail = get_option('admin_email');
-        $name            = $enquiry_details->name;
-        $mail            = $enquiry_details->email;
+        $quotation = $wpdb->get_results($wpdb->prepare("SELECT * FROM $quotation_tbl WHERE enquiry_id = %d", $enquiry_id), ARRAY_A);
+
+        //Get Plugin setttings in selected Language
+        add_filter('icl_current_string_language', array(__CLASS__, 'setQuoteLanguage'));
+        $pdfSetting = get_option('wdm_form_data');
+        remove_filter('icl_current_string_language', array(__CLASS__, 'setQuoteLanguage'));
+
+        $name = $enquiry_details->name;
+        $mail = $enquiry_details->email;
+        $expiration_date = $quoteup->manageExpiration->getExpirationDate($PDFData[ 'enquiry_id' ]);
 
         //Genrate hash for this enquiry id
         $hash = quoteupEnquiryHashGenerator($enquiry_id);
@@ -125,188 +51,122 @@ class QuoteupGeneratePdf
         //Genrate Unique URL For Approve or reject
         $uniqueURL = quoteLinkGenerator($hash);
         if (empty($uniqueURL)) {
-            echo "ERROR";
+            echo 'ERROR';
             die();
         }
 
-
         ob_start();
-        ?>
-        <html>
-    <body>
-        <?php
-        self::header($pdfSetting, $mail, $name);
-        ?>
-        <div id="head"><h2> <?php _e('Quote Request', 'quoteup'); ?> #<?php echo "$enquiry_id"; ?></h2></div>
-        <div id="Enquiry">
-    <table align="center" class="quote_table">
-        <tr>
-            <th align="left" width="30%"><?php _e('Product', 'quoteup'); ?></th>
-            <th align="left" width="10%" > <?php _e('Sku', 'quoteup'); ?> </th>
-        <?php
-        if ($show_price == 1) {
-            ?>
-                                <th align="left"> <?php _e('Old', 'quoteup'); ?> </th>
-                                <?php
-        }
-            ?>
+        $args = array(
+            'pdfSetting' => $pdfSetting,
+            'enquiry_id' => $enquiry_id,
+            'name' => $name,
+            'mail' => $mail,
+            'show_price' => $show_price,
+            'enquiry_details' => $enquiry_details,
+            'uniqueURL' => $uniqueURL,
+            'quotation' => $quotation,
+            'expiration_date' => $expiration_date,
+            'source' => isset($PDFData[ 'source' ])?$PDFData[ 'source' ]:"",
+            );
 
-            <th align="left"> <?php _e('New', 'quoteup'); ?> </th>
-                    <th align="left"> <?php _e('Quantity', 'quoteup'); ?> </th>
-                    <th align="right"> <?php _e('Amount', 'quoteup'); ?> </th>
-                </tr>
-        <?php
-        $products    = unserialize($enquiry_details->product_details);
-        $total_price = 0;
-        
-        foreach ($quotation as $quoteProduct) {
-            $_product    = wc_get_product($quoteProduct['product_id']);
-            if (empty($_product)) {
-                continue;
-            }
-            $price       = $quoteProduct['oldprice'];
-                ?>
-                                <tr>
-                                <?php
-                                if ($show_price == 1) {
-                                    ?>
-                                    <td class="product-price" align="left"><?php echo get_the_title($quoteProduct['product_id']);
-                                    if ($_product->is_type('variable')) {
-                                        $variationArray = unserialize($quoteProduct['variation']);
-                                        foreach ($variationArray as $attributeName => $attributeValue) {
-                                            $taxonomy = trim($attributeName);
-                                            echo "<br>".wc_attribute_label($taxonomy).":".$attributeValue;
-                                        }
-                                    }
-                                    ?>
-                                    </td>
-                                    <?php
-                                } else {
-                                    ?>
-                                    <td class="product" align="left"><?php echo get_the_title($quoteProduct['product_id']);
-                                    if ($_product->is_type('variable')) {
-                                        $variationArray = unserialize($quoteProduct['variation']);
-                                        foreach ($variationArray as $attributeName => $attributeValue) {
-                                            // $variation = explode(':', $variation);
-                                            $taxonomy = trim($attributeName);
-                                            echo "<br>".wc_attribute_label($taxonomy).":".$attributeValue;
-                                        }
+        //This loads the template for PDF
+        quoteupGetAdminTemplatePart('pdf-quote/quote-pdf', '', $args);
+        wc_cart_totals_shipping_html();
 
-                                    }
-                                    ?>
-                                    </td>
-                                    <?php
-                                }
+        do_action('wdm_after_create_pdf');
 
-                                if ($show_price == 1) {
-                                    ?>
-                                    <td class="sku-price" align="left"><?php
-                                    if ($_product->is_type('variable')) {
-                                        $_product_variation    = wc_get_product($quoteProduct['variation_id']);
-                                        echo $_product_variation->get_sku();
-                                    } else {
-                                        echo $_product->get_sku();
-                                    }
-                                        ?></td>
-                                    
-                                <?php
-                                } else {
-                                    ?>
-                                    <td class="sku" align="left"><?php
-                                    if ($_product->is_type('variable')) {
-                                        $_product_variation    = wc_get_product($quoteProduct['variation_id']);
-                                        echo $_product_variation->get_sku();
-                                    } else {
-                                        echo $_product->get_sku();
-                                    }
-                                        ?>
-                                    </td>                                    
-                                <?php
-                                }
-                                if ($show_price == 1) {
-                                    ?>
-                                        <td align="left"><?php echo wc_price($price); ?></td>
-                                        <?php
-                                }
-                                    ?>
-                                    <td align="left"><?php echo wc_price($quoteProduct['newprice']); ?></td>
-                                    <td align="left"><?php echo $quoteProduct['quantity']; ?></td>
-                                    <td align="right"><?php
-                                    echo wc_price($quoteProduct['newprice'] * $quoteProduct['quantity']);
-                                    $total_price = $total_price + $quoteProduct['newprice'] * $quoteProduct['quantity']     ;
-                                    ?></td>
-                                </tr>
-                                        <?php
-        }
-                ?>
-                <tr border="1">
-                <?php
-                if ($show_price == 1) {
-                    ?>
-                        <td colspan="4"></td>
-                        <?php
-                } else {
-                    ?>
-                    <td colspan="3"></td>
-                    <?php
-                }
-                    ?>
-                    <td> <?php _e('TOTAL', 'quoteup'); ?> </td>
-                    <td align="right" ><?php echo wc_price($total_price); ?></td>
-                </tr>
-
-                    </table>
-                    <table align="center">
-
-                <?php if ( apply_filters("quoteup/show_tax", true) ): ?>
-                <tr>
-	                <td> <?php echo apply_filters("quoteup/include_tax_heading", __('TAX', 'quoteup'). ":"); ?> </td>
-	                <td colspan="3"> <?php echo apply_filters("quoteup/include_tax_message",__('Quote does not include default store tax', 'quoteup').'.'); ?></td>
-                </tr>
-			    <?php endif; ?>
-
-			    <?php if ( apply_filters("quoteup/show_shipping", true) ): ?>
-                <tr>
-                    <td> <?php echo apply_filters("quoteup/include_shipping_heading", __('SHIPPING', 'quoteup'). ":"); ?> </td>
-	                <td colspan="3"> <?php echo apply_filters("quoteup/include_shipping_message",__('Quote does not include shipping', 'quoteup')."."); ?></td>
-                </tr>
-			    <?php endif; ?>
-
-                    </table>
-                </div>
-                <?php
-                echo sprintf(__(' %s To Approve or Reject Quotation %s Click Here %s %s', 'quoteup'), "<p align='center'>", "<a class='button' href='$uniqueURL'>", "</a>", "</p>");
-                ?>
-
-            </body>
-        </html>
-        <?php
         $html = ob_get_clean();
 
         self::createFontsDirectory();
 
-        require_once('mpdf/mpdf.php');
-        $stylesheet              = file_get_contents(QUOTEUP_PLUGIN_DIR . '/css/admin/pdf-generation.css');
-        $upload_dir              = wp_upload_dir();
-        $path                    = $upload_dir[ 'basedir' ] . '/QuoteUp_PDF/';
-        $mpdf                    = new \mPDF();
-        $mpdf->useAdobeCJK       = true;
-        $mpdf->autoScriptToLang  = true;
-        $mpdf->autoLangToFont    = true;
+        require_once 'mpdf/mpdf.php';
+        $stylesheet = file_get_contents(QUOTEUP_PLUGIN_DIR.'/css/admin/pdf-generation.css');
+        $upload_dir = wp_upload_dir();
+        $path = $upload_dir[ 'basedir' ].'/QuoteUp_PDF/';
+        $mpdf = new \mPDF();
+        $mpdf->useAdobeCJK = true;
+        $mpdf->autoScriptToLang = true;
+        $mpdf->autoLangToFont = true;
         $mpdf->WriteHTML($stylesheet, 1);
         $mpdf->WriteHtml($html, 2);
 
-        $mpdf->Output($path . $enquiry_id . ".pdf", "F");
-        die;
+        $mpdf->Output($path.$enquiry_id.'.pdf', 'F');
+
+        if (isset($PDFData[ 'source' ]) && $PDFData[ 'source' ] == 'email') {
+            do_action('wdm_before_create_pdf', isset($PDFData['language']) ? $PDFData['language'] : 'all');
+            ob_start();
+            //This loads the template for PDF
+            quoteupGetAdminTemplatePart('pdf-quote/quote-email', '', $args);
+            $customCSS = '';
+            $form_data = quoteupSettings();
+            $too = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+            $table_name = $wpdb->prefix.'enquiry_detail_new';
+            $sql = $wpdb->prepare("SELECT name,enquiry_hash FROM $table_name WHERE enquiry_id=%d", $enquiry_id);
+            $hash = $wpdb->get_row($sql, ARRAY_A);
+            $uniqueURL = quoteLinkGenerator($hash['enquiry_hash']);
+            //Show Approve button Label
+            $approveButtonLabel = self::getApproveButtonLabel($form_data);
+            //Show Reject button Label
+            $rejectButtonLabel = self::getRejectButtonLabel($form_data);
+            
+            if (isset($form_data[ 'button_CSS' ]) && $form_data[ 'button_CSS' ] == 'manual_css') {
+                $customCSS = getManualCSS($form_data);
+            }
+            $nonce = wp_create_nonce('approveRejectionNonce');
+            $enquiryHash = $hash['enquiry_hash'];
+            $rejectURL = $uniqueURL.'&enquiryEmail='.$too.'&source=emailReject';
+            $approveURL = $uniqueURL."&_quoteupApprovalRejectionNonce=$nonce&quoteupHash=$enquiryHash&enquiryEmail=$too&source=emailApprove";
+            ?>
+            <div>
+                <a href="<?php echo $approveURL ?>" class="reject-quote-button"> <?php echo $approveButtonLabel ?></a> |
+
+                <a href="<?php echo $rejectURL ?>" class="reject-quote-button"> <?php echo $rejectButtonLabel ?></a>
+            </div>
+            <?php
+            do_action('woocommerce_email_footer');
+            $mailData = ob_get_clean();
+            do_action('wdm_after_create_pdf');
+            return $mailData;
+        }
     }
 
+    public static function getApproveButtonLabel($form_data)
+    {
+        if (isset($form_data['approve_custom_label']) && !empty($form_data['approve_custom_label'])) {
+            $approveButtonLabel = $form_data['approve_custom_label'];
+        } else {
+            $approveButtonLabel = __('Approve Quote', 'quoteup');
+        }
+        return $approveButtonLabel;
+    }
+
+    public static function getRejectButtonLabel($form_data)
+    {
+        if (isset($form_data['reject_custom_label']) && !empty($form_data['reject_custom_label'])) {
+            $rejectButtonLabel = $form_data['reject_custom_label'];
+        } else {
+            $rejectButtonLabel = __('Reject Quote', 'quoteup');
+        }
+        return $rejectButtonLabel;
+    }
+
+    /*
+     * This function is used to set quote language if WPML is active
+     */
+    public static function setQuoteLanguage()
+    {
+        return isset($PDFData['language']) ? $PDFData['language'] : 'all';
+    }
+    /**
+     * This function is used to Create a font file if it does not exist in fonts.
+     */
     public static function createFontsDirectory()
     {
-        if (! defined('_MPDF_CUSTOM_TTFONTPATH')) {
-            $upload_dir              = wp_upload_dir();
-            $quoteup_custom_font_dir = $upload_dir[ 'basedir' ] . '/custom_fonts/';
+        if (!defined('_MPDF_CUSTOM_TTFONTPATH')) {
+            $upload_dir = wp_upload_dir();
+            $quoteup_custom_font_dir = $upload_dir[ 'basedir' ].'/custom_fonts/';
             define('_MPDF_CUSTOM_TTFONTPATH', $quoteup_custom_font_dir);
-            if (! file_exists(_MPDF_CUSTOM_TTFONTPATH)) {
+            if (!file_exists(_MPDF_CUSTOM_TTFONTPATH)) {
                 wp_mkdir_p(_MPDF_CUSTOM_TTFONTPATH);
             }
         }

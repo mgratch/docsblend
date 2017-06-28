@@ -250,6 +250,9 @@ class AesopGalleryComponentAdmin {
 		$hero_trans  = $hero_trans ? $hero_trans: $thumb_trans;
 		$hero_speed  = get_post_meta( $id, 'aesop_hero_gallery_transition_speed', true );
 		$hero_speed  = $hero_trans ? $hero_speed: $thumb_speed;
+		$hero_anim_speed  = get_post_meta( $id, 'aesop_hero_gallery_transition_anim_speed', true );
+		$hero_anim_speed  = $hero_anim_speed ? $hero_speed: 1500;
+		$hero_enable_nav  = get_post_meta( $id, 'aesop_hero_gallery_enable_nav', true );
 
 ?>
 		<div class="ase-gallery-opts--global">
@@ -333,19 +336,30 @@ class AesopGalleryComponentAdmin {
 			<div class="ase-gallery-opts--single" style="padding-top:20px">
 				<label for="aesop_hero_gallery_transition_speed"><?php _e( 'Gallery Transition Speed', 'aesop-core' );?></label>
 				<p class="aesop-gallery-opts--desc"><?php _e( 'Activate slideshow by setting a speed for the transition. 5000 = 5 seconds.', 'aesop-core' );?></p>
-				<input type="text" name="aesop_hero_gallery_transition_speed" value="<?php echo (int) $hero_speed ? $hero_speed : 300;?>">
+				<input type="text" name="aesop_hero_gallery_transition_speed" value="<?php echo (int) $hero_speed ? $hero_speed : 3000;?>">
 			</div>
+			
 			<div class="ase-gallery-opts--single" style="padding-top:20px">
 				<label for="aesop_hero_gallery_height"><?php _e( 'Main Gallery Height', 'aesop-core' );?></label>
 				<p class="aesop-gallery-opts--desc"><?php _e( 'Specify this if you want to control the height of the gallery. Acceptable values include 500px, 50%, 100% etc.', 'aesop-core' );?></p>
+				<p class="aesop-gallery-opts--desc"><?php _e( 'If you enter a ratio, such as 800/600, the gallery would appear with a constant width/height ratio. This is useful if you want the galery to be responsive on mobile devices on portrait modes.', 'aesop-core' );?></p>
 				<input type="text" name="aesop_hero_gallery_height" value="<?php echo $hero_width_to_height_ratio;?>">
 			</div>
+			
+			<div class="ase-gallery-opts--single" style="padding-top:20px">
+				<label for="aesop_hero_gallery_transition_anim_speed"><?php _e( 'Gallery Transition Animation Speed', 'aesop-core' );?></label>
+				<p class="aesop-gallery-opts--desc"><?php _e( 'Animation duration for transition in milliseconds.', 'aesop-core' );?></p>
+				<input type="text" name="aesop_hero_gallery_transition_anim_speed" value="<?php echo (int) $hero_speed ? $hero_anim_speed : 1500;?>">
+			</div>
 
-			<br>
 			<div class="ase-gallery-opts--single" style="padding-top:20px">
 				<label for="aesop_hero_gallery_content"><?php _e( 'Gallery Content', 'aesop-core' );?></label>
 				<p class="aesop-gallery-opts--desc"><?php _e( 'Content displayed within the Hero gallery. You can use HTML tags with classes and styles.', 'aesop-core' );?></p>
 				<textarea name="aesop_hero_gallery_content"><?php echo $hero_content; ?></textarea>
+			</div>
+			<div class="ase-gallery-opts--single">
+				<input type="checkbox" name="aesop_hero_gallery_enable_nav" <?php if ( $hero_enable_nav == true ) { ?>checked="checked"<?php } ?>>
+				<label for="aesop_hero_gallery_enable_nav"><?php _e( 'Enable Navigation Controls', 'aesop-core' );?></label>
 			</div>
 		</div>
 		<?php
@@ -399,6 +413,7 @@ class AesopGalleryComponentAdmin {
 		$hero_width_to_height_ratio = isset( $_POST['aesop_hero_gallery_height'] ) ? $_POST['aesop_hero_gallery_height'] : false;
         $hero_speed  = isset( $_POST['aesop_hero_gallery_transition_speed'] ) ? $_POST['aesop_hero_gallery_transition_speed'] : false;
         $hero_trans  = isset( $_POST['aesop_hero_gallery_transition'] ) ? $_POST['aesop_hero_gallery_transition'] : false;
+		$hero_enable_nav   = isset( $_POST['aesop_hero_gallery_enable_nav'] ) ? $_POST['aesop_hero_gallery_enable_nav'] : false;
 	
 
 		// safe to proceed
@@ -429,8 +444,10 @@ class AesopGalleryComponentAdmin {
 		// hero width_to_height_ratio
 		update_post_meta( $post_id, 'aesop_hero_gallery_content', aesop_component_media_filter( $hero_content ) );
 		update_post_meta( $post_id, 'aesop_hero_gallery_height',  sanitize_text_field($hero_width_to_height_ratio) );
-        update_post_meta( $post_id, 'aesop_hero_gallery_transition_speed', absint( $thumb_speed ) );
+        update_post_meta( $post_id, 'aesop_hero_gallery_transition_speed', absint( $hero_speed ) );
+		update_post_meta( $post_id, 'aesop_hero_gallery_transition_anim_speed', absint( $hero_anim_speed ) );
         update_post_meta( $post_id, 'aesop_hero_gallery_transition', sanitize_text_field( $hero_trans ) );
+		update_post_meta( $post_id, 'aesop_hero_gallery_enable_nav', sanitize_text_field( $hero_enable_nav ) );
 	
 
 	}

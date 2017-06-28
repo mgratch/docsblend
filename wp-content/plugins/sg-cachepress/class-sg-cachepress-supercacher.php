@@ -99,7 +99,13 @@ class SG_CachePress_Supercacher {
         
 		// Check if caching server is varnish or nginx.
 		$sgcache_ip = '/etc/sgcache_ip';
-		$hostname = $_SERVER['SERVER_ADDR'];
+		
+		$hostname = parse_url(get_home_url(), PHP_URL_HOST);
+		
+		if ( isset($_SERVER['SERVER_ADDR']) ) {
+			$hostname = $_SERVER['SERVER_ADDR'];
+		}
+			
 		$purge_method = "PURGE";
 
 		if (file_exists($sgcache_ip) && !self::is_nginx_server()) {
@@ -112,7 +118,13 @@ class SG_CachePress_Supercacher {
 			return;
 		}
 		
-      	$realhost= parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST );   	
+		$realhost= $hostname;
+		
+		if ( isset($_SERVER['HTTP_REFERER']) ) {
+			$realhost= parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST );   
+		}
+		
+		
 		$request = "$purge_method {$purge_request} HTTP/1.0\r\n";
       	$request .= "Host: {$realhost}\r\n";
       	$request .= "Connection: Close\r\n\r\n";
@@ -580,5 +592,6 @@ class SG_CachePress_Supercacher {
 	    
 	    return $head;
 	}
+
 	
 }

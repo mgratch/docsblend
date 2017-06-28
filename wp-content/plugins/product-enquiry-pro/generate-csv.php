@@ -6,8 +6,8 @@ $head = array();
 
 $hd = array();
 
-// $head=implode(',',$hd);
 if (sizeof($data) > 0) {
+    date_default_timezone_set('UTC');
     $date = new DateTime();
 
     $ts = $date->format('Y-m-d-G-i-s');
@@ -19,7 +19,7 @@ if (sizeof($data) > 0) {
 
     $fp = fopen('php://output', 'w');
     $keys = array();
-    
+
     foreach ($data[0] as $k => $v) {
         array_push($keys, $k);
     }

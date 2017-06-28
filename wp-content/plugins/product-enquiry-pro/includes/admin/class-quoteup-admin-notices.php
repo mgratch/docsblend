@@ -1,12 +1,9 @@
 <?php
-namespace Admin\Includes;
+namespace Includes\Admin;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
-// if (!class_exists('Admin\Includes\QuoteupAdminNotices')) {
-//     return;
-// }
 class QuoteupAdminNotices
 {
 
@@ -55,7 +52,7 @@ class QuoteupAdminNotices
      */
     public function showNoticesInDashboard()
     {
-        $optionData = get_option('wdm_form_data');
+        $optionData = quoteupSettings();
         if (isset($optionData['enable_disable_mpe']) && $optionData['enable_disable_mpe']==1) {
             $pageId = $this->findMPECartPageId($optionData);
       // Enquiry Cart is not set in the Settings
@@ -73,10 +70,10 @@ class QuoteupAdminNotices
             // Check if page exists
                 if ($selectedPage !== null) {
         //Check if selected page has the shortcode.
-                    if (! $this->doesContentHaveShortcode($selectedPage->post_content, 'ENQUIRY_CART')) {
+                    if (quoteupDoesContentHaveShortcode($selectedPage->post_content, 'ENQUIRY_CART') === false) {
                          $html = '<div class="error">';
                         $html .= '<p>';
-                        $html .= sprintf(__('Page you have set for QuoteUp Cart does not have the shortcode [ENQUIRY_CART]. Please add [ENQUIRY_CART] in the content of that page  %s here %s.', 'quoteup'), "<a href='post.php?post={$pageId}&action=edit'>", "</a>");
+                        $html .= sprintf(__('Page you have set for QuoteUp Cart does not have the shortcode %s. Please add %s in the content of that page  %s here %s.', 'quoteup'), "[ENQUIRY_CART]", "[ENQUIRY_CART]", "<a href='post.php?post={$pageId}&action=edit'>", "</a>");
                         $html .= '</p>';
                         $html .= '</div><!-- /.error -->';
                         echo $html;
@@ -114,7 +111,6 @@ class QuoteupAdminNotices
         if ($hookName != 'wdm_form_data') {
             return;
         }
-        // unset($oldValue);
         $this->removeShortcodeFromOldPage($oldValue);
         $this->addShortcodeOnPage($newValue);
     }
@@ -131,22 +127,7 @@ class QuoteupAdminNotices
         if ($pageId === false) {
             return;
         }
-
-        //get content of the page
-        $selectedPage = get_post($pageId);
-
-        if ($selectedPage !== null) {
-            if ($this->doesContentHaveShortcode($selectedPage->post_content, '[ENQUIRY_CART]')) {
-                // Update Selected Page
-                  $page_data = array(
-                      'ID'           => $pageId,
-                      'post_content'   => str_replace('[ENQUIRY_CART]', '', $selectedPage->post_content),
-                  );
-                // Update the page into the database
-                  wp_update_post($page_data);
-            }
-        }
-        
+        quoteupRemoveShortcodeFromPage($pageId, 'ENQUIRY_CART');
     }
 
     /**
@@ -178,21 +159,6 @@ class QuoteupAdminNotices
         return false;
     }
 
-    /**
-     * Checks if the content has the shortcode we are interested in.
-     * @param String $content
-     * @param String $shortcodeTag
-     * @return boolean Returns true if shortcode is found
-     */
-    public function doesContentHaveShortcode($content, $shortcodeTag)
-    {
-        if (false === strstr($content, $shortcodeTag)) {
-            return false;
-        } else {
-            return true;
-        }
-        // unset($shortcodeTag);
-    }
 
     /**
      * Adds [ENQUIRY_CART] shortcode on selected page.
@@ -205,23 +171,7 @@ class QuoteupAdminNotices
         if ($pageId === false) {
             return;
         }
-
-        //get content of the page
-        $selectedPage = get_post($pageId);
-
-        if ($selectedPage !== null) {
-            if (! $this->doesContentHaveShortcode($selectedPage->post_content, 'ENQUIRY_CART')) {
-                // Update Selected Page
-                  $page_data = array(
-                      'ID'           => $pageId,
-                      'post_content'   => $selectedPage->post_content . '<br /> [ENQUIRY_CART]' ,
-                  );
-
-                // Update the page into the database
-                  wp_update_post($page_data);
-            }
-        }
-        
+        quoteupAddShortcodeOnPage($pageId, 'ENQUIRY_CART');
     }
 }
 QuoteupAdminNotices::getInstance();

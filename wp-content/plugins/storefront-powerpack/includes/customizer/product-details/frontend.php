@@ -35,6 +35,8 @@ if ( ! class_exists( 'SP_Frontend_Product_Details' ) ) :
 		 * Tweaks the WooCommerce layout based on settings
 		 */
 		public function shop_layout() {
+			global $post;
+
 			$product_layout         = get_theme_mod( 'sp_product_layout', 'default' );
 			$product_gallery_layout = get_theme_mod( 'sp_product_gallery_layout', 'default' );
 			$product_details_tabs   = get_theme_mod( 'sp_product_details_tab', true );
@@ -65,6 +67,14 @@ if ( ! class_exists( 'SP_Frontend_Product_Details' ) ) :
 
 				if ( false === $product_description ) {
 					remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20 );
+				}
+
+				if ( $post ) {
+					$sf_gallery_layout = get_post_meta( $post->ID, '_sp_sf_gallery_layout', true );
+
+					if ( $sf_gallery_layout && 'hide' === $sf_gallery_layout ) {
+						remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20 );
+					}
 				}
 			}
 		}
@@ -139,7 +149,7 @@ if ( ! class_exists( 'SP_Frontend_Product_Details' ) ) :
 						if ( false === $key2 ) {
 							$classes[] = 'sp-product-gallery-stacked';
 						}
-					} elseif ( 'hidden' === $sf_gallery_layout ) {
+					} elseif ( 'hide' === $sf_gallery_layout ) {
 						$key1 = array_search( 'sp-product-gallery-stacked', $classes );
 						$key2 = array_search( 'sp-product-gallery-hidden', $classes );
 

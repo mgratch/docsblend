@@ -1,140 +1,169 @@
-jQuery(document).ready(function(){
+jQuery(document).ready(function () {
+  if(dateData.unreadEnquiryFlag == 'yes') {
+    $countValue = jQuery('.enquiry-count').html();
+    if($countValue == 1) {
+      jQuery('.enquiry-count').remove();
+    }
+    $countValue = parseInt($countValue) - 1;
+    jQuery('.enquiry-count').html($countValue);
+  }
+
+  jQuery('#toplevel_page_quoteup-details-new').addClass('wp-has-current-submenu wp-menu-open');
+  jQuery('#toplevel_page_quoteup-details-new a').each(function(){
+    if(jQuery(this).attr('href') == 'admin.php?page=quoteup-details-new' && !jQuery(this).hasClass('wp-first-item'))
+    {
+      jQuery(this).addClass('wp-has-current-submenu wp-menu-open');
+    }
+  })
+  
+
+  //This is to allow metabox to collapse
+  postboxes.add_postbox_toggles(pagenow);
+  
   jQuery(".msg-wrapper:last").find(".msg-border").hide();
+  var atLeastOneIsChecked;
+  jQuery('.item-content-add-to-quote').each(function () {
+    if (jQuery('.item-content-add-to-quote').html() == '-') {
+      jQuery(this).closest('tr').children('.item-content-qty').find('.newqty    ').addClass("unchecked");
+      jQuery(this).closest('tr').children('.item-content-newcost').find('.newprice ').addClass("unchecked");
+      jQuery('#variation-'+rowNumber).hide();
+      jQuery('#variation-unchecked-'+rowNumber).show();
+    }
+  })
 
-    // Trigger WooCommerce Tooltips. This is used to trigger tooltips added by function \wc_help_tip
- //    var tiptip_args = {
- //     'attribute': 'data-tip',
- //     'fadeIn': 50,
- //     'fadeOut': 50,
- //     'delay': 200
- // };
- // jQuery( '.tips, .help_tip, .woocommerce-help-tip' ).tipTip( tiptip_args );
- var atLeastOneIsChecked;
- jQuery('.wdm-checkbox-quote').each(function () {
-  if (jQuery(this).is(':checked')) {
-    atLeastOneIsChecked = true;
-    rowNumber=jQuery(this).attr("data-row-num");
-    jQuery('#content-qty-'+rowNumber).removeClass("unchecked");
-    jQuery('#content-new-'+rowNumber).removeClass("unchecked");
-    jQuery('#variation-'+rowNumber).show();
-    jQuery('#variation-unchecked-'+rowNumber).hide();
-            // jQuery(this).removeClass("unchecked");
-          }else{
-            rowNumber=jQuery(this).attr("data-row-num");
-            jQuery('#content-qty-'+rowNumber).addClass("unchecked");
-            jQuery('#content-new-'+rowNumber).addClass("unchecked");
-            jQuery('#variation-'+rowNumber).hide();
-            jQuery('#variation-unchecked-'+rowNumber).show();
-            // jQuery(this).addClass("unchecked");
-          }
-          rowNumber=jQuery(this).attr("data-row-num");
-          if(jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.item-content-variations').find('#variation-unchecked-'+rowNumber).hasClass('quotation-disabled')){
-            jQuery('#variation-unchecked-'+rowNumber).hide();
-          }
-        });
-if(atLeastOneIsChecked){
-  jQuery( '#send' ).prop( 'disabled', false );
-  jQuery( '#btnPQuote' ).prop( 'disabled', false );
-}else{
-  jQuery( '#send' ).prop( 'disabled', true );
-  jQuery( '#btnPQuote' ).prop( 'disabled', true );
-}
-
-jQuery('.rply-link').click(function (e)
-{
-  e.preventDefault();
-
-  jQuery(this).next('.reply-div').slideToggle();
-
-});
-
-jQuery('.button-rply-user').click(function (e)
-{
-  e.preventDefault();
-  elem = jQuery(this);
-  thread_id = jQuery(this).attr('data_thread_id');
-
-  user_email = jQuery('.wdm-enquiry-usr').val();
-  subject = jQuery('.wdm_reply_subject_'+thread_id).val();
-  path = jQuery('.admin-url').val();
-  message = jQuery('.wdm_reply_msg_'+thread_id).val();
-  enq_id =jQuery('.wdm-enq-id').val();
-  parent_id=elem.closest('.reply-div').find('.parent-id').val();
-  jQuery(this).next('.load-ajax').css('display','inline-block');
-  jQuery.ajax(
-  {
-    method: 'POST',
-    url: path,
-    data: {action: 'wdmSendReply',
-    'email': user_email,
-    'subject': subject,
-    'msg': message,
-    'eid': enq_id,
-    'parent_id':parent_id
-  },
-  success: function (response) {
-    jQuery('.wdm-action option:first-child').attr('selected', 'selected');
-    elem.closest('.reply-div').slideUp();
-    elem.closest('.reply-div').next('.msg-sent').fadeIn();
-    jQuery(this).next('.load-ajax').css('display','none');
-    setTimeout(function () {
-      elem.next('.msg-sent').fadeOut();
-    }, 3000);
-    location.reload();
-  },
-  error: function (error) {
-    console.log(error);
-  }
-});
+  jQuery('.version-details-head').css('display', 'none');
+  jQuery('.version-details-head').first().css('display', 'table-header-group');
 
 
-});
+  // jQuery('#editMainEnquiry').css('display', 'none');
 
-jQuery( ".newqty" ).change( function () {
-  quantity = jQuery(this).val();
-  if(quantity % 1 !== 0){
-    jQuery(this).css('border-color','red');
-    jQuery( "#btnPQuote" ).attr( "disabled", false );
-    jQuery( "#send" ).attr( "disabled", false );
-    jQuery( "#downloadPDF" ).attr( "disabled", false );
+  jQuery('#showEnquiry').click(function(){
+    jQuery('#editMainEnquiry').slideToggle('slow', function(){
 
-    jQuery( "#PdfLoad" ).css( "visibility", "hidden" );
+      if(jQuery( "#editMainEnquiry" ).is( ":visible" ))
+      {
+        jQuery('#showEnquiry').text("Hide Orignal Enquiry");
+      } else {
+        jQuery('#showEnquiry').text("Show Orignal Enquiry")
+      }
+    });
+  })
 
-    // displayAjaxResponseMessages( quote_data.quantity_invalid );
-    return;
-  }else{
-    jQuery(this).css('border-color','#ddd');
-  }
-} );
+  jQuery('.rply-link').click(function (e) {
+    e.preventDefault();
 
-var totalprice=0;
-var rowNumber;
-var previousSKU = jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.item-content-sku').text();
+    jQuery(this).next('.reply-div').slideToggle();
+
+  });
+
+  jQuery('.button-rply-user').click(function (e) {
+    e.preventDefault();
+    elem = jQuery(this);
+    thread_id = jQuery(this).attr('data_thread_id');
+
+    user_email = jQuery('.wdm-enquiry-usr').val();
+    subject = jQuery('.wdm_reply_subject_'+thread_id).val();
+    path = jQuery('.admin-url').val();
+    message = jQuery('.wdm_reply_msg_'+thread_id).val();
+    enq_id =jQuery('.wdm-enq-id').val();
+    parent_id=elem.closest('.reply-div').find('.parent-id').val();
+    jQuery(this).next('.load-ajax').css('display','inline-block');
+    division = '<div class="msg-wrapper"><div class="wdm-input-ip hide wdm-enquirymsg"><em>'+subject+'</em></div><div wdm-input-ip>'+message+'</div><hr class="msg-border" style="display: none;"/></div>'
+    jQuery.ajax(
+    {
+      type: 'POST',
+      url: path,
+      data: {action: 'wdmSendReply',
+      'email': user_email,
+      'subject': subject,
+      'msg': message,
+      'eid': enq_id,
+      'parent_id':parent_id
+    },
+    success: function (response) {
+      jQuery('.wdm-action option:first-child').attr('selected', 'selected');
+      elem.closest('.reply-div').slideUp();
+      elem.closest('.reply-div').next('.msg-sent').fadeIn();
+      elem.next('.load-ajax').css('display','none');
+      jQuery('.reply-field').val('');
+      setTimeout(function () {
+        elem.closest('.reply-div').next('.msg-sent').fadeOut();
+      }, 3000);
+      division = jQuery(division);
+      division.hide();
+      jQuery('.rply-link').prev('.msg-wrapper').find('.msg-border').css('display','block');
+      jQuery('.rply-link').before(division);
+      jQuery('.reply-div').attr('data-thred-id',response);
+      jQuery('.parent-id').val(response);
+      elem.attr('data_thread_id',response);
+      jQuery('.wdm_reply_subject_'+thread_id).addClass('wdm_reply_subject_'+response).removeClass('wdm_reply_subject_'+thread_id);
+      jQuery('.wdm_reply_subject_'+response).val(subject);
+      jQuery('.wdm_reply_msg_'+thread_id).addClass('wdm_reply_msg_'+response).removeClass('wdm_reply_msg_'+thread_id);
+      division.fadeIn(500);
+                          // location.reload();
+                        },
+                        error: function (error) {
+                          console.log(error);
+                        }
+                      }
+                      );
+
+
+  });
+  jQuery(document).on( 'change', ".newqty", function(){
+  // jQuery(".newqty").change(function () {
+    quantity = jQuery(this).val();
+    if (quantity % 1 !== 0) {
+      jQuery(this).css('border-color','red');
+      jQuery("#btnPQuote").attr("disabled", false);
+      jQuery("#send").attr("disabled", false);
+      jQuery("#downloadPDF").attr("disabled", false);
+
+      jQuery("#PdfLoad").css("visibility", "hidden");
+
+        // displayAjaxResponseMessages( quote_data.quantity_invalid );
+        return;
+      } else {
+        jQuery(this).css('border-color','#ddd');
+      }
+    });
+
+  var totalprice=0;
+  var rowNumber;
+  var previousSKU = jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.item-content-sku').text();
         //Enable input boxes if checkbox is checked
-        jQuery('.wdm-checkbox-quote').click (function(){
+        jQuery('.wdm-checkbox-quote').click(function () {
           var atLeastOneIsChecked = false;
           jQuery('.wdm-checkbox-quote').each(function () {
             if (jQuery(this).is(':checked')) {
               atLeastOneIsChecked = true;
-                  // Stop .each from processing any more items
-                  return false;
-                }
-              });
-          if(atLeastOneIsChecked){
-            jQuery( '#send' ).prop( 'disabled', false );
-            jQuery( '#btnPQuote' ).prop( 'disabled', false );
-          }else{
-            jQuery( '#send' ).prop( 'disabled', true );
-            jQuery( '#btnPQuote' ).prop( 'disabled', true );
+                      // Stop .each from processing any more items
+                      return false;
+                    }
+                  });
+          if (atLeastOneIsChecked) {
+            jQuery('#send').prop('disabled', false);
+            jQuery('#btnPQuote').prop('disabled', false);
+            jQuery('#show_price').prop('disabled', false);
+            jQuery('.quoteup-pdf-language').prop('disabled', false);
+            jQuery('.wdm-input-expiration-date').prop('disabled', false);
+            jQuery('.quote-options').removeClass('deleted-product');
+          } else {
+            jQuery('#send').prop('disabled', true);
+            jQuery('#btnPQuote').prop('disabled', true);
+            jQuery('#show_price').prop('disabled', true);
+            jQuery('.quoteup-pdf-language').prop('disabled', true);
+            jQuery('.wdm-input-expiration-date').prop('disabled', true);
+            jQuery('.quote-options').addClass('deleted-product');
           }
           rowNumber=jQuery(this).attr("data-row-num");
-          if(jQuery(this).is(":checked")){
+          if (jQuery(this).is(":checked")) {
             jQuery('#content-qty-'+rowNumber).removeClass("unchecked");
             jQuery('#content-new-'+rowNumber).removeClass("unchecked");
             jQuery('#variation-'+rowNumber).show();
             jQuery('#variation-unchecked-'+rowNumber).hide();
             jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.item-content-sku').text(previousSKU);
-            if(!jQuery('#content-qty-'+rowNumber).hasClass('sold-individual-quantity')){
+            if (!jQuery('#content-qty-'+rowNumber).hasClass('sold-individual-quantity')) {
               jQuery('#content-qty-'+rowNumber).prop('disabled', false);
             }
             jQuery('#content-new-'+rowNumber).prop('disabled', false);
@@ -144,13 +173,13 @@ var previousSKU = jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.it
             jQuery('#content-cost-'+rowNumber).html(quoteupFormatPrice(finalprice));
             jQuery('#content-amount-'+rowNumber).val(finalprice);
             var finaltotal=0
-            jQuery('.amount_database').each(function(){
+            jQuery('.amount_database').each(function () {
               var current=jQuery(this).val();
               finaltotal=parseFloat(finaltotal)+parseFloat(current);
             })
 
             jQuery('#amount_total').html(quoteupFormatPrice(finaltotal));
-          }else{
+          } else {
             previousSKU = jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.item-content-sku').text();
             jQuery('#content-qty-'+rowNumber).addClass("unchecked");
             jQuery('#content-new-'+rowNumber).addClass("unchecked");
@@ -162,7 +191,7 @@ var previousSKU = jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.it
             jQuery('#content-cost-'+rowNumber).html("-");
             jQuery('#content-amount-'+rowNumber).val(0);
             var finaltotal=0
-            jQuery('.amount_database').each(function(){
+            jQuery('.amount_database').each(function () {
               var current=jQuery(this).val();
               finaltotal=parseInt(finaltotal)+parseInt(current);
             })
@@ -172,7 +201,8 @@ var previousSKU = jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.it
         });
 
         //Update Amout and total amount on change of new price or quantity
-        jQuery('.newprice, .newqty').on('input',function(e){
+        jQuery(document).on( 'input', ".newprice, .newqty", function(e){
+        // jQuery('.newprice, .newqty').on('input',function (e) {
           rowNumber=jQuery(this).attr("data-row-num");
           var quantity=jQuery('#content-qty-'+rowNumber).val();
           var newprice=jQuery('#content-new-'+rowNumber).val();
@@ -180,35 +210,38 @@ var previousSKU = jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.it
           jQuery('#content-cost-'+rowNumber).html(quoteupFormatPrice(finalprice));
           jQuery('#content-amount-'+rowNumber).val(finalprice);
           var finaltotal=0
-          jQuery('.amount_database').each(function(){
+          jQuery('.amount_database').each(function () {
             var current=jQuery(this).val();
             finaltotal=parseFloat(finaltotal)+parseFloat(current);
           })
 
+          jQuery('#database-amount').val(finaltotal);
           jQuery('#amount_total').html(quoteupFormatPrice(finaltotal));
         })
 
         //Change Quantity to 1 if it is blank or invalid
-        jQuery('.newqty, .newprice').focusout(function(){
+        jQuery(document).on( 'focusout', ".newqty, .newprice", function(){
+        // jQuery('.newqty, .newprice').focusout(function () {
           makeDataValid(jQuery(this));
 
         });
 
-        function makeDataValid(selector){
+        function makeDataValid(selector)
+        {
           var isDataValid = true;
-          if(selector.hasClass('newqty')){
-            if(!jQuery.trim(selector.val()) || selector.val() <= 0){
+          if (selector.hasClass('newqty')) {
+            if (!jQuery.trim(selector.val()) || selector.val() <= 0) {
               isDataValid = false;
               selector.val("1");
             }
           } else {
-            if(!jQuery.trim(selector.val()) || selector.val() < 0){
+            if (!jQuery.trim(selector.val()) || selector.val() < 0) {
               isDataValid = false;
               selector.val("0");
             }
           }
 
-          if(isDataValid == false){
+          if (isDataValid == false) {
            rowNumber=selector.attr("data-row-num");
            var quantity=jQuery('#content-qty-'+rowNumber).val();
            var newprice=jQuery('#content-new-'+rowNumber).val();
@@ -216,9 +249,9 @@ var previousSKU = jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.it
            jQuery('#content-cost-'+rowNumber).html(quoteupFormatPrice(finalprice));
            jQuery('#content-amount-'+rowNumber).val(finalprice);
            var finaltotal=0;
-           jQuery('.amount_database').each(function(){
-            var current=selector.val();
-            finaltotal=parseFloat(finaltotal)+parseFloat(current);
+           jQuery('.amount_database').each(function () {
+            // var current=finalprice;
+            finaltotal=parseFloat(finaltotal)+parseFloat(jQuery(this).val());
           })
 
            jQuery('#amount_total').html(quoteupFormatPrice(finaltotal));
@@ -227,37 +260,131 @@ var previousSKU = jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.it
 
 
        jQuery(".wdm-input-expiration-date").datepicker({
-         altFormat: "yy-mm-dd 00:00:00",
-         altField: ".expiration_date_hidden",
-         dateFormat: "MM d, yy",
-         minDate: 0,
-       });
+        altFormat: "yy-mm-dd 00:00:00",
+        altField: ".expiration_date_hidden",
+        minDate: 0,
+        showButtonPanel: true,
+        closeText: dateData.closeText,
+        currentText: dateData.currentText,
+        monthNames: dateData.monthNames,
+        monthNamesShort: dateData.monthNamesShort,
+        dayNames: dateData.dayNames,
+        dayNamesShort: dateData.dayNamesShort,
+        dayNamesMin: dateData.dayNamesMin,
+        dateFormat: dateData.dateFormat,
+        firstDay: dateData.firstDay,
+        isRTL: dateData.isRTL,
+      });
 
-    // When WooCommerce changes image on changing variation, copy new image's src value in the image column of Product Details Table 
-    jQuery('.variation_image').observe({ attributes: true, attributeFilter: ['src'] }, function(){
-     if(empty(this.getAttribute('src'))) {
-       jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.item-content-img img').attr('src', this.getAttribute('data-o_src'));
-     } else {
-       jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.item-content-img img').attr('src', this.getAttribute('src')); 
-     }
-   });
+    // When WooCommerce changes image on changing variation, copy new image's src value in the image column of Product Details Table
+   //  jQuery('.variation_image').observe({ attributes: true, attributeFilter: ['src'] }, function () {
+   //    if (empty(this.getAttribute('src'))) {
+   //     jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.item-content-img img').attr('src', this.getAttribute('data-o_src'));
+   //   } else {
+   //     jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.item-content-img img').attr('src', this.getAttribute('src'));
+   //   }
+   // });
 
-    // When WooCommerce changes SKU, copy new SKU value in the SKU column of Product Details Table 
-    jQuery('.sku').observe('childlist subtree', function(){
-      jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.item-content-sku').text(jQuery(this).text());
+    // When WooCommerce changes SKU, copy new SKU value in the SKU column of Product Details Table
+    
+    // jQuery('.sku').observe('childlist subtree', function () {
+    //   jQuery(this).closest('.wdmpe-detailtbl-content-row').find('.item-content-sku').text(jQuery(this).text());
+    // });
+
+    //If no date is filled, set hidden value to 0000-00-00 00:00:00
+    jQuery(".wdm-input-expiration-date").change(function () {
+      if (empty(jQuery(this).val())) {
+        jQuery('.expiration_date_hidden').val('0000-00-00 00:00:00');
+      }
     });
 
-	//If no date is filled, set hidden value to 0000-00-00 00:00:00 
-	jQuery(".wdm-input-expiration-date").change(function(){
-   if(empty(jQuery(this).val())){
-    jQuery('.expiration_date_hidden').val('0000-00-00 00:00:00');
-  }
-});
+    jQuery('#wpfooter').css("position", "relative");
 
+  //
+  jQuery('.variations_form').on('change', '.variations select', function () {
+    var productLink = jQuery(this).closest('.item-content-variations').data('product-link');
+    wc_cart_fragments_params.wc_ajax_url = add_query_arg('wc-ajax', '%%endpoint%%', productLink);
+  });
 
-  jQuery('#wpfooter').css("position", "relative");
+  /**
+     * When variation id is changed, then show actual price of selected variation as old price
+     */
+     jQuery('#Quotation').delegate('.product', 'change', function(){
+       // jQuery('.variations_form').on('change', '[name="variation_id"]', function () {
+        /**
+         * Check if selected variation was already present in the enquiry and if present, set old price
+         * as price available during enquiry
+         */
+         $this = jQuery(this).find('.variation_id');
+         var $shouldOriginalPriceBeRetrieved = true;
+         var $rowOfCurrentVariation = $this.closest('.wdmpe-detailtbl-content-row');
+         var $oldPriceCell = $rowOfCurrentVariation.find('.item-content-old-cost');
+         var $oldPriceData = $oldPriceCell.data('old_price');
 
-});
+         if (!empty($oldPriceData.variation)) {
+            /**
+             * If value of all variation attributes match with the ones selected during enquiry, then
+             * show price available at enquiry
+             */
+             for (var variation_attribute in $oldPriceData.variation) {
+              if ($oldPriceData.variation.hasOwnProperty(variation_attribute)) {
+                if ($rowOfCurrentVariation.find(".variations select[name='attribute_" + variation_attribute + "']").val() != $oldPriceData.variation[variation_attribute]) {
+                  $shouldOriginalPriceBeRetrieved = false;
+                  break;
+                }
+              }
+            }
+          } else {
+            $shouldOriginalPriceBeRetrieved = false;
+          }
+
+          if ($shouldOriginalPriceBeRetrieved) {
+            $oldPriceCell.find('.amount').html(quoteupFormatPrice($oldPriceData.price));
+            $oldPriceCell.find('input').val($oldPriceData.price);
+          } else {
+            /**
+             * Finds out price of a selected variation saved on Product Edit page and set it as old
+             * price
+             */
+             var $productData = $this.closest('.product');
+             var $variationId = $this.val();
+             var $allVariations = $productData.find('.variations_form.cart').data('product_variations');
+             var $variationsFetchedByAjax = false;
+             if ($allVariations === false) {
+              $variationsFetchedByAjax = true;
+            }
+            if (!$variationsFetchedByAjax) {
+                /**
+                 * Find out data of current selected variation from $allVariations object and set that data
+                 * in 'Price' (i.e Old Price) column
+                 */
+                 for ($i = 0; $i < $allVariations.length; $i++) {
+                  if ($allVariations[$i].variation_id == $variationId) {
+                    $oldPriceCell.find('.amount').html(quoteupFormatPrice($allVariations[$i].display_regular_price));
+                    $oldPriceCell.find('input').val($allVariations[$i].display_regular_price);
+                    if (!empty($allVariations[$i].display_price)) {
+                      $oldPriceCell.find('.amount').html(quoteupFormatPrice($allVariations[$i].display_price));
+                      $oldPriceCell.find('input').val($allVariations[$i].display_price);
+                    }
+
+                    break;
+                  }
+                }
+              } else {
+                var newRegularPrice = $productData.find('.quoteup-regular-price').text();
+                var newPrice = $productData.find('.quoteup-price').text();
+                $oldPriceCell.find('.amount').html(quoteupFormatPrice(newRegularPrice));
+                $oldPriceCell.find('input').val(newRegularPrice);
+                if (!empty(newPrice)) {
+                  $oldPriceCell.find('.amount').html(quoteupFormatPrice(newPrice));
+                  $oldPriceCell.find('input').val(newPrice);
+                }
+              }
+            }
+
+          });
+
+   });
 
 
 

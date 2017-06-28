@@ -2,6 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
 require_once vc_path_dir( 'SHORTCODES_DIR', 'paginator/class-vc-pageable.php' );
 require_once vc_path_dir( 'SHORTCODES_DIR', 'vc-btn.php' );
 
@@ -58,6 +59,7 @@ class WPBakeryShortCode_VC_Basic_Grid extends WPBakeryShortCode_Vc_Pageable {
 		// New button3:
 		'btn_title' => '',
 		'btn_style' => 'modern',
+		'btn_el_id' => '',
 		'btn_custom_background' => '#ededed',
 		'btn_custom_text' => '#666',
 		'btn_outline_custom_color' => '#666',
@@ -77,6 +79,8 @@ class WPBakeryShortCode_VC_Basic_Grid extends WPBakeryShortCode_Vc_Pageable {
 		'btn_i_icon_entypo' => 'entypo-icon entypo-icon-note',
 		'btn_i_icon_linecons' => 'vc_li vc_li-heart',
 		'btn_i_icon_pixelicons' => 'vc_pixel_icon vc_pixel_icon-alert',
+		'btn_custom_onclick' => '',
+		'btn_custom_onclick_code' => '',
 		// fix template
 		'page_id' => '',
 	);

@@ -146,7 +146,9 @@
 
 		initialize: function() {
 			// Initialize gridstack.js
-			this.initGridstack();
+			try {
+				this.initGridstack();
+			} catch ( error ) {}
 		},
 
 		initGridstack: function() {

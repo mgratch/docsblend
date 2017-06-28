@@ -305,14 +305,6 @@ input[type=checkbox].css-checkbox:checked+label.css-label {
   background-image: url(../img/lite-blue-check.png);
 }
 
-#contact-cc {
-  /*background-color: #A5A5A5!important;
-  color: #000!important;
-  border-radius: 1px!important;
-  border: 1px #ccc solid!important;
-  width: 16px!important;*/
-}
-
 #nonce_error {
   display: none;
 }
@@ -574,8 +566,6 @@ div.wdm-enquiry-form > h4.wdm-enquiry-form-title {
 .wdm-enquiryform-btn-wrap > .mpe-right > input[type=submit],
 .wdm-enquiryform-btn-wrap > .form-wrap > input[type=submit],
 .woocommerce .wdm-remark-form > .wdmquoteup-addRemark-wrap > input.button.btnAddRemark {
-  /*color: #515151 !important;*/
-  /*background-color: #ebe9eb !important;*/
   border: 0 !important;
   background-image: none;
   border-radius: 4px !important;
@@ -610,10 +600,8 @@ div.wdm-enquiry-form > h4.wdm-enquiry-form-title {
 .wdm-enquiryform-btn-wrap > .mpe-right > input[type=submit]:hover,
 .wdm-enquiryform-btn-wrap > .form-wrap > input[type=submit]:hover,
 .woocommerce .wdm-remark-form > .wdmquoteup-addRemark-wrap > input.button.btnAddRemark:hover {
-  /*background-color: #dad8da;*/
   text-decoration: none;
   background-image: none;
-  /*color: #515151;*/
 }
 .td-btn-update
 {
@@ -626,7 +614,6 @@ div.wdm-enquiry-form > h4.wdm-enquiry-form-title {
 input[type="checkbox"]#contact-cc {
   vertical-align: middle;
   margin: 0 5px 0 0;
-  /* padding: 0 9px; */
   display: inline-block;
 }
 
@@ -657,30 +644,26 @@ span.contact-cc-txt {
   right: 0;
 }
 
-/*.wdm-error:focus + .wdm-err-triangle,
-.wdm-error:focus + .wdm-err-triangle + .wdm-err-inline {
-    display: none;
-    }*/
 
-    .wdm-modal_textarea {
-      resize: vertical;
-    }
+.wdm-modal_textarea {
+  resize: vertical;
+}
 
-    .wdm-modal_textarea.wdm-error {
-      resize: none;
-    }
+.wdm-modal_textarea.wdm-error {
+  resize: none;
+}
 
-    .wdm-modal_textarea.wdm-error:focus {
-      resize: vertical;
-    }
+.wdm-modal_textarea.wdm-error:focus {
+  resize: vertical;
+}
 
-    .wdm-remark-wrap {
-      margin-bottom: 10px;
-    }
+.wdm-remark-wrap {
+  margin-bottom: 10px;
+}
 
-    .wdmquoteup-addRemark-wrap {
-      text-align: center;
-    }
+.wdmquoteup-addRemark-wrap {
+  text-align: center;
+}
 
 /*# Enquiry cart count
 ------------------------------------------------------------------------------------------------- */
@@ -763,54 +746,48 @@ span.contact-cc-txt {
   margin-top: -6px;
 }
 
-/*.form-wrap > .wdm-err-inline {
-    margin-top: 8px;
-    }*/
+.wdm-err-inline {
+  color: #fff;
+  margin-bottom: 3px;
+  text-align: right;
+  position: absolute;
+  z-index: 1;
+  max-width: 70%;
+  right: 0;
+  line-height: 19px;
+}
 
-    .wdm-err-inline {
-      color: #fff;
-      margin-bottom: 3px;
-      text-align: right;
-      position: absolute;
-      z-index: 1;
-      max-width: 70%;
-      right: 0;
-      line-height: 19px;
-    }
+#nonce_error .wdm-quoteupicon-exclamation-circle,
+#error .wdm-quoteupicon-exclamation-circle,
+.wdm-err-inline .wdm-quoteupicon-exclamation-circle,
+.success_msg .wdm-quoteupicon-done,
+.wdm-enquiry-success-icon {
+  margin-right: 4px;
+  font-size: 1.04em;
+  position: relative;
+  top: 1px;
+}
 
-    #nonce_error .wdm-quoteupicon-exclamation-circle,
-    #error .wdm-quoteupicon-exclamation-circle,
-    .wdm-err-inline .wdm-quoteupicon-exclamation-circle,
-    .success_msg .wdm-quoteupicon-done,
-    .wdm-enquiry-success-icon {
-      margin-right: 4px;
-      font-size: 1.04em;
-      position: relative;
-      top: 1px;
-    }
+.success_msg .wdm-quoteupicon-done {
+  margin-right: 0;
+}
 
-    .success_msg .wdm-quoteupicon-done {
-      margin-right: 0;
-    }
+.wdmquoteup-err-display {
+  display: inline-block;
+  background-color: #a94442;
+  padding: 4px 8px;
+  border-radius: 0 0 2px 2px;
+  text-align: center;
+}
 
-    .wdmquoteup-err-display {
-      /*line-height: 1;*/
-      display: inline-block;
-      background-color: #a94442;
-      padding: 4px 8px;
-      border-radius: 0 0 2px 2px;
-      /*max-width: 91%;*/
-      text-align: center;
-    }
+.wdmquoteup-err-display:last-child {
+  margin-bottom: 0;
+}
 
-    .wdmquoteup-err-display:last-child {
-      margin-bottom: 0;
-    }
-
-    #wdm-cart-count.animated {
-      background-color: #b1b1b1;
-      border: 1px solid #b1b1b1;
-    }
+#wdm-cart-count.animated {
+  background-color: #b1b1b1;
+  border: 1px solid #b1b1b1;
+}
 
 /*# Shop Page
 ------------------------------------------------------------------------------------------------- */
@@ -866,9 +843,6 @@ button.wdm_enquiry {
   margin: 24px 0 15px !important;
 }
 
-/*.woocommerce.single-product .quote-form {
-  margin-bottom: 39px;
-}*/
 
 /*# Form Errors
 ------------------------------------------------------------------------------------------------- */

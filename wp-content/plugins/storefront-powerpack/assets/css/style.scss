@@ -2,14 +2,6 @@
 @import 'susy';
 @import '../../../../themes/storefront/assets/sass/utils/variables';
 
-.sp-archive-hide-product-titles {
-	ul.products {
-		h3 {
-			display: none;
-		}
-	}
-}
-
 .sp-shop-alignment-left {
 	ul.products {
 		li.product {
@@ -92,10 +84,7 @@
 	.single-product.sp-product-gallery-hidden.storefront-full-width-content {
 		div.product {
 			.summary {
-				width: 100%;
-				float: none;
-				margin-left: 0;
-				margin-right: 0;
+				@include span(full);
 			}
 		}
 	}
@@ -105,10 +94,7 @@
 		div.product {
 			.images,
 			.summary {
-				width: 100%;
-				float: none;
-				margin-left: 0;
-				margin-right: 0;
+				@include span(full);
 			}
 		}
 	}

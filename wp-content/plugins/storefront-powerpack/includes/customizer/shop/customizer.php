@@ -375,11 +375,12 @@ if ( ! class_exists( 'SP_Customizer_Shop' ) ) :
 			) );
 
 			$wp_customize->add_control( new WP_Customize_Control( $wp_customize, 'sp_infinite_scroll', array(
-				'label'    => __( 'Enable infinite scroll', 'storefront-powerpack' ),
-				'section'  => self::POWERPACK_SHOP_SECTION,
-				'settings' => 'sp_infinite_scroll',
-				'type'     => 'checkbox',
-				'priority' => 180,
+				'label'           => __( 'Enable infinite scroll', 'storefront-powerpack' ),
+				'section'         => self::POWERPACK_SHOP_SECTION,
+				'settings'        => 'sp_infinite_scroll',
+				'type'            => 'checkbox',
+				'priority'        => 180,
+				'active_callback' => array( $this, 'is_infinite_scroll_active' ),
 			) ) );
 
 			/**
@@ -421,6 +422,21 @@ if ( ! class_exists( 'SP_Customizer_Shop' ) ) :
 			} else {
 				return true;
 			}
+		}
+
+		/**
+		 * Checks if Infinite Scroll is active.
+		 * Removes the option from users that are not using it.
+		 *
+		 * @return bool
+		 * @since  1.2.0
+		 */
+		public function is_infinite_scroll_active() {
+			if ( true === get_theme_mod( 'sp_infinite_scroll' ) ) {
+				return true;
+			}
+
+			return false;
 		}
 	}
 

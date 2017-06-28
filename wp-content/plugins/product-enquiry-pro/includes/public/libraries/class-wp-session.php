@@ -11,7 +11,7 @@
  * @subpackage Session
  * @since   3.7.0
  */
-namespace Frontend\Includes\Libraries;
+namespace Includes\Frontend\Libraries;
 
 // Exit if accessed directly
 if (! defined('ABSPATH')) {

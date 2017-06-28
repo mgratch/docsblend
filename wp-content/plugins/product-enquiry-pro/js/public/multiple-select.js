@@ -9,14 +9,16 @@
 
     'use strict';
 
-    function MultipleSelect($el, options) {
+    function MultipleSelect($el, options)
+    {
         var that = this,
             name = $el.attr('name') || options.name || ''
 
         $el.parent().hide();
         var elWidth = $el.css("width");
         $el.parent().show();
-        if (elWidth=="0px") {elWidth = $el.outerWidth()+20}
+        if (elWidth=="0px") {
+            elWidth = $el.outerWidth()+20}
 
         this.$el = $el.hide();
         this.options = options;
@@ -162,7 +164,8 @@
                         (disabled ? ' disabled="disabled"' : '') + ' /> '),
                     label,
                     '</label>',
-                    '</li>');
+                    '</li>'
+                );
                 $.each($elm.children(), function (i, elm) {
                     html.push(that.optionToHtml(i, elm, _group, disabled));
                 });
@@ -173,7 +176,8 @@
         events: function () {
             var that = this;
 
-            function toggleOpen(e) {
+            function toggleOpen(e)
+            {
                 e.preventDefault();
                 that[that.options.isOpen ? 'close' : 'open']();
             }
@@ -208,17 +212,17 @@
                     that.close();
                 }
             }).off('keyup').on('keyup', function (e) {
-                    if (that.options.filterAcceptOnEnter &&
+                if (that.options.filterAcceptOnEnter &&
                         (e.which === 13 || e.which == 32) && // enter or space
                         that.$searchInput.val() // Avoid selecting/deselecting if no choices made
                         ) {
-                        that.$selectAll.click();
-                        that.close();
-                        that.focus();
-                        return;
-                    }
+                    that.$selectAll.click();
+                    that.close();
+                    that.focus();
+                    return;
+                }
                     that.filter();
-                });
+            });
             this.$selectAll.off('click').on('click', function () {
                 var checked = $(this).prop('checked'),
                     $items = that.$selectItems.filter(':visible');
@@ -315,15 +319,15 @@
             } else if (this.options.countSelected && selects.length < this.options.minimumCountSelected) {
                 $span.removeClass('placeholder').html(
                     (this.options.displayValues ? selects : this.getSelects('text'))
-                        .join(this.options.delimiter));
+                    .join(this.options.delimiter)
+                );
             } else if (this.options.allSelected &&
                 selects.length === this.$selectItems.length + this.$disableItems.length) {
                 $span.removeClass('placeholder').html(this.options.allSelected);
             } else if ((this.options.countSelected || this.options.etcaetera) && selects.length > this.options.minimumCountSelected) {
                 if (this.options.etcaetera) {
                     $span.removeClass('placeholder').html((this.options.displayValues ? selects : this.getSelects('text').slice(0, this.options.minimumCountSelected)).join(this.options.delimiter) + '...');
-                }
-                else {
+                } else {
                     $span.removeClass('placeholder').html(this.options.countSelected
                         .replace('#', selects.length)
                         .replace('%', this.$selectItems.length + this.$disableItems.length));
@@ -331,7 +335,8 @@
             } else {
                 $span.removeClass('placeholder').html(
                     (this.options.displayValues ? selects : this.getSelects('text'))
-                        .join(this.options.delimiter));
+                    .join(this.options.delimiter)
+                );
             }
             // set selects to select
             this.$el.val(this.getSelects());
@@ -350,7 +355,8 @@
 
         updateSelectAll: function (Init) {
             var $items = this.$selectItems;
-            if (!Init) { $items = $items.filter(':visible'); }
+            if (!Init) {
+                $items = $items.filter(':visible'); }
             this.$selectAll.prop('checked', $items.length &&
                 $items.length === $items.filter(':checked').length);
             if (this.$selectAll.prop('checked')) {
@@ -506,8 +512,12 @@
         this.each(function () {
             var $this = $(this),
                 data = $this.data('multipleSelect'),
-                options = $.extend({}, $.fn.multipleSelect.defaults,
-                    $this.data(), typeof option === 'object' && option);
+                options = $.extend(
+                    {},
+                    $.fn.multipleSelect.defaults,
+                    $this.data(),
+                    typeof option === 'object' && option
+                );
 
             if (!data) {
                 data = new MultipleSelect($this, options);
@@ -589,8 +599,8 @@
     
 })(jQuery);
 
-jQuery(document).ready(function(){
+jQuery(document).ready(function () {
          jQuery('.wdm-custom-multiple-fields').multipleSelect({
-	     width: '80%',
-	});
+                width: '80%',
+            });
 })

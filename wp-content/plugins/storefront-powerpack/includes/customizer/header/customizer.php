@@ -54,6 +54,18 @@ if ( ! class_exists( 'SP_Customizer_Header' ) ) :
 		}
 
 		/**
+		 * Returns an array of the Storefront Powerpack setting defaults.
+		 *
+		 * @return array
+		 * @since 1.0.0
+		 */
+		public function setting_defaults() {
+			return $args = array(
+				'sp_header_sticky' => false,
+			);
+		}
+
+		/**
 		 * Enqueue styles and scripts.
 		 *
 		 * @since   1.0.0
@@ -104,6 +116,44 @@ if ( ! class_exists( 'SP_Customizer_Header' ) ) :
 					'settings' => self::POWERPACK_HEADER_SETTING
 				) ) );
 			}
+
+			/**
+			 * Storefront Divider
+			 */
+			if ( class_exists( 'Arbitrary_Storefront_Control' ) ) {
+				$wp_customize->add_control( new Arbitrary_Storefront_Control( $wp_customize, 'sp_header_divider', array(
+					'section'  => self::POWERPACK_HEADER_SECTION,
+					'type'     => 'divider',
+					'priority' => 20,
+				) ) );
+			}
+
+			/**
+			 * Sticky Header Heading
+			 */
+			if ( class_exists( 'Arbitrary_Storefront_Control' ) ) {
+				$wp_customize->add_control( new Arbitrary_Storefront_Control( $wp_customize, 'sp_header_sticky_heading', array(
+					'section'  => self::POWERPACK_HEADER_SECTION,
+					'type'     => 'heading',
+					'label'    => __( 'Sticky Header', 'storefront-powerpack' ),
+					'priority' => 30,
+				) ) );
+			}
+
+			/**
+			 * Sticky header
+			 */
+			$wp_customize->add_setting( 'sp_header_sticky', array(
+				'default' => false,
+			) );
+
+			$wp_customize->add_control( new WP_Customize_Control( $wp_customize, 'sp_header_sticky', array(
+				'label'    => __( 'Stick the site header to the top of the browser window.', 'storefront-powerpack' ),
+				'section'  => self::POWERPACK_HEADER_SECTION,
+				'settings' => 'sp_header_sticky',
+				'type'     => 'checkbox',
+				'priority' => 40,
+			) ) );
 		}
 
 		/**
@@ -116,7 +166,7 @@ if ( ! class_exists( 'SP_Customizer_Header' ) ) :
 		?>
 			<div id="sp-header-configurator">
 				<div class="sp-header-section-title">
-					<h1 class="sp-header-item-title"><?php _e( 'Header Configurator', 'storefront-powerpack' ); ?></h1>
+					<h1 class="sp-header-item-title"><?php _e( 'Header Customizer', 'storefront-powerpack' ); ?></h1>
 				</div>
 
 				<div class="sp-header-gridstack-wrapper sp-header-grid-empty">

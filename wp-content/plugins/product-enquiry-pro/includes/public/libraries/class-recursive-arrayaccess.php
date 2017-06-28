@@ -10,7 +10,7 @@
  * @since 3.6.0
  */
 
-namespace Frontend\Includes\Libraries;
+namespace Includes\Frontend\Libraries;
 
 // Exit if accessed directly
 if (! defined('ABSPATH')) {

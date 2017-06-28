@@ -28,6 +28,7 @@ if ( ! class_exists( 'SP_Frontend_Checkout' ) ) :
 			add_action( 'wp',                 array( $this, 'two_step_checkout' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'script' ), 99 );
 			add_filter( 'body_class',         array( $this, 'body_class' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'add_customizer_css' ), 999 );
 		}
 
 		/**
@@ -145,6 +146,42 @@ if ( ! class_exists( 'SP_Frontend_Checkout' ) ) :
 			}
 
 			return $classes;
+		}
+
+		/**
+		 * Add CSS in <head> for styles handled by the Customizer
+		 *
+		 * @return  void
+		 * @since   1.2.1
+		 */
+		public function add_customizer_css() {
+			$content_background_color = storefront_get_content_background_color();
+
+			$checkout_style = '
+				.checkout-slides .sp-checkout-control-nav li a:after {
+					background-color:' . $content_background_color . ';
+					border: 4px solid ' . storefront_adjust_color_brightness( $content_background_color, -40 ) . ';
+				}
+
+				.checkout-slides .sp-checkout-control-nav li:nth-child(2) a.flex-active:after {
+					border: 4px solid ' . storefront_adjust_color_brightness( $content_background_color, -40 ) . ';
+				}
+
+				.checkout-slides .sp-checkout-control-nav li a:before,
+				.checkout-slides .sp-checkout-control-nav li:nth-child(2) a.flex-active:before  {
+					background-color:' . storefront_adjust_color_brightness( $content_background_color, -40 ) . ';
+				}
+
+				.checkout-slides .sp-checkout-control-nav li:nth-child(2) a:before {
+					background-color:' . storefront_adjust_color_brightness( $content_background_color, -20 ) . ';
+				}
+
+				.checkout-slides .sp-checkout-control-nav li:nth-child(2) a:after {
+					border: 4px solid ' . storefront_adjust_color_brightness( $content_background_color, -20 ) . ';
+				}
+			';
+
+			wp_add_inline_style( 'storefront-style', $checkout_style );
 		}
 	}
 

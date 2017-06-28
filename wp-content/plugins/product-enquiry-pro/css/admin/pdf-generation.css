@@ -1,4 +1,4 @@
-h2 {
+h2.quote-heading {
     width:85%;
 }
 
@@ -6,7 +6,11 @@ h2 {
     text-align: right;
 }
 
-table{
+table {
+    width: 100%;
+}
+
+table.quote_table, table.quote-pdf-note {
     table-layout: fixed;
     vertical-align: center;
     border:1%;
@@ -22,7 +26,7 @@ table{
     margin-left: 1%;
 }
 
-img {
+img.quote-logo {
     display: block;
     max-width:460px;
     max-height:190px;
@@ -66,13 +70,10 @@ img {
     clear:both;
 }
 
-table tr th, table tr td{
-    padding-bottom: 10px;
-    padding-top: 10px;
-}
-
 .quote_table tr th, .quote_table tr td {
     border-bottom:0.5px solid gray;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
 
 dt{
@@ -83,18 +84,49 @@ dd{
     display:inline;
 }
 
-.product-price{
-    width: 25%
+.product-price, .head-product-price{
+    text-align: left;
+    width: 30%
 }
 
-.product{
-    width: 30%;
+.product, .head-product{
+    text-align: left;
+    width: 35%;
+    word-wrap: break-word;
 }
 
-.sku-price{
+.head-sku-price, .sku-price{
+    text-align: left;
     width: 15%;
+    word-wrap: break-word;
 }
 
-.sku{
+.head-sku, .sku{
+    text-align: left;
     width: 20%;
+    word-wrap: break-word;
 }
+
+/*.product-head{
+    text-align: left;
+    width: 25%;
+    }*/
+
+  /*  .sku-head{
+        text-align: left;
+        width: 20%;
+        }*/
+
+        .new-price-head,
+        .qty-head,
+        .old-price-head,
+        .old-price-content,
+        .new-price-content,
+        .qty-content{
+            text-align: left;
+        }
+
+        .amount-head,
+        .amount-content{
+            text-align: right;
+        }

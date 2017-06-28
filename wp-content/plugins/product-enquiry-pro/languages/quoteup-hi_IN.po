@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: QuoteUp\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-05 14:11+0530\n"
-"PO-Revision-Date: 2016-08-05 14:11+0530\n"
+"POT-Creation-Date: 2016-10-24 14:45+0530\n"
+"PO-Revision-Date: 2016-10-24 14:45+0530\n"
 "Last-Translator: Tester <yogesh.deore@wisdmlabs.com>\n"
 "Language-Team: support@wisdmlabs.com\n"
 "Language: hi\n"
@@ -22,168 +22,73 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: js\n"
 
-#: ajax.php:776
+#: ajax.php:975
 msgid "Products"
 msgstr "उत्पाद"
 
-#: ajax.php:859 ajax.php:876
+#: ajax.php:1042 ajax.php:1058
 msgid "Product Name"
 msgstr "उत्पाद का नाम"
 
-#: ajax.php:864 ajax.php:882 ajax.php:934 ajax.php:968
+#: ajax.php:1047 ajax.php:1064 ajax.php:1115 ajax.php:1148
 msgid "Variation"
 msgstr "परिवर्तन"
 
-#: ajax.php:871 ajax.php:889
+#: ajax.php:1053 ajax.php:1071
 msgid "Product Price"
 msgstr "उत्पाद की कीमत"
 
-#: ajax.php:930 ajax.php:964 includes/admin/class-quoteup-quote-details-edit.php:918
-#: includes/admin/class-quoteup-quote-details-edit.php:1441
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:95
+#: ajax.php:1111 ajax.php:1144 includes/admin/class-quoteup-quote-details-edit.php:1200
+#: includes/admin/class-quoteup-quote-details-edit.php:1807
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:75
 msgid "Price"
 msgstr "मूल्य"
 
-#: ajax.php:931 ajax.php:965 includes/admin/class-quoteup-generate-pdf.php:155
-#: includes/admin/class-quoteup-quote-details-edit.php:920
-#: includes/admin/class-quoteup-quote-details-edit.php:1445
-#: includes/admin/class-quoteup-quotes-list.php:274
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:96
+#: ajax.php:1112 ajax.php:1145 includes/admin/class-quoteup-generate-pdf.php:277
+#: includes/admin/class-quoteup-quote-details-edit.php:1202
+#: includes/admin/class-quoteup-quote-details-edit.php:1811
+#: includes/admin/class-quoteup-quotes-list.php:238
+#: templates/admin/pdf-quote/quote-table-header.php:8
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:76
 msgid "Quantity"
 msgstr "मात्रा"
 
-#: ajax.php:932 ajax.php:966 templates/public/class-quoteup-handle-enquiry-cart-view.php:98
+#: ajax.php:1113 ajax.php:1146 templates/public/class-quoteup-handle-enquiry-cart-view.php:78
 msgid "Expected Price"
 msgstr "उम्मीद की कीमत"
 
-#: ajax.php:933 ajax.php:967 includes/admin/class-quoteup-quote-details-edit.php:914
-#: includes/admin/class-quoteup-quote-details-edit.php:1437
+#: ajax.php:1114 ajax.php:1147 includes/admin/class-quoteup-quote-details-edit.php:1196
+#: includes/admin/class-quoteup-quote-details-edit.php:1803
 msgid "SKU"
 msgstr "SKU"
 
-#: ajax.php:1055
+#: ajax.php:1238
 msgid "Enquiry from"
 msgstr "पूछताछ"
 
-#: ajax.php:1065
+#: ajax.php:1248
 msgid "Enquiry And Quote Request From"
 msgstr "पूछताछ और बोली अनुरोध से"
 
-#: ajax.php:1119
+#: ajax.php:1302
 msgid "Enquiry or Quote Request for Products from  "
 msgstr "पूछताछ या उद्धरण से उत्पादों के लिए अनुरोध"
 
-#: ajax.php:1155
+#: ajax.php:1338
 msgid "Your enquiry at"
 msgstr "आपकी जाँच "
 
-#: ajax.php:1157
+#: ajax.php:1340
 msgid "Thank you for your enquiry. We will get back to you soon."
 msgstr "पूछताक्ष के लिए धन्यवाद। हम तुमसे जल्द ही संपर्क करेंगे।"
 
-#: ajax.php:1160
+#: ajax.php:1343
 msgid "Your enquiry/quote request at"
 msgstr "आपकी जाँच "
 
-#: ajax.php:1162
+#: ajax.php:1345
 msgid "Thank you for your enquiry/quote request. We will get back to you soon."
 msgstr "अपनी जांच / उद्धरण अनुरोध के लिए धन्यवाद । हम तुमसे जल्द ही संपर्क करेंगे।"
-
-#: functions.php:78
-msgid "View Enquiry & Quote Cart"
-msgstr "देखें पूछताछ और भाव गाड़ी"
-
-#: functions.php:80
-msgid "View Enquiry Cart"
-msgstr "देखें पूछताछ की टोकरी"
-
-#: functions.php:86 includes/class-quoteup-add-custom-field.php:590
-msgid "Please Enter Name"
-msgstr "अपना नाम दर्ज करें"
-
-#: functions.php:87 includes/class-quoteup-add-custom-field.php:592
-msgid "Please Enter Valid Name"
-msgstr "कृपया मान्य नाम दर्ज करें"
-
-#: functions.php:88
-msgid "Please Enter Email Address"
-msgstr "कृपया ईमेल दर्ज करें"
-
-#: functions.php:89 includes/class-quoteup-add-custom-field.php:606
-msgid "Please Enter Valid Email Address"
-msgstr "कृपया मान्य ईमेल दर्ज करें"
-
-#: functions.php:90 includes/class-quoteup-add-custom-field.php:631
-msgid "Please Enter Valid Telephone No"
-msgstr "कृपया वैध टेलीफोन नंबर दर्ज करें"
-
-#: functions.php:91 includes/class-quoteup-add-custom-field.php:664
-msgid "Please Enter Message"
-msgstr "संदेश दर्ज करें"
-
-#: functions.php:92 includes/class-quoteup-add-custom-field.php:666
-msgid "Message length must be between 15 to 500 characters"
-msgstr "संदेश लंबाई 15 से 500 अक्षर में होना चाहिए"
-
-#: functions.php:93
-msgid "Name*"
-msgstr "नाम *"
-
-#: functions.php:94
-msgid "Email*"
-msgstr "ईमेल*"
-
-#: functions.php:95
-msgid "Please Enter"
-msgstr "कृपया दर्ज करें"
-
-#: functions.php:96
-msgid "Please Select"
-msgstr "कृपया चुने"
-
-#: functions.php:104
-msgid "products added in Quote Cart"
-msgstr "उत्पादों कोटेशन कार्ट में जोड़ा गया है"
-
-#: functions.php:105
-msgid "Please select variation before sending enquiry"
-msgstr "कृपया जांच भेजने से पहले भिन्नता का चयन"
-
-#: functions.php:106
-msgid "product added in Quote Cart"
-msgstr "उत्पादों कोटेशन कार्ट में जोड़ा गया है"
-
-#: functions.php:107
-msgid "Enter valid Quantity"
-msgstr "वैध मात्रा दर्ज करे"
-
-#: functions.php:202
-msgid "Invalid URL Provided."
-msgstr "अमान्य URL दर्ज किया गया है"
-
-#: functions.php:207
-msgid "Could not create Temporary file."
-msgstr "अस्थायी फ़ाइल नहीं बना सका।"
-
-#: functions.php:296
-#, php-format
-msgid "Stock for %s is only %d. Please make quotation for less quantity"
-msgstr "%s के लिए स्टॉक केवल %d है । कृपया कम मात्रा के लिए कोटेशन बनाएं "
-
-#: functions.php:309
-#, php-format
-msgid "Stock for %s(%s) is only %d. Please make quotation for less quantity"
-msgstr ""
-
-#: functions.php:340
-#, php-format
-msgid "Stock not available for %s."
-msgstr "स्टॉक % s के लिए उपलब्ध नहीं है।"
-
-#: functions.php:353
-#, php-format
-msgid "Stock not available for %s(%s)."
-msgstr " %s(%s) स्टॉक के लिए उपलब्ध नहीं"
 
 #: includes/admin/class-quoteup-admin-notices.php:65
 msgid "Please set a page for Enquiry & QuoteUp Cart"
@@ -233,13 +138,13 @@ msgid "Quote Details"
 msgstr "कोटेशन विवरण"
 
 #: includes/admin/class-quoteup-dashboard-menu.php:52
-#: includes/admin/class-quoteup-quote-details-edit.php:271
-#: includes/admin/class-quoteup-quote-details.php:77
+#: includes/admin/class-quoteup-quote-details-edit.php:347
+#: includes/admin/class-quoteup-quote-details.php:74
 msgid "Enquiry Details"
 msgstr "पूछताछ का विवरण"
 
 #: includes/admin/class-quoteup-dashboard-menu.php:55
-#: includes/admin/class-quoteup-quote-details.php:79
+#: includes/admin/class-quoteup-quote-details.php:76
 msgid "Enquiry & Quote Details"
 msgstr "पूछताछ और भाव विवरण"
 
@@ -247,25 +152,126 @@ msgstr "पूछताछ और भाव विवरण"
 msgid "QuoteUp Settings"
 msgstr "कोटेशन सेटिंग्स"
 
-#: includes/admin/class-quoteup-dashboard-menu.php:58
+#: includes/admin/class-quoteup-dashboard-menu.php:58 product_enquiry_pro.php:328
 msgid "Settings"
 msgstr "सेटिंग्स"
 
-#: includes/admin/class-quoteup-enable-disable-add-to-cart-button.php:53
+#: includes/admin/class-quoteup-display-history.php:57
+msgid "Quote Status History"
+msgstr "उद्धरण स्थिति इतिहास"
+
+#: includes/admin/class-quoteup-display-history.php:79
+msgid "Date and Time"
+msgstr "दिनांक और समय"
+
+#: includes/admin/class-quoteup-display-history.php:81
+msgid "Action"
+msgstr "कार्य"
+
+#: includes/admin/class-quoteup-display-history.php:83
+msgid "Performed by"
+msgstr "द्वारा प्रदर्शित"
+
+#: includes/admin/class-quoteup-display-history.php:85
+#: includes/admin/class-quoteup-enquiries-list.php:161
+#: includes/admin/class-quoteup-quote-details-edit.php:581
+#: includes/class-quoteup-add-custom-field.php:820
+#: includes/class-quoteup-add-custom-field.php:827
+#: includes/class-quoteup-add-custom-field.php:988
+msgid "Message"
+msgstr "संदेश"
+
+#: includes/admin/class-quoteup-display-history.php:156
+msgid "Quote Approved"
+msgstr "उद्धरण स्वीकृत"
+
+#: includes/admin/class-quoteup-display-history.php:160
+#: includes/admin/class-quoteup-quote-details-edit.php:335
+#: includes/admin/class-quoteup-quotes-list.php:70
+#: includes/admin/class-quoteup-quotes-list.php:224
+msgid "Approved"
+msgstr "मंजूर"
+
+#: includes/admin/class-quoteup-display-history.php:183
+#: includes/settings/quote/quoteup-approval-rejection.php:165
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:113
+msgid "Quote Rejected"
+msgstr "कोटेशन अस्वीकृत"
+
+#: includes/admin/class-quoteup-display-history.php:187
+msgid "Reject"
+msgstr "अस्वीकार"
+
+#: includes/admin/class-quoteup-display-history.php:210
+msgid "Quote Sent"
+msgstr "कोटेशन भेज दिया"
+
+#: includes/admin/class-quoteup-display-history.php:214
+#: includes/admin/class-quoteup-quote-details-edit.php:334
+#: includes/admin/class-quoteup-quotes-list.php:64
+#: includes/admin/class-quoteup-quotes-list.php:223
+msgid "Sent"
+msgstr "भेज दिया"
+
+#: includes/admin/class-quoteup-display-history.php:237
+msgid "Quote Requested"
+msgstr "कोटेशन का अनुरोध किया"
+
+#: includes/admin/class-quoteup-display-history.php:241
+#: includes/admin/class-quoteup-quote-details-edit.php:332
+#: includes/admin/class-quoteup-quotes-list.php:52
+#: includes/admin/class-quoteup-quotes-list.php:221
+msgid "Requested"
+msgstr "अनुरोध किया"
+
+#: includes/admin/class-quoteup-display-history.php:265
+msgid "Quote Saved"
+msgstr "कोटेशन बचाया"
+
+#: includes/admin/class-quoteup-display-history.php:269
+#: includes/admin/class-quoteup-quote-details-edit.php:333
+#: includes/admin/class-quoteup-quotes-list.php:58
+#: includes/admin/class-quoteup-quotes-list.php:222
+msgid "Saved"
+msgstr "बचाया"
+
+#: includes/admin/class-quoteup-display-history.php:284
+msgid "Quote Expired"
+msgstr "कोटेशन समय सीमा समाप्त"
+
+#: includes/admin/class-quoteup-display-history.php:286
+msgid "System"
+msgstr "प्रणाली"
+
+#: includes/admin/class-quoteup-display-history.php:288
+#: includes/admin/class-quoteup-quote-details-edit.php:338
+#: includes/admin/class-quoteup-quotes-list.php:88
+#: includes/admin/class-quoteup-quotes-list.php:227
+msgid "Expired"
+msgstr "समय सीमा समाप्त"
+
+#: includes/admin/class-quoteup-display-history.php:303
+#: includes/admin/class-quoteup-quote-details-edit.php:337
+#: includes/admin/class-quoteup-quotes-list.php:82
+#: includes/admin/class-quoteup-quotes-list.php:226
+msgid "Order Placed"
+msgstr "आदेश रखा"
+
+#: includes/admin/class-quoteup-enable-disable-add-to-cart-button.php:54
 msgid "Show Add to Cart button"
 msgstr "कार्ट  में जोड़े बटन दिखाएं "
 
-#: includes/admin/class-quoteup-enable-disable-price.php:52
-#: includes/admin/class-quoteup-products-table.php:55
+#: includes/admin/class-quoteup-enable-disable-price.php:54
+#: includes/admin/class-quoteup-products-table.php:53
 msgid "Show Price"
 msgstr "मूल्य दिखाएं "
 
-#: includes/admin/class-quoteup-enable-disable-quoteup-button.php:45
+#: includes/admin/class-quoteup-enable-disable-quoteup-button.php:47
 msgid "Enable Enquiry Button when Product goes out of Stock"
 msgstr "जब उत्पाद स्टॉक से बाहर चला जाता है पूछताछ बटन को सक्षम"
 
-#: includes/admin/class-quoteup-enable-disable-quoteup-button.php:47
-#: includes/admin/class-quoteup-enable-disable-quoteup-button.php:50
+#: includes/admin/class-quoteup-enable-disable-quoteup-button.php:49
+#: includes/admin/class-quoteup-enable-disable-quoteup-button.php:52
 msgid "Enable Enquiry Button"
 msgstr "पूछताछ बटन को सक्षम करे"
 
@@ -279,168 +285,188 @@ msgstr "पूछताछ"
 msgid "Enquiries"
 msgstr "पूछताछ"
 
-#: includes/admin/class-quoteup-enquiries-list.php:123
+#: includes/admin/class-quoteup-enquiries-list.php:122
 msgid "No enquiries avaliable."
 msgstr "कोई पूछताछ उपलब्ध नहीं"
 
-#: includes/admin/class-quoteup-enquiries-list.php:133
-#: includes/admin/class-quoteup-products-table.php:92
-#: includes/admin/class-quoteup-quotes-list.php:422
+#: includes/admin/class-quoteup-enquiries-list.php:132
+#: includes/admin/class-quoteup-products-table.php:93
+#: includes/admin/class-quoteup-quotes-list.php:430
 msgid "Edit"
 msgstr "संपादित करें"
 
-#: includes/admin/class-quoteup-enquiries-list.php:135
-#: includes/admin/class-quoteup-enquiries-list.php:195
-#: includes/admin/class-quoteup-quotes-list.php:424
-#: includes/admin/class-quoteup-quotes-list.php:488
+#: includes/admin/class-quoteup-enquiries-list.php:134
+#: includes/admin/class-quoteup-enquiries-list.php:194
+#: includes/admin/class-quoteup-quotes-list.php:432
+#: includes/admin/class-quoteup-quotes-list.php:496
 msgid "Delete"
 msgstr "मिटाओ"
 
-#: includes/admin/class-quoteup-enquiries-list.php:157
-#: includes/admin/class-quoteup-quotes-list.php:446
+#: includes/admin/class-quoteup-enquiries-list.php:156
+#: includes/admin/class-quoteup-quotes-list.php:454
 msgid "ID"
 msgstr "आईडी"
 
-#: includes/admin/class-quoteup-enquiries-list.php:158
+#: includes/admin/class-quoteup-enquiries-list.php:157
 #: includes/admin/class-quoteup-quotes-list.php:157
-#: includes/admin/class-quoteup-quotes-list.php:273
-#: includes/admin/class-quoteup-quotes-list.php:448
+#: includes/admin/class-quoteup-quotes-list.php:237
+#: includes/admin/class-quoteup-quotes-list.php:456
 msgid "Items"
 msgstr "आइटम"
 
-#: includes/admin/class-quoteup-enquiries-list.php:159
-#: includes/admin/class-quoteup-quotes-list.php:449
-#: includes/class-quoteup-add-custom-field.php:736
+#: includes/admin/class-quoteup-enquiries-list.php:158
+#: includes/admin/class-quoteup-quotes-list.php:457
+#: includes/class-quoteup-add-custom-field.php:593
+#: includes/class-quoteup-add-custom-field.php:942
 msgid "Customer Name"
 msgstr "ग्राहक का नाम"
 
-#: includes/admin/class-quoteup-enquiries-list.php:160
-#: includes/admin/class-quoteup-quotes-list.php:450
-#: includes/class-quoteup-add-custom-field.php:751
+#: includes/admin/class-quoteup-enquiries-list.php:159
+#: includes/admin/class-quoteup-quotes-list.php:458
+#: includes/class-quoteup-add-custom-field.php:974
 msgid "Customer Email"
 msgstr "ग्राहक ईमेल"
 
-#: includes/admin/class-quoteup-enquiries-list.php:161
-#: includes/admin/class-quoteup-quote-details-edit.php:366
-#: includes/admin/class-quoteup-quotes-list.php:451
+#: includes/admin/class-quoteup-enquiries-list.php:160
+#: includes/admin/class-quoteup-quote-details-edit.php:437
+#: includes/admin/class-quoteup-quotes-list.php:459
 msgid "Enquiry Date"
 msgstr "पूछताछ दिनांक"
 
-#: includes/admin/class-quoteup-enquiries-list.php:162
-#: includes/admin/class-quoteup-history.php:81
-#: includes/admin/class-quoteup-quote-details-edit.php:464
-#: includes/admin/class-quoteup-quote-details-edit.php:1357
-#: includes/admin/class-quoteup-quote-details-edit.php:1361
-#: includes/class-quoteup-add-custom-field.php:662
-#: includes/class-quoteup-add-custom-field.php:765
-msgid "Message"
-msgstr "संदेश"
-
-#: includes/admin/class-quoteup-enquiries-list.php:193
-#: includes/admin/class-quoteup-quotes-list.php:486
+#: includes/admin/class-quoteup-enquiries-list.php:192
+#: includes/admin/class-quoteup-quotes-list.php:494
 msgid "Export"
 msgstr "निर्यात"
 
-#: includes/admin/class-quoteup-enquiries-list.php:194
-#: includes/admin/class-quoteup-quotes-list.php:487
+#: includes/admin/class-quoteup-enquiries-list.php:193
+#: includes/admin/class-quoteup-quotes-list.php:495
 msgid "Export all enquiries"
 msgstr "सभी जांच निर्यात"
 
-#: includes/admin/class-quoteup-enquiries-list.php:306
-#: includes/admin/class-quoteup-quotes-list.php:599
+#: includes/admin/class-quoteup-enquiries-list.php:257
+#: includes/admin/class-quoteup-quotes-list.php:559
 msgid "enquiries are deleted"
 msgstr "पूछताछ नष्ट हो जाती हैं"
 
-#: includes/admin/class-quoteup-enquiries-list.php:310
-#: includes/admin/class-quoteup-quotes-list.php:603
+#: includes/admin/class-quoteup-enquiries-list.php:261
+#: includes/admin/class-quoteup-quotes-list.php:563
 msgid "Select Enquiries to delete"
 msgstr "नष्ट करने के लिए पूछताछ का चयन करें"
 
-#: includes/admin/class-quoteup-generate-pdf.php:33
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:238
+#: includes/admin/class-quoteup-generate-pdf.php:38 templates/admin/pdf-quote/quote-pdf.php:6
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:355
 msgid "Quote"
 msgstr "कोटेशन"
 
-#: includes/admin/class-quoteup-generate-pdf.php:40
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:258
+#: includes/admin/class-quoteup-generate-pdf.php:46
+#: templates/admin/pdf-quote/recipient-info.php:3
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:375
 msgid "Quote For"
 msgstr "कोटेशन "
 
-#: includes/admin/class-quoteup-generate-pdf.php:57
-#: includes/admin/class-quoteup-quote-details-edit.php:355
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:274
+#: includes/admin/class-quoteup-generate-pdf.php:64
+#: includes/admin/class-quoteup-quote-details-edit.php:1493
+#: templates/admin/pdf-quote/expiration-date.php:4
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:261
 msgid "Expiration Date"
 msgstr "समाप्ति तिथि"
 
-#: includes/admin/class-quoteup-generate-pdf.php:84
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:244
+#: includes/admin/class-quoteup-generate-pdf.php:101
+#: templates/admin/pdf-quote/sender-info.php:3
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:361
 msgid "From"
 msgstr "से"
 
-#: includes/admin/class-quoteup-generate-pdf.php:140
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:290
+#: includes/admin/class-quoteup-generate-pdf.php:255 templates/admin/pdf-quote/quote-pdf.php:17
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:394
 msgid "Quote Request"
 msgstr "उद्धरण अनुरोध"
 
-#: includes/admin/class-quoteup-generate-pdf.php:144
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:94
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:298
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:304
+#: includes/admin/class-quoteup-generate-pdf.php:261
+#: templates/admin/pdf-quote/quote-table-header.php:2
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:74
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:285
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:295
 msgid "Product"
 msgstr "उत्पाद"
 
-#: includes/admin/class-quoteup-generate-pdf.php:145
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:299
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:305
+#: includes/admin/class-quoteup-generate-pdf.php:263
+#: templates/admin/pdf-quote/quote-table-header.php:3
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:287
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:297
 msgid "Sku"
 msgstr "Sku"
 
-#: includes/admin/class-quoteup-generate-pdf.php:149
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:300
+#: includes/admin/class-quoteup-generate-pdf.php:268
+#: templates/admin/pdf-quote/quote-table-header.php:5
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:289
 msgid "Old"
 msgstr "पुराना"
 
-#: includes/admin/class-quoteup-generate-pdf.php:154
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:310
+#: includes/admin/class-quoteup-generate-pdf.php:275
+#: templates/admin/pdf-quote/quote-table-header.php:7
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:304
 msgid "New"
 msgstr "नया"
 
-#: includes/admin/class-quoteup-generate-pdf.php:156
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:312
+#: includes/admin/class-quoteup-generate-pdf.php:279
+#: templates/admin/pdf-quote/quote-table-header.php:9
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:308
 msgid "Amount"
 msgstr "रकम"
 
-#: includes/admin/class-quoteup-generate-pdf.php:254
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:404
+#: includes/admin/class-quoteup-generate-pdf.php:301
+#: templates/admin/pdf-quote/quote-table.php:21
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:487
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:493
 msgid "TOTAL"
 msgstr "कुल"
 
-#: includes/admin/class-quoteup-generate-pdf.php:262
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:410
+#: includes/admin/class-quoteup-generate-pdf.php:311
+#: templates/admin/pdf-quote/tax-shipping-note.php:4
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:505
 msgid "TAX"
 msgstr "कर"
 
-#: includes/admin/class-quoteup-generate-pdf.php:263
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:410
+#: includes/admin/class-quoteup-generate-pdf.php:313
+#: templates/admin/pdf-quote/tax-shipping-note.php:7
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:506
 msgid "Quote does not include default store tax"
 msgstr "कोटेशन डिफ़ॉल्ट संग्रह कर शामिल नहीं है"
 
-#: includes/admin/class-quoteup-generate-pdf.php:267
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:411
+#: includes/admin/class-quoteup-generate-pdf.php:318
+#: templates/admin/pdf-quote/tax-shipping-note.php:12
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:508
 msgid "SHIPPING"
 msgstr "शिपिंग"
 
-#: includes/admin/class-quoteup-generate-pdf.php:268
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:411
+#: includes/admin/class-quoteup-generate-pdf.php:320
+#: templates/admin/pdf-quote/tax-shipping-note.php:15
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:509
 msgid "Quote does not include shipping"
 msgstr "कोटेशन शिपिंग शामिल नहीं है"
 
-#: includes/admin/class-quoteup-generate-pdf.php:274
+#: includes/admin/class-quoteup-generate-pdf.php:327 templates/admin/pdf-quote/quote-link.php:2
 #, php-format
 msgid " %s To Approve or Reject Quotation %s Click Here %s %s"
 msgstr "%s को स्वीकार या यहाँ कोटेशन %s क्लिक करें अस्वीकार %s   %s"
 
-#: includes/admin/class-quoteup-handle-quote-approval-rejection.php:71
+#: includes/admin/class-quoteup-handle-quote-approval-rejection.php:54
+#, php-format
+msgid "Please set a page where users can approve or reject the quote %s on this page %s"
+msgstr "जहां उन स्वीकृत या अस्वीकार कर सकते हैं एक पेज सेट करें बोली %s इस पृष्ठ पर %s"
+
+#: includes/admin/class-quoteup-handle-quote-approval-rejection.php:67
+#, php-format
+msgid ""
+"Page you have set for approval and rejection of quote does not have the shortcode "
+"[APPROVAL_REJECTION_CHOICE]. Please add [APPROVAL_REJECTION_CHOICE] in the content of that "
+"page  %s here %s."
+msgstr ""
+"पृष्ठ आप अनुमोदन और बोली की अस्वीकृति शोर्ट [ APPROVAL_REJECTION_CHOICE ] नहीं है के लिए निर्धारित किया "
+"है। कृपया उस पृष्ठ % s यहाँ % s की सामग्री में [ APPROVAL_REJECTION_CHOICE ] जोड़ें।"
+
+#: includes/admin/class-quoteup-handle-quote-approval-rejection.php:98
 #, php-format
 msgid ""
 "It seems you have upgraded from Product Enquiry Pro 2.x to QuoteUp. There have been database "
@@ -451,22 +477,7 @@ msgstr ""
 "गया है। हम दृढ़ता %s यहाँ %s QuoteUp करने के लिए इससे पहले कि आप Quoteup का उपयोग शुरू पिछले पूछताछ "
 "विस्थापित करने की सलाह देते हैं।"
 
-#: includes/admin/class-quoteup-handle-quote-approval-rejection.php:88
-#, php-format
-msgid "Please set a page where users can approve or reject the quote %s on this page %s"
-msgstr "जहां उन स्वीकृत या अस्वीकार कर सकते हैं एक पेज सेट करें बोली %s इस पृष्ठ पर %s"
-
-#: includes/admin/class-quoteup-handle-quote-approval-rejection.php:103
-#, php-format
-msgid ""
-"Page you have set for approval and rejection of quote does not have the shortcode "
-"[APPROVAL_REJECTION_CHOICE]. Please add [APPROVAL_REJECTION_CHOICE] in the content of that "
-"page  %s here %s."
-msgstr ""
-"पृष्ठ आप अनुमोदन और बोली की अस्वीकृति शोर्ट [ APPROVAL_REJECTION_CHOICE ] नहीं है के लिए निर्धारित किया "
-"है। कृपया उस पृष्ठ % s यहाँ % s की सामग्री में [ APPROVAL_REJECTION_CHOICE ] जोड़ें।"
-
-#: includes/admin/class-quoteup-handle-quote-approval-rejection.php:112
+#: includes/admin/class-quoteup-handle-quote-approval-rejection.php:124
 #, php-format
 msgid ""
 "Page you have set for approval and rejection of quote is in Trash. Therefore, users won't be "
@@ -475,7 +486,7 @@ msgstr ""
 "पृष्ठ आप अनुमोदन और बोली की अस्वीकृति के लिए निर्धारित किया है ट्रैश में है। इसलिए, उपयोगकर्ताओं को मंजूरी के "
 "लिए सक्षम नहीं होगा / उद्धरण अस्वीकार। आप उस पृष्ठ % s % s यहां की स्थिति को बदल सकते हैं।"
 
-#: includes/admin/class-quoteup-handle-quote-approval-rejection.php:121
+#: includes/admin/class-quoteup-handle-quote-approval-rejection.php:133
 #, php-format
 msgid ""
 "Page you have set for approval and rejection of quote does not exist. Please set a new page "
@@ -484,147 +495,56 @@ msgstr ""
 "अनुमोदन और कोटेशन की अस्वीकृति पृष्ठ मौजूद नहीं है । उद्धरण के अनुमोदन / अस्वीकृति के लिए  %s यहाँ  %s  एक "
 "नया पेज सेट करें"
 
-#: includes/admin/class-quoteup-handle-quote-approval-rejection.php:140
+#: includes/admin/class-quoteup-handle-quote-approval-rejection.php:152
 #, php-format
 msgid "Please enter license key %s here %s to activate Product Enquiry Pro."
 msgstr "कृपया लाइसेंस कुंजी %s यहाँ %s सक्रिय करने के लिए उत्पाद पूछताछ समर्थक है।"
 
-#: includes/admin/class-quoteup-history.php:58
-msgid "Quote Status History"
-msgstr "उद्धरण स्थिति इतिहास"
-
-#: includes/admin/class-quoteup-history.php:78
-msgid "Date and Time"
-msgstr "दिनांक और समय"
-
-#: includes/admin/class-quoteup-history.php:79
-msgid "Action"
-msgstr "कार्य"
-
-#: includes/admin/class-quoteup-history.php:80
-msgid "Performed by"
-msgstr "द्वारा प्रदर्शित"
-
-#: includes/admin/class-quoteup-history.php:146
-msgid "Quote Approved"
-msgstr "उद्धरण स्वीकृत"
-
-#: includes/admin/class-quoteup-history.php:148
-#: includes/admin/class-quoteup-quote-details-edit.php:261
-#: includes/admin/class-quoteup-quotes-list.php:65
-#: includes/admin/class-quoteup-quotes-list.php:261
-msgid "Approved"
-msgstr "मंजूर"
-
-#: includes/admin/class-quoteup-history.php:166
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:103
-msgid "Quote Rejected"
-msgstr "कोटेशन अस्वीकृत"
-
-#: includes/admin/class-quoteup-history.php:168
-msgid "Reject"
-msgstr "अस्वीकार"
-
-#: includes/admin/class-quoteup-history.php:187
-msgid "Quote Sent"
-msgstr "कोटेशन भेज दिया"
-
-#: includes/admin/class-quoteup-history.php:189
-#: includes/admin/class-quoteup-quote-details-edit.php:260
-#: includes/admin/class-quoteup-quotes-list.php:60
-#: includes/admin/class-quoteup-quotes-list.php:260
-msgid "Sent"
-msgstr "भेज दिया"
-
-#: includes/admin/class-quoteup-history.php:207
-msgid "Quote Requested"
-msgstr "कोटेशन का अनुरोध किया"
-
-#: includes/admin/class-quoteup-history.php:209
-#: includes/admin/class-quoteup-quote-details-edit.php:258
-#: includes/admin/class-quoteup-quotes-list.php:50
-#: includes/admin/class-quoteup-quotes-list.php:258
-msgid "Requested"
-msgstr "अनुरोध किया"
-
-#: includes/admin/class-quoteup-history.php:228
-msgid "Quote Saved"
-msgstr "कोटेशन बचाया"
-
-#: includes/admin/class-quoteup-history.php:230
-#: includes/admin/class-quoteup-quote-details-edit.php:259
-#: includes/admin/class-quoteup-quotes-list.php:55
-#: includes/admin/class-quoteup-quotes-list.php:259
-msgid "Saved"
-msgstr "बचाया"
-
-#: includes/admin/class-quoteup-history.php:242
-msgid "Quote Expired"
-msgstr "कोटेशन समय सीमा समाप्त"
-
-#: includes/admin/class-quoteup-history.php:243
-msgid "System"
-msgstr "प्रणाली"
-
-#: includes/admin/class-quoteup-history.php:244
-#: includes/admin/class-quoteup-quote-details-edit.php:264
-#: includes/admin/class-quoteup-quotes-list.php:81
-#: includes/admin/class-quoteup-quotes-list.php:264
-msgid "Expired"
-msgstr "समय सीमा समाप्त"
-
-#: includes/admin/class-quoteup-history.php:256
-#: includes/admin/class-quoteup-quote-details-edit.php:263
-#: includes/admin/class-quoteup-quotes-list.php:75
-#: includes/admin/class-quoteup-quotes-list.php:263
-msgid "Order Placed"
-msgstr "आदेश रखा"
-
-#: includes/admin/class-quoteup-products-table.php:51
+#: includes/admin/class-quoteup-products-table.php:49
 msgid "Enable Enquiry"
 msgstr "पूछताछ सक्षम करें"
 
-#: includes/admin/class-quoteup-products-table.php:52
+#: includes/admin/class-quoteup-products-table.php:50
 msgid "Disable Enquiry"
 msgstr "अक्षम पूछताछ"
 
-#: includes/admin/class-quoteup-products-table.php:53
+#: includes/admin/class-quoteup-products-table.php:51
 msgid "Enable Add to Cart"
 msgstr "अड्ड टू कार्ट सक्षम करें"
 
-#: includes/admin/class-quoteup-products-table.php:54
+#: includes/admin/class-quoteup-products-table.php:52
 msgid "Disable Add to Cart"
 msgstr "अक्षम गाड़ी में जोड़ें"
 
-#: includes/admin/class-quoteup-products-table.php:56
+#: includes/admin/class-quoteup-products-table.php:54
 msgid "Hide Price"
 msgstr "मूल्य मिटायें"
 
-#: includes/admin/class-quoteup-products-table.php:63
+#: includes/admin/class-quoteup-products-table.php:61
 msgid "Add to Cart Enabled"
 msgstr "गाड़ी में जोड़ें सक्षम"
 
-#: includes/admin/class-quoteup-products-table.php:64
+#: includes/admin/class-quoteup-products-table.php:62
 msgid "Add to Cart Disabled"
 msgstr "गाड़ी में जोड़ें अक्षम"
 
-#: includes/admin/class-quoteup-products-table.php:65
+#: includes/admin/class-quoteup-products-table.php:63
 msgid "Price Visible"
 msgstr "मूल्य दृष्टिगोचर"
 
-#: includes/admin/class-quoteup-products-table.php:66
+#: includes/admin/class-quoteup-products-table.php:64
 msgid "Price Hidden"
 msgstr "मूल्य छिपे हुए"
 
-#: includes/admin/class-quoteup-products-table.php:67
+#: includes/admin/class-quoteup-products-table.php:65
 msgid "Enquiry Enabled"
 msgstr "पूछताछ सक्षम"
 
-#: includes/admin/class-quoteup-products-table.php:68
+#: includes/admin/class-quoteup-products-table.php:66
 msgid "Enquiry is enabled but Enquiry button will be shown when product goes out of stock"
 msgstr "पूछताछ सक्षम किया गया है, लेकिन पूछताछ बटन दिखाया जाएगा जब उत्पाद स्टॉक से बाहर चला जाता है"
 
-#: includes/admin/class-quoteup-products-table.php:69
+#: includes/admin/class-quoteup-products-table.php:67
 msgid "Enquiry Disabled"
 msgstr "पूछताछ विक्लांग"
 
@@ -634,125 +554,89 @@ msgid ""
 "continue?"
 msgstr ""
 
-#: includes/admin/class-quoteup-products-table.php:90
+#: includes/admin/class-quoteup-products-table.php:91
 msgid "Restore"
 msgstr "पुनर्स्थापित"
 
-#: includes/admin/class-quoteup-products-table.php:99
+#: includes/admin/class-quoteup-products-table.php:100
 msgid "Delete Permanently"
 msgstr "स्थायी रूप से मिटाएं"
 
-#: includes/admin/class-quoteup-products-table.php:101
+#: includes/admin/class-quoteup-products-table.php:102
 msgid "Move to Trash"
 msgstr "रद्दी में डालें"
 
-#: includes/admin/class-quoteup-products-table.php:165
+#: includes/admin/class-quoteup-products-table.php:128
 #, php-format
 msgid "You are not allowed to edit %s. Therefore you can not enable enquiry for this product"
 msgstr "आपको %s को संपादित करने की अनुमति नहीं है। इसलिए आप इस उत्पाद के लिए जांच सक्षम नहीं कर सकते"
 
-#: includes/admin/class-quoteup-products-table.php:205
+#: includes/admin/class-quoteup-products-table.php:173
 #, php-format
 msgid "You are not allowed to edit %s. Therefore you can not disable enquiry for this product"
 msgstr "आपको %s को संपादित करने की अनुमति नहीं है। इसलिए आप इस उत्पाद के लिए जांच अक्षम नहीं कर सकता"
 
-#: includes/admin/class-quoteup-products-table.php:234
+#: includes/admin/class-quoteup-products-table.php:208
 #, php-format
 msgid ""
 "You are not allowed to edit %s. Therefore you can not make price visible for this product"
 msgstr "आपको %s को संपादित करने की अनुमति नहीं है। इसलिए तुम कीमत इस उत्पाद के लिए दिखाई नहीं कर सकता"
 
-#: includes/admin/class-quoteup-products-table.php:262
+#: includes/admin/class-quoteup-products-table.php:242
 #, php-format
 msgid "You are not allowed to edit %s. Therefore you can not hide price for this product"
 msgstr "आपको %s को संपादित करने की अनुमति नहीं है। इसलिए आप इस उत्पाद के लिए कीमत नहीं छुपा सकते हैं"
 
-#: includes/admin/class-quoteup-products-table.php:293
+#: includes/admin/class-quoteup-products-table.php:279
 #, php-format
 msgid ""
 "You are not allowed to edit %s. Therefore you can not enable Add to Cart for this product"
 msgstr ""
 "आपको %s को संपादित करने की अनुमति नहीं है। इसलिए आप इस उत्पाद के लिए गाड़ी में जोड़ें सक्षम नहीं कर सकते"
 
-#: includes/admin/class-quoteup-products-table.php:330
+#: includes/admin/class-quoteup-products-table.php:323
 #, php-format
 msgid ""
 "You are not allowed to edit %s. Therefore you can not disable Add to Cart for this product"
 msgstr ""
 "आपको %s को संपादित करने की अनुमति नहीं है। इसलिए आप इस उत्पाद के लिए गाड़ी में जोड़ें अक्षम नहीं कर सकता"
 
-#: includes/admin/class-quoteup-products-table.php:376
-#, php-format
-msgid ""
-"Enquiry enabled for %s in stock product. Enquiry button will be displayed when that product "
-"runs out of stock."
-msgid_plural ""
-"Enquiries enabled for %s in stock products. Enquiry button will be displayed on those "
-"products only when those products run out of stock."
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/admin/class-quoteup-products-table.php:378
-#, php-format
-msgid "Enquiry enabled for %s out of stock product"
-msgid_plural "Enquiries enabled for %s out of stock products"
-msgstr[0] "पूछताछ %s के लिए सक्षम स्टॉक उत्पाद के बाहर"
-msgstr[1] "पूछताछ %s के लिए सक्षम स्टॉक उत्पाद के बाहर"
-
-#: includes/admin/class-quoteup-products-table.php:380
-#, php-format
-msgid ""
-"and %s in stock product. Enquiry button will be displayed only when the product runs out of "
-"stock"
-msgid_plural ""
-"and %s in stock products. Enquiry button will be displayed only when the products run out of "
-"stock"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/admin/class-quoteup-products-table.php:383
-#, php-format
-msgid "Enquiry enabled for %s product."
-msgid_plural "Enquiries enabled for %s products."
-msgstr[0] "पूछताछ %s के लिए एक उत्पाद का सक्षम होना चाहिए।"
-msgstr[1] "पूछताछ %s उत्पादों के लिए सक्षम होना चाहिए।"
-
-#: includes/admin/class-quoteup-products-table.php:389
+#: includes/admin/class-quoteup-products-table.php:459
 #, php-format
 msgid "Enquiry disabled for %s product."
 msgid_plural "Enquiries disabled for %s products."
 msgstr[0] "पूछताछ %s के लिए अक्षम एक उत्पाद।"
 msgstr[1] "पूछताछ %s उत्पादों के लिए अक्षम।"
 
-#: includes/admin/class-quoteup-products-table.php:390
+#: includes/admin/class-quoteup-products-table.php:460
 #, php-format
 msgid "Price visible for %s product."
 msgid_plural "Price visible for %s products."
 msgstr[0] "मूल्य %s एक उत्पाद के लिए दिख रहा है।"
 msgstr[1] "मूल्य %s के उत्पादों के लिए दिख रहा है।"
 
-#: includes/admin/class-quoteup-products-table.php:391
+#: includes/admin/class-quoteup-products-table.php:461
 #, php-format
 msgid "'Add to Cart' & Price hidden for %s products."
 msgid_plural "'Add to Cart' & Price hidden for %s products."
 msgstr[0] "'गाड़ी में जोड़ें' और मूल्य %s उत्पादों के लिए छिपा हुआ"
 msgstr[1] "'गाड़ी में जोड़ें' और मूल्य %s उत्पादों के लिए छिपा हुआ"
 
-#: includes/admin/class-quoteup-products-table.php:392
+#: includes/admin/class-quoteup-products-table.php:462
 #, php-format
 msgid "Add to Cart enabled for %s in stock product."
 msgid_plural "Add to Cart enabled for %s in stock products."
 msgstr[0] "गाड़ी के शेयर उत्पाद में %s के लिए सक्षम करने के लिए जोड़ें।"
 msgstr[1] "गाड़ी के शेयर उत्पादों में %s के लिए सक्षम करने के लिए जोड़ें।"
 
-#: includes/admin/class-quoteup-products-table.php:393
+#: includes/admin/class-quoteup-products-table.php:463
 #, php-format
 msgid "Add to Cart disabled for %s product."
 msgid_plural "Add to Cart disabled for %s products."
 msgstr[0] "गाड़ी एक उत्पाद %s के लिए अक्षम करने के लिए जोड़ें।"
 msgstr[1] "कार्ट %s उत्पादों के लिए अक्षम करने के लिए जोड़ें।"
 
-#: includes/admin/class-quoteup-products-table.php:394
+#: includes/admin/class-quoteup-products-table.php:464
 #, php-format
 msgid "Enabling 'Add to Cart' skipped for %s product because price is hidden for that product."
 msgid_plural ""
@@ -761,7 +645,7 @@ msgstr[0] ""
 "सक्षम करने से 'गाड़ी में जोड़ें' %s के लिए एक उत्पाद को छोड़ दिया क्योंकि कीमत है कि उत्पाद के लिए छिपा है।"
 msgstr[1] "सक्षम करने से 'गाड़ी में जोड़ें' %s उत्पादों के लिए छोड़ दिया क्योंकि कीमत उन उत्पादों के लिए छिपा है।"
 
-#: includes/admin/class-quoteup-products-table.php:395
+#: includes/admin/class-quoteup-products-table.php:465
 #, php-format
 msgid ""
 "Though Add to Cart is enabled for %s out of product, Add to Cart button is shown only for in-"
@@ -776,7 +660,7 @@ msgstr[1] ""
 "हालांकि गाड़ी में जोड़ें उत्पादों के बाहर %s के लिए सक्षम है, गाड़ी बटन को जोड़े में स्टॉक उत्पादों के लिए ही "
 "दिखाया गया है।"
 
-#: includes/admin/class-quoteup-products-table.php:396
+#: includes/admin/class-quoteup-products-table.php:466
 #, php-format
 msgid ""
 "%s product skipped because it's product type is not supported by Product Enquiry Pro (A.K.A "
@@ -791,324 +675,362 @@ msgstr[1] ""
 "%s उत्पादों को छोड़ दिया क्योंकि उनके उत्पाद प्रकार द्वारा उत्पाद पूछताछ प्रो (A.N.A उद्धरण) समर्थित नहीं हैं। "
 "यह सरल और चर उत्पादों के साथ ही काम करता है।"
 
-#: includes/admin/class-quoteup-products-table.php:449
+#: includes/admin/class-quoteup-products-table.php:507
+#, php-format
+msgid ""
+"Enquiry enabled for %s in stock product. Enquiry button will be displayed when that product "
+"runs out of stock."
+msgid_plural ""
+"Enquiries enabled for %s in stock products. Enquiry button will be displayed on those "
+"products only when those products run out of stock."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-quoteup-products-table.php:509
+#, php-format
+msgid "Enquiry enabled for %s out of stock product"
+msgid_plural "Enquiries enabled for %s out of stock products"
+msgstr[0] "पूछताछ %s के लिए सक्षम स्टॉक उत्पाद के बाहर"
+msgstr[1] "पूछताछ %s के लिए सक्षम स्टॉक उत्पाद के बाहर"
+
+#: includes/admin/class-quoteup-products-table.php:511
+#, php-format
+msgid ""
+"and %s in stock product. Enquiry button will be displayed only when the product runs out of "
+"stock"
+msgid_plural ""
+"and %s in stock products. Enquiry button will be displayed only when the products run out of "
+"stock"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-quoteup-products-table.php:514
+#, php-format
+msgid "Enquiry enabled for %s product."
+msgid_plural "Enquiries enabled for %s products."
+msgstr[0] "पूछताछ %s के लिए एक उत्पाद का सक्षम होना चाहिए।"
+msgstr[1] "पूछताछ %s उत्पादों के लिए सक्षम होना चाहिए।"
+
+#: includes/admin/class-quoteup-products-table.php:585
 msgid "Use Bulk Actions to change visibility"
 msgstr "दृश्यता बदलने के लिए थोक प्रक्रिया का प्रयोग करें"
 
-#: includes/admin/class-quoteup-products-table.php:449
+#: includes/admin/class-quoteup-products-table.php:585
 msgid "Visibility"
 msgstr "दृश्यता"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:90
+#: includes/admin/class-quoteup-quote-details-edit.php:71
+#: includes/class-quoteup-add-custom-field.php:681
+msgid "Done"
+msgstr "किया हुआ"
+
+#: includes/admin/class-quoteup-quote-details-edit.php:72
+#: includes/class-quoteup-add-custom-field.php:682
+msgid "Today"
+msgstr "आज"
+
+#: includes/admin/class-quoteup-quote-details-edit.php:75
+#: includes/class-quoteup-add-custom-field.php:685
+msgid "Show a different month"
+msgstr "एक अलग महीने दिखाएँ"
+
+#: includes/admin/class-quoteup-quote-details-edit.php:126
 msgid "Sorry, no products matched your selection. Please choose a different combination."
 msgstr "क्षमा करें, अपने चयन से मेल खाते कोई उत्पादों। कृपया एक अलग संयोजन चुनें।"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:91
+#: includes/admin/class-quoteup-quote-details-edit.php:127
 msgid "Please select some product options before adding this product to your cart."
 msgstr "अपनी गाड़ी के लिए इस उत्पाद को जोड़ने से पहले कुछ उत्पाद विकल्पों का चयन करें।"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:92
+#: includes/admin/class-quoteup-quote-details-edit.php:128 includes/admin/variation.php:25
 msgid "Sorry, this product is unavailable. Please choose a different combination."
 msgstr "क्षमा करें, इस उत्पाद को अनुपलब्ध है। कृपया एक अलग संयोजन चुनें।"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:129
+#: includes/admin/class-quoteup-quote-details-edit.php:166
 msgid "Saving Data"
 msgstr "डेटा की बचत"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:133
+#: includes/admin/class-quoteup-quote-details-edit.php:170
 msgid "Generating PDF"
 msgstr "जनरेटिंग पीडीएफ"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:138
+#: includes/admin/class-quoteup-quote-details-edit.php:175
 #, php-format
 msgid "Please select the Approval/Rejection page %s here %s to create quote"
 msgstr "%s यहाँ %s अनुमोदन / अस्वीकृति पृष्ठों का चयन करें बोली बनाने के लिए है"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:145
+#: includes/admin/class-quoteup-quote-details-edit.php:182
 msgid "PDF Generated"
 msgstr "पीडीएफ जनित"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:149
+#: includes/admin/class-quoteup-quote-details-edit.php:186
 msgid "Sending Mail"
 msgstr "मेल भेजें"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:153
+#: includes/admin/class-quoteup-quote-details-edit.php:190
 msgid "Total Quantity can not be less than or equal to 0"
 msgstr "कुल मात्रा 0 से कम या नहीं के बराबर हो सकता है"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:157
+#: includes/admin/class-quoteup-quote-details-edit.php:194
 msgid "PDF generation process aborted due to security issue."
 msgstr "पीडीएफ पीढ़ी प्रक्रिया सुरक्षा के मुद्दे के कारण निरस्त किया गया।"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:161
+#: includes/admin/class-quoteup-quote-details-edit.php:198
 msgid "Data update aborted due to security issue."
 msgstr "डेटा अद्यतन सुरक्षा के मुद्दे के कारण निरस्त किया गया।"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:165
+#: includes/admin/class-quoteup-quote-details-edit.php:202
 msgid "Saved Successfully"
 msgstr "रक्षित सफलतापूर्वक"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:169
+#: includes/admin/class-quoteup-quote-details-edit.php:206
 msgid "Customer Data updated."
 msgstr "ग्राहक जानकारी अद्यतन"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:173
+#: includes/admin/class-quoteup-quote-details-edit.php:210
 msgid "Quantity can not be in decimal."
 msgstr "मात्रा दशमलव में नहीं हो सकती ।"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:177
+#: includes/admin/class-quoteup-quote-details-edit.php:214
 msgid "Enter valid name. Customer Data not updated."
 msgstr "मान्य नाम दर्ज करें। ग्राहक डेटा को अद्यतन नहीं ।"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:181
+#: includes/admin/class-quoteup-quote-details-edit.php:218
 msgid "Enter valid email address. Customer Data not updated."
 msgstr "मान्य ईमेल पता दर्ज करें। ग्राहक डेटा को अद्यतन नहीं ।"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:185
-msgid "Please select valid variation for all products."
-msgstr "कृपया सभी उत्पादों के लिए मान्य भिन्नता का चयन करें।"
+#: includes/admin/class-quoteup-quote-details-edit.php:222
+msgid "Please select a valid variation for"
+msgstr "कृपया एक वैध भिन्नता का चयन"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:189
+#: includes/admin/class-quoteup-quote-details-edit.php:226
 msgid "Same variation of a product cannot be added twice."
 msgstr "एक उत्पाद के एक ही भिन्नता दो बार नहीं जोड़ा जा सकता।"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:202
+#: includes/admin/class-quoteup-quote-details-edit.php:239
 msgid ""
 "Quote can not be saved because it is already expired. Kindly, change the date to future date."
 msgstr ""
 "क्योंकि यह पहले ही समाप्त हो जाता है कोटेशन को बचाया नहीं जा सकता है। कृपया , भविष्य की तारीख के लिए "
 "तारीख बदल जाते हैं।"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:206
-#: includes/admin/class-quoteup-quote-details-edit.php:1128
+#: includes/admin/class-quoteup-quote-details-edit.php:243
+#: includes/admin/class-quoteup-quote-details-edit.php:1362
 msgid "Create Quotation"
 msgstr "कोटेशन बनाएं"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:210
-#: includes/admin/class-quoteup-quote-details-edit.php:1122
+#: includes/admin/class-quoteup-quote-details-edit.php:247
+#: includes/admin/class-quoteup-quote-details-edit.php:1356
 msgid "Preview Quotation"
 msgstr "पूर्वावलोकन कोटेशन"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:214
-#: includes/admin/class-quoteup-quote-details-edit.php:1126
-#: includes/admin/class-quoteup-quote-details-edit.php:1129
+#: includes/admin/class-quoteup-quote-details-edit.php:251
+#: includes/admin/class-quoteup-quote-details-edit.php:1360
+#: includes/admin/class-quoteup-quote-details-edit.php:1363
 msgid "Save & Send Quotation"
 msgstr "कोटेशन सहेजें और भेजें"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:218
-#: includes/admin/class-quoteup-quote-details-edit.php:1123
-#: includes/admin/class-quoteup-quote-details-edit.php:1369
+#: includes/admin/class-quoteup-quote-details-edit.php:255
+#: includes/admin/class-quoteup-quote-details-edit.php:1357
 msgid "Send Quotation"
 msgstr "कोटेशन भेजें"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:248
+#: includes/admin/class-quoteup-quote-details-edit.php:321
 msgid "No Enquiry Found."
 msgstr "पूछताछ नहीं मिला"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:262
-#: includes/admin/class-quoteup-quotes-list.php:70
-#: includes/admin/class-quoteup-quotes-list.php:262
+#: includes/admin/class-quoteup-quote-details-edit.php:336
+#: includes/admin/class-quoteup-quotes-list.php:76
+#: includes/admin/class-quoteup-quotes-list.php:225
 msgid "Rejected"
 msgstr "अस्वीकृत"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:267
+#: includes/admin/class-quoteup-quote-details-edit.php:341
 msgid "Quotation Details"
 msgstr "उद्धरण विवरण"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:292
+#: includes/admin/class-quoteup-quote-details-edit.php:368
 msgid "Customer Data"
 msgstr "ग्राहक डेटा"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:293
+#: includes/admin/class-quoteup-quote-details-edit.php:371
 msgid "Product Details"
 msgstr "उत्पाद विवरण"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:295
+#: includes/admin/class-quoteup-quote-details-edit.php:374
 msgid "Enquiry Messages"
 msgstr "पूछताछ संदेश"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:318
+#: includes/admin/class-quoteup-quote-details-edit.php:401
 msgid "General details"
 msgstr "सामान्य विवरण"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:327
+#: includes/admin/class-quoteup-quote-details-edit.php:411
 msgid "From "
 msgstr "से"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:335
+#: includes/admin/class-quoteup-quote-details-edit.php:420
 msgid "Client's Full Name"
 msgstr "ग्राहकों का पूरा नाम"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:335
+#: includes/admin/class-quoteup-quote-details-edit.php:420
 msgid "Full Name"
 msgstr "पूरा नाम"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:340
+#: includes/admin/class-quoteup-quote-details-edit.php:426
 msgid "Client's Email Address"
 msgstr "ग्राहक के ईमेल एड्रेस"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:340
-#: includes/class-quoteup-add-custom-field.php:602 includes/settings/settings-tabs.php:19
+#: includes/admin/class-quoteup-quote-details-edit.php:426
+#: includes/class-quoteup-add-custom-field.php:600
+#: includes/class-quoteup-add-custom-field.php:607 includes/settings/settings-tabs.php:23
 msgid "Email"
 msgstr "ईमेल"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:362
+#: includes/admin/class-quoteup-quote-details-edit.php:432
 msgid "Client's IP Address"
 msgstr "क्लाइंट का IP पता"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:362
+#: includes/admin/class-quoteup-quote-details-edit.php:432
 msgid "IP Address"
 msgstr "आईपी ​​पता"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:384
-#: includes/class-quoteup-add-custom-field.php:758
+#: includes/admin/class-quoteup-quote-details-edit.php:460
+#: includes/class-quoteup-add-custom-field.php:981
 msgid "Telephone"
 msgstr "टेलीफोन"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:442
+#: includes/admin/class-quoteup-quote-details-edit.php:558
 msgid "Reply"
 msgstr "जवाब दें"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:467
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:220
-#: templates/public/class-quoteup-single-product-modal.php:219
+#: includes/admin/class-quoteup-quote-details-edit.php:584
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:261
+#: templates/public/class-quoteup-single-product-modal.php:228
 msgid "Send"
 msgstr "भेजें"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:476
+#: includes/admin/class-quoteup-quote-details-edit.php:593
 msgid "Reply sent successfully"
 msgstr "उत्तर सफलतापूर्वक भेजा"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:746
+#: includes/admin/class-quoteup-quote-details-edit.php:773
+#: includes/admin/class-quoteup-quote-details-edit.php:850
 msgid "N/A"
 msgstr ""
 " \n"
 "\n"
 "एन / ए"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:863
-#: includes/admin/class-quoteup-quotes-list.php:452
+#: includes/admin/class-quoteup-quote-details-edit.php:1118
+#: includes/admin/class-quoteup-quotes-list.php:460
 msgid "Total"
 msgstr "कुल"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:913
-#: includes/admin/class-quoteup-quote-details-edit.php:1435
+#: includes/admin/class-quoteup-quote-details-edit.php:1194
+#: includes/admin/class-quoteup-quote-details-edit.php:1799
 msgid "Item"
 msgstr "आइटम"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:916
+#: includes/admin/class-quoteup-quote-details-edit.php:1198
 msgid "Remark"
 msgstr "टिप्पणी"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:922
+#: includes/admin/class-quoteup-quote-details-edit.php:1204
 msgid "Total price"
 msgstr "कुल कीमत"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1091
-msgid "Show Old Price in Quotation"
-msgstr "उद्धरण में पुरानी कीमत दिखाएँ"
-
-#: includes/admin/class-quoteup-quote-details-edit.php:1125
+#: includes/admin/class-quoteup-quote-details-edit.php:1359
 msgid "Regenerate PDF"
 msgstr "पीडीएफ उत्पन्न"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1138
-#: includes/admin/class-quoteup-quote-details-edit.php:1142
+#: includes/admin/class-quoteup-quote-details-edit.php:1377
 msgid "Download PDF"
 msgstr "पीडीएफ़ डाउनलोड करें"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1160
+#: includes/admin/class-quoteup-quote-details-edit.php:1413
+msgid "Show Old Price in Quotation"
+msgstr "उद्धरण में पुरानी कीमत दिखाएँ"
+
+#: includes/admin/class-quoteup-quote-details-edit.php:1504
 msgid "Order associated with the Quote  : "
 msgstr "कोटेशन के साथ जुड़े ऑर्डर:"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1264
+#: includes/admin/class-quoteup-quote-details-edit.php:1609
 msgid "Quote PDF Preview"
 msgstr "कोटेशन पीडीएफ पूर्वावलोकन"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1293
-#: includes/admin/class-quoteup-quote-details-edit.php:1351
+#: includes/admin/class-quoteup-quote-details-edit.php:1640
 msgid "Quotation Details #"
 msgstr "कोटेशन विवरण #"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1305
-#: includes/admin/class-quoteup-quote-details-edit.php:1358
+#: includes/admin/class-quoteup-quote-details-edit.php:1652
 #, php-format
 msgid "Quote Request sent from %s"
 msgstr "कोटेशन अनुरोध % s से भेजा"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1314
-#: includes/admin/class-quoteup-quote-details-edit.php:1361
+#: includes/admin/class-quoteup-quote-details-edit.php:1662
 msgid "This email has the quotation attached for your enquiry"
 msgstr "यह ईमेल कोटेशन अपनी जांच के लिए संलग्न है"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1319
-#: includes/admin/class-quoteup-quote-details-edit.php:1363
+#: includes/admin/class-quoteup-quote-details-edit.php:1667
 msgid "The quotation PDF will be attached to this email"
 msgstr "कोटेशन पीडीएफ इस ईमेल के साथ संलग्न किया जाएगा"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1323
+#: includes/admin/class-quoteup-quote-details-edit.php:1672
 msgid "Send Quote"
 msgstr "कोटेशन भेजें"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1358
-#: includes/class-quoteup-add-custom-field.php:648
-msgid "Subject"
-msgstr "विषय"
-
-#: includes/admin/class-quoteup-quote-details-edit.php:1363
-msgid "Note"
-msgstr "टिप्पणी"
-
-#: includes/admin/class-quoteup-quote-details-edit.php:1432
+#: includes/admin/class-quoteup-quote-details-edit.php:1795
 msgid "Add to Quote"
 msgstr "कोटेशन में जोड़े"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1436
+#: includes/admin/class-quoteup-quote-details-edit.php:1801
 msgid "Variations"
 msgstr "बदलाव"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1439
+#: includes/admin/class-quoteup-quote-details-edit.php:1805
 msgid "Expected Price and Remarks"
 msgstr "उम्मीद की कीमत और टिप्पणियां"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1443
+#: includes/admin/class-quoteup-quote-details-edit.php:1809
 msgid "New Price"
 msgstr "नया मूल्य"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1448
+#: includes/admin/class-quoteup-quote-details-edit.php:1814
 #, php-format
 msgid "Amount( %s )"
 msgstr "राशि ( % s)"
 
-#: includes/admin/class-quoteup-quote-details-edit.php:1516
+#: includes/admin/class-quoteup-quote-details-edit.php:1919
 msgid "Total quantity is 0. Quotation is same as orignal quantity and price"
 msgstr "कुल मात्रा 0. कोटेशन मूल मात्रा और कीमत के रूप में एक ही है"
 
-#: includes/admin/class-quoteup-quote-details.php:56
+#: includes/admin/class-quoteup-quote-details.php:53
 msgid "Could not create CSV file because of Security issues"
 msgstr "सुरक्षा के मुद्दों की वजह से सीएसवी फ़ाइल नहीं बना सका"
 
-#: includes/admin/class-quoteup-quote-details.php:57
+#: includes/admin/class-quoteup-quote-details.php:54
 msgid "Select atleast one enquiry to export"
 msgstr "निर्यात करने के लिए कम से कम एक जांच का चयन करें"
 
-#: includes/admin/class-quoteup-quotes-list.php:257
+#: includes/admin/class-quoteup-quotes-list.php:220
 msgid "All"
 msgstr "सब"
 
-#: includes/admin/class-quoteup-quotes-list.php:412
+#: includes/admin/class-quoteup-quotes-list.php:420
 msgid "No enquiry & quote details available."
 msgstr "कोई जांच और बोली विवरण उपलब्ध नहीं है ।"
 
-#: includes/admin/class-quoteup-quotes-list.php:447
+#: includes/admin/class-quoteup-quotes-list.php:455
 msgid "Status"
 msgstr "स्थिति"
 
-#: includes/admin/class-quoteup-quotes-list.php:453
+#: includes/admin/class-quoteup-quotes-list.php:461
 msgid "Order #"
 msgstr "ऑर्डर  #"
 
-#: includes/admin/class-quoteup-send-quote-mail.php:21 includes/settings/settings-tabs.php:21
+#: includes/admin/class-quoteup-send-quote-mail.php:21
 msgid "Quotation"
 msgstr "कोटेशन"
 
@@ -1121,36 +1043,83 @@ msgstr "स्वीकृत या उद्धरण अस्वीकार
 msgid "Mail Sent"
 msgstr "मेल भेजा"
 
-#: includes/class-quoteup-add-custom-field.php:588
+#: includes/class-quoteup-add-custom-field.php:586
 msgid "Name"
 msgstr "नाम"
 
-#: includes/class-quoteup-add-custom-field.php:604
+#: includes/class-quoteup-add-custom-field.php:588 quoteup-functions.php:101
+msgid "Please Enter Name"
+msgstr "अपना नाम दर्ज करें"
+
+#: includes/class-quoteup-add-custom-field.php:590 quoteup-functions.php:102
+msgid "Please Enter Valid Name"
+msgstr "कृपया मान्य नाम दर्ज करें"
+
+#: includes/class-quoteup-add-custom-field.php:602
 msgid "Please Enter Email"
 msgstr "कृपया ईमेल दर्ज करे"
 
-#: includes/class-quoteup-add-custom-field.php:627
+#: includes/class-quoteup-add-custom-field.php:604 quoteup-functions.php:104
+msgid "Please Enter Valid Email Address"
+msgstr "कृपया मान्य ईमेल दर्ज करें"
+
+#: includes/class-quoteup-add-custom-field.php:635
+#: includes/class-quoteup-add-custom-field.php:642
 msgid "Phone Number"
 msgstr "फ़ोन नंबर"
 
-#: includes/class-quoteup-add-custom-field.php:629
+#: includes/class-quoteup-add-custom-field.php:637
 msgid "Please Enter Phone Number"
 msgstr "कृपया फोन नंबर दर्ज करें"
 
-#: includes/class-quoteup-add-custom-field.php:650
+#: includes/class-quoteup-add-custom-field.php:639 quoteup-functions.php:105
+msgid "Please Enter Valid Telephone No"
+msgstr "कृपया वैध टेलीफोन नंबर दर्ज करें"
+
+#: includes/class-quoteup-add-custom-field.php:702
+#: includes/settings/general/quoteup-form-options.php:362
+msgid "Date"
+msgstr "तारीख"
+
+#: includes/class-quoteup-add-custom-field.php:713
+msgid "Please Enter Date"
+msgstr "कृपया दिनांक दर्ज"
+
+#: includes/class-quoteup-add-custom-field.php:737
+msgid "Please Enter Qunatity"
+msgstr "कृपया मात्रा दर्ज"
+
+#: includes/class-quoteup-add-custom-field.php:739
+msgid "Please Enter Valid Quantity"
+msgstr "कृपया मान्य मात्रा दर्ज करें"
+
+#: includes/class-quoteup-add-custom-field.php:796
+#: includes/class-quoteup-add-custom-field.php:803
+msgid "Subject"
+msgstr "विषय"
+
+#: includes/class-quoteup-add-custom-field.php:798
 msgid "Please Enter Subject"
 msgstr "कृपया विषय प्रविष्ट करें"
 
-#: includes/class-quoteup-add-custom-field.php:652
+#: includes/class-quoteup-add-custom-field.php:800
 msgid "Please Enter Valid Subject"
 msgstr "कृपया मान्य विषय प्रविष्ट करें"
 
-#: includes/public/class-quoteup-display-quote-button.php:464
-#: includes/settings/general/quoteup-form-options.php:52
+#: includes/class-quoteup-add-custom-field.php:822 quoteup-functions.php:106
+msgid "Please Enter Message"
+msgstr "संदेश दर्ज करें"
+
+#: includes/class-quoteup-add-custom-field.php:824 quoteup-functions.php:107
+msgid "Message length must be between 15 to 500 characters"
+msgstr "संदेश लंबाई 15 से 500 अक्षर में होना चाहिए"
+
+#: includes/public/class-quoteup-display-quote-button.php:477
+#: includes/settings/general/quoteup-form-options.php:59
 msgid "Make an Enquiry"
 msgstr "पूछताछ करिये"
 
-#: includes/public/class-quoteup-handle-cart.php:312
+#: includes/public/class-quoteup-handle-cart.php:282
 msgid ""
 " Your Quotation Session has started. Hence, you cannot add any more products. To end the "
 "session, <input type=\"button\" id=\"endsession\" title=\"Ending Session will clear the "
@@ -1160,71 +1129,71 @@ msgstr ""
 "<input type = \"button\" id = \"endsession\"  title = \" सत्र समाप्त चालू गाड़ी साफ हो जाएगा। \" "
 "value = \"यहाँ क्लिक करें \">"
 
-#: includes/public/class-quoteup-handle-quote-approval-rejection.php:103
+#: includes/public/class-quoteup-handle-quote-approval-rejection.php:106
 msgid "Approved but order not yet placed"
 msgstr "स्वीकृत है लेकिन अभी तक आदेश नहीं रखा"
 
-#: includes/public/class-quoteup-handle-quote-approval-rejection.php:126
+#: includes/public/class-quoteup-handle-quote-approval-rejection.php:129
 msgid "No message from customer"
 msgstr "ग्राहक से संदेश नहीं"
 
-#: includes/settings/class-quoteup-settings.php:58
+#: includes/settings/class-quoteup-settings.php:56
 msgid "Please enter email address"
 msgstr "कृपया ईमेल पता दर्ज करें"
 
-#: includes/settings/class-quoteup-settings.php:59
+#: includes/settings/class-quoteup-settings.php:57
 msgid "Please enter valid email address. Multiple email addresses must be comma separated."
 msgstr "कृपया सही ईमेल पता दें। एकाधिक ईमेल पते अल्पविराम से अलग किया जाना चाहिए"
 
-#: includes/settings/class-quoteup-settings.php:61
+#: includes/settings/class-quoteup-settings.php:59
 msgid "Could not migrate enquiries due to security issue."
 msgstr "सुरक्षा मुद्दे की वजह से पूछताछ विस्थापित नहीं किया जा सका ।"
 
-#: includes/settings/class-quoteup-settings.php:62
+#: includes/settings/class-quoteup-settings.php:60
 msgid "Enable"
 msgstr "सक्षम करें"
 
-#: includes/settings/class-quoteup-settings.php:63
+#: includes/settings/class-quoteup-settings.php:61
 msgid "Disable"
 msgstr "अक्षम"
 
-#: includes/settings/class-quoteup-settings.php:64
+#: includes/settings/class-quoteup-settings.php:62
 msgid "enquiry system for all products"
 msgstr "सभी उत्पादों के लिए पूछताछ प्रणाली"
 
-#: includes/settings/class-quoteup-settings.php:65
+#: includes/settings/class-quoteup-settings.php:63
 msgid "add to cart for all products"
 msgstr "सभी उत्पादों के लिए कार्ट में जोड़ने का बटन   "
 
-#: includes/settings/class-quoteup-settings.php:66
+#: includes/settings/class-quoteup-settings.php:64
 msgid "price for all products"
 msgstr "सभी उत्पादों के लिए मूल्य"
 
-#: includes/settings/class-quoteup-settings.php:67
+#: includes/settings/class-quoteup-settings.php:65
 msgid "Show"
 msgstr "दिखाओ "
 
-#: includes/settings/class-quoteup-settings.php:68
+#: includes/settings/class-quoteup-settings.php:66
 msgid "Hide"
 msgstr "छुपाओ "
 
-#: includes/settings/class-quoteup-settings.php:69
+#: includes/settings/class-quoteup-settings.php:67
 msgid "Applying Global Settings will do following things"
 msgstr "वैश्विक सेटिंग्स को लागू करने ये सेटिंग्स बदल जाएंगी "
 
-#: includes/settings/class-quoteup-settings.php:82
+#: includes/settings/class-quoteup-settings.php:80
 msgid "Upload or Choose Your Custom Image File"
 msgstr "अपलोड / अपने कस्टम छवि फ़ाइल चुनें"
 
-#: includes/settings/class-quoteup-settings.php:83
+#: includes/settings/class-quoteup-settings.php:81
 msgid "Insert Image into Input Field"
 msgstr "इनपुट क्षेत्र में छवि डालें"
 
-#: includes/settings/class-quoteup-settings.php:106
+#: includes/settings/class-quoteup-settings.php:104
 msgid "Settings Saved"
 msgstr "सेटिंग्स को सहेजा गया"
 
-#: includes/settings/class-quoteup-settings.php:136
+#: includes/settings/class-quoteup-settings.php:134
 msgid "Save changes"
 msgstr "परिवर्तनों को सुरक्षित करें"
 
@@ -1232,27 +1201,27 @@ msgstr "परिवर्तनों को सुरक्षित करे
 msgid "Styling Options "
 msgstr "स्टाइलिंग विकल्प"
 
-#: includes/settings/display/quoteup-styling-options.php:21
+#: includes/settings/display/quoteup-styling-options.php:22
 msgid " Add Custom CSS "
 msgstr "कस्टम सीएसएस जोड़ें"
 
-#: includes/settings/display/quoteup-styling-options.php:37
+#: includes/settings/display/quoteup-styling-options.php:38
 msgid " Custom Styling "
 msgstr "कस्टम स्टाइलिंग"
 
-#: includes/settings/display/quoteup-styling-options.php:45
+#: includes/settings/display/quoteup-styling-options.php:47
 msgid "  Use Activated Theme CSS "
 msgstr "सक्रिय थीम सीएसएस का उपयोग"
 
-#: includes/settings/display/quoteup-styling-options.php:53
+#: includes/settings/display/quoteup-styling-options.php:56
 msgid " Manually specify color settings"
 msgstr "मैन्युअल रंग सेटिंग्स निर्दिष्ट"
 
-#: includes/settings/display/quoteup-styling-options.php:82
+#: includes/settings/display/quoteup-styling-options.php:89
 msgid "Specify Color Settings "
 msgstr "रंग सेटिंग्स निर्दिष्ट"
 
-#: includes/settings/display/quoteup-styling-options.php:84
+#: includes/settings/display/quoteup-styling-options.php:91
 msgid ""
 "Button color settings will be applied to Enquiry or Quote Request button and 'Send' button on "
 "Enquiry and Quote Request Form."
@@ -1260,31 +1229,31 @@ msgstr ""
 "बटन रंग सेटिंग्स पूछताछ या बोली का अनुरोध बटन और बटन पूछताछ और बोली का अनुरोध फॉर्म पर 'भेजें' लागू किया "
 "जाएगा।"
 
-#: includes/settings/display/quoteup-styling-options.php:109
+#: includes/settings/display/quoteup-styling-options.php:119
 msgid "  Button Background Color: Gradient Start "
 msgstr "बटन पृष्ठभूमि रंग : ढाल प्रारंभ"
 
-#: includes/settings/display/quoteup-styling-options.php:134
+#: includes/settings/display/quoteup-styling-options.php:147
 msgid "  Button Background Color: Gradient End "
 msgstr "बटन पृष्ठभूमि रंग : ढाल अंत"
 
-#: includes/settings/display/quoteup-styling-options.php:160
+#: includes/settings/display/quoteup-styling-options.php:176
 msgid " Button Text Color "
 msgstr "बटन पाठ रंग"
 
-#: includes/settings/display/quoteup-styling-options.php:184
+#: includes/settings/display/quoteup-styling-options.php:203
 msgid " Button Border Color "
 msgstr "बटन बॉर्डर का रंग"
 
-#: includes/settings/display/quoteup-styling-options.php:208
+#: includes/settings/display/quoteup-styling-options.php:230
 msgid " Dialog Background Color "
 msgstr "संवाद पृष्ठभूमि का रंग"
 
-#: includes/settings/display/quoteup-styling-options.php:233
+#: includes/settings/display/quoteup-styling-options.php:258
 msgid "  Product Name Color "
 msgstr "उत्पाद का नाम रंग"
 
-#: includes/settings/display/quoteup-styling-options.php:260
+#: includes/settings/display/quoteup-styling-options.php:288
 msgid "  Dialog Text Color "
 msgstr "संवाद पाठ रंग"
 
@@ -1292,67 +1261,69 @@ msgstr "संवाद पाठ रंग"
 msgid "Emailing Information"
 msgstr "ईमेल सूचना"
 
-#: includes/settings/email/quoteup-emailing-information.php:18
+#: includes/settings/email/quoteup-emailing-information.php:30
 msgid "Recipient Email ID"
 msgstr "प्राप्तकर्ता का ईमेल आईडी"
 
-#: includes/settings/email/quoteup-emailing-information.php:22
+#: includes/settings/email/quoteup-emailing-information.php:34
 msgid "You can add multiple email addresses separated by comma"
 msgstr "आप कई ईमेल पतों अल्पविराम के द्वारा अलग जोड़ सकते हैं"
 
-#: includes/settings/email/quoteup-emailing-information.php:33
+#: includes/settings/email/quoteup-emailing-information.php:52
 msgid "Send mail to Admin"
 msgstr "व्यवस्थापक मेल भेजें"
 
-#: includes/settings/email/quoteup-emailing-information.php:37
-msgid "When checked, sends enquiry email to 'Email Address' specified under Settings -> General"
-msgstr "जब जाँच की, करने के लिए 'ईमेल एड्रेस' सेटिंग के तहत निर्दिष्ट भेजता जांच ईमेल -> सामान्य"
+#: includes/settings/email/quoteup-emailing-information.php:56
+msgid ""
+"When checked, sends the enquiry email to the Admin email address specified under Settings -> "
+"General"
+msgstr ""
 
-#: includes/settings/email/quoteup-emailing-information.php:49
+#: includes/settings/email/quoteup-emailing-information.php:75
 msgid "Send mail to Product Author"
 msgstr "उत्पाद लेखक मेल भेजें"
 
-#: includes/settings/email/quoteup-emailing-information.php:53
+#: includes/settings/email/quoteup-emailing-information.php:79
 msgid "When checked, sends enquiry email to author/owner of the Product"
 msgstr "जब जाँच की, उत्पाद के लेखक / मालिक को भेजता जांच ईमेल"
 
-#: includes/settings/email/quoteup-emailing-information.php:64
+#: includes/settings/email/quoteup-emailing-information.php:97
 msgid "Default Subject"
 msgstr "डिफ़ॉल्ट विषय"
 
-#: includes/settings/email/quoteup-emailing-information.php:68
+#: includes/settings/email/quoteup-emailing-information.php:101
 msgid "Subject to be used if customer does not enter a subject"
 msgstr "विषय अगर ग्राहक एक विषय प्रवेश नहीं करता इस्तेमाल किया जाएगा"
 
-#: includes/settings/email/quoteup-emailing-information.php:72
+#: includes/settings/email/quoteup-emailing-information.php:105
 msgid "Quote request for a product from "
 msgstr "उत्पाद के लिए बोली का अनुरोध"
 
-#: includes/settings/general/quoteup-enquiry-and-quote-options.php:16
+#: includes/settings/general/quoteup-enquiry-and-quote-options.php:14
 msgid "Enquiry & Quote Options"
 msgstr "पूछताछ और भाव विकल्प"
 
-#: includes/settings/general/quoteup-enquiry-and-quote-options.php:31
+#: includes/settings/general/quoteup-enquiry-and-quote-options.php:29
 msgid "Disable Quotation System"
 msgstr "अक्षम कोटेशन प्रणाली"
 
-#: includes/settings/general/quoteup-enquiry-and-quote-options.php:35
+#: includes/settings/general/quoteup-enquiry-and-quote-options.php:33
 msgid "Disable quote management system"
 msgstr "अक्षम कोटेशन प्रणाली"
 
-#: includes/settings/general/quoteup-enquiry-and-quote-options.php:57
+#: includes/settings/general/quoteup-enquiry-and-quote-options.php:55
 msgid "Display Enquiry or Quote button only when 'Out of Stock'"
 msgstr "प्रदर्शन पूछताछ या भाव बटन केवल जब ' स्टॉक से बाहर '"
 
-#: includes/settings/general/quoteup-enquiry-and-quote-options.php:62
+#: includes/settings/general/quoteup-enquiry-and-quote-options.php:60
 msgid "Display enquiry and quote button only after the product runs out of stock"
-msgstr ""
+msgstr "प्रदर्शन जांच और बोली बटन केवल उत्पाद के बाद स्टॉक से बाहर चलाता है"
 
-#: includes/settings/general/quoteup-enquiry-and-quote-options.php:83
+#: includes/settings/general/quoteup-enquiry-and-quote-options.php:81
 msgid "Display Enquiry or Quote button on Archive Page "
-msgstr ""
+msgstr "प्रदर्शन पूछताछ या पुरालेख पेज पर भाव बटन"
 
-#: includes/settings/general/quoteup-enquiry-and-quote-options.php:88
+#: includes/settings/general/quoteup-enquiry-and-quote-options.php:86
 msgid "Display enquiry and quote button on Archive (Shop, Categories) Page"
 msgstr "आर्काइव पर (दुकान , श्रेणियाँ ) पृष्ठ पर  जांच और बोली बटन प्रदर्शन करे"
 
@@ -1360,63 +1331,107 @@ msgstr "आर्काइव पर (दुकान , श्रेणिया
 msgid "Form Options"
 msgstr "प्रपत्र विकल्प"
 
-#: includes/settings/general/quoteup-form-options.php:43
-msgid " Button Label "
-msgstr "बटन लेबल"
+#: includes/settings/general/quoteup-form-options.php:50
+msgid " Enquiry Button Label "
+msgstr "पूछताछ बटन लेबल"
 
-#: includes/settings/general/quoteup-form-options.php:48
+#: includes/settings/general/quoteup-form-options.php:55
 msgid "Add custom label for Enquiry or Quote button."
 msgstr "पूछताछ या भाव बटन के लिए कस्टम लेबल जोड़ें ।"
 
-#: includes/settings/general/quoteup-form-options.php:75
+#: includes/settings/general/quoteup-form-options.php:82 quoteup-functions.php:94
+msgid "View Enquiry & Quote Cart"
+msgstr "देखें पूछताछ और भाव गाड़ी"
+
+#: includes/settings/general/quoteup-form-options.php:84 quoteup-functions.php:96
+msgid "View Enquiry Cart"
+msgstr "देखें पूछताछ की टोकरी"
+
+#: includes/settings/general/quoteup-form-options.php:92
+msgid " View Cart Button Label "
+msgstr "कार्ट देखें बटन लेबल"
+
+#: includes/settings/general/quoteup-form-options.php:97
+msgid "Add custom label for Enquiry or Quote cart button."
+msgstr "पूछताछ या उद्धरण गाड़ी बटन के लिए कस्टम लेबल जोड़ें।"
+
+#: includes/settings/general/quoteup-form-options.php:127
+msgid " Alternate word for Enquiry "
+msgstr "पूछताछ के लिए वैकल्पिक शब्द"
+
+#: includes/settings/general/quoteup-form-options.php:132
+msgid "Alternate word for Enquiry."
+msgstr "पूछताछ के लिए वैकल्पिक शब्द।"
+
+#: includes/settings/general/quoteup-form-options.php:161
 msgid " Button Location"
 msgstr "बटन स्थान"
 
-#: includes/settings/general/quoteup-form-options.php:94
+#: includes/settings/general/quoteup-form-options.php:181
 msgid " After single product summary "
 msgstr "एकल उत्पाद सारांश के बाद"
 
-#: includes/settings/general/quoteup-form-options.php:105
+#: includes/settings/general/quoteup-form-options.php:193
 msgid " At the end of single product page "
 msgstr "एकल उत्पाद पृष्ठ के अंत में"
 
-#: includes/settings/general/quoteup-form-options.php:127
+#: includes/settings/general/quoteup-form-options.php:218
 msgid " Display Enquiry Button As A Link "
 msgstr "प्रदर्शन पूछताछ बटन लिंक के रूप में दिखाये "
 
-#: includes/settings/general/quoteup-form-options.php:158
+#: includes/settings/general/quoteup-form-options.php:253
 msgid " Display 'Powered by WisdmLabs' "
 msgstr "' WisdmLabs द्वारा संचालित ' दिखायें "
 
-#: includes/settings/general/quoteup-form-options.php:185
+#: includes/settings/general/quoteup-form-options.php:283
 msgid " Display 'Send me a copy' "
 msgstr " ' मुझे एक प्रति भेजें ' दिखायें "
 
-#: includes/settings/general/quoteup-form-options.php:191
+#: includes/settings/general/quoteup-form-options.php:289
 msgid "This will display 'Send me a copy' checkbox on Enquiry or Quote request form."
 msgstr "यह प्रदर्शित करेगा पूछताछ या बोली का अनुरोध फॉर्म पर चेकबॉक्स ' मुझे एक प्रति भेजें '।"
 
-#: includes/settings/general/quoteup-form-options.php:217
+#: includes/settings/general/quoteup-form-options.php:318
+msgid " Display 'Date Field' "
+msgstr "प्रदर्शन 'तिथि फील्ड'"
+
+#: includes/settings/general/quoteup-form-options.php:324
+msgid "This will display 'Date Field' on Enquiry or Quote request form."
+msgstr "यह पूछताछ या बोली का अनुरोध फॉर्म पर 'तिथि फील्ड' प्रदर्शित करेगा।"
+
+#: includes/settings/general/quoteup-form-options.php:353
+msgid " Date Field Label "
+msgstr "तारीख क्षेत्र लेबल"
+
+#: includes/settings/general/quoteup-form-options.php:358
+msgid "Add custom label for Date Field."
+msgstr "तारीख क्षेत्र के लिए कस्टम लेबल जोड़ें।"
+
+#: includes/settings/general/quoteup-form-options.php:393
+msgid " Make Date Field Mandatory"
+msgstr "तारीख क्षेत्र को अनिवार्य बनाने"
+
+#: includes/settings/general/quoteup-form-options.php:422
 msgid " Display Telephone Number Field"
 msgstr "टेलीफोन नंबर क्षेत्र दिखायें"
 
-#: includes/settings/general/quoteup-form-options.php:222
+#: includes/settings/general/quoteup-form-options.php:427
 msgid "Display Telephone number field on Enquiry and Quote Request form."
 msgstr "पूछताछ और बोली का अनुरोध प्रपत्र पर टेलीफोन संख्या क्षेत्र प्रदर्शन करे "
 
-#: includes/settings/general/quoteup-form-options.php:251
+#: includes/settings/general/quoteup-form-options.php:461
 msgid " Make Telephone Number Field Mandatory"
 msgstr "टेलीफोन नंबर क्षेत्र को अनिवार्य बनाएं "
 
-#: includes/settings/general/quoteup-form-options.php:282
+#: includes/settings/general/quoteup-form-options.php:496
 msgid " Select Country for Telephone Number Validation"
 msgstr "टेलीफोन नंबर सत्यापन के लिए देश का चयन करें"
 
-#: includes/settings/general/quoteup-form-options.php:287
+#: includes/settings/general/quoteup-form-options.php:501
 msgid "To accept any number, do not select a country."
 msgstr "किसी भी संख्या को स्वीकार करने के लिए किसी  देश का चयन ना करे  ।"
 
-#: includes/settings/general/quoteup-form-options.php:298
+#: includes/settings/general/quoteup-form-options.php:512
 msgid "Select one"
 msgstr "एक चुनो"
 
@@ -1424,7 +1439,7 @@ msgstr "एक चुनो"
 msgid "Migrate Enquiries"
 msgstr "पूछताछ माइग्रेट"
 
-#: includes/settings/general/quoteup-migrate-enquiries.php:21
+#: includes/settings/general/quoteup-migrate-enquiries.php:23
 msgid ""
 "This update includes database architectural changes. We strongly recommend to migrate the "
 "previous enquiries. Previous enquiries will be displayed in enquiry details table only after "
@@ -1434,7 +1449,7 @@ msgstr ""
 "जांच केवल प्रवास के बाद में जांच विवरण तालिका प्रदर्शित किया जाएगा। पूछताछ विस्थापित करने की कोई ज़रूरत नहीं "
 "है पहले से ही चले गए , तो"
 
-#: includes/settings/general/quoteup-migrate-enquiries.php:23
+#: includes/settings/general/quoteup-migrate-enquiries.php:26
 msgid "Please wait"
 msgstr "कृपया प्रतीक्षा करें"
 
@@ -1454,40 +1469,40 @@ msgstr ""
 "आप को सक्षम / बहु उत्पाद जांच या बोली निष्क्रिय कर सकते हैं। एक समय एकल या बहु उत्पाद जांच या बोली पर "
 "उपलब्ध हो जाएगा।"
 
-#: includes/settings/general/quoteup-multiproduct-enquiry-and-quote-options.php:58
+#: includes/settings/general/quoteup-multiproduct-enquiry-and-quote-options.php:59
 msgid "Enquiry and Quote Cart Page"
 msgstr "पूछताछ और उद्धरण कार्ट पृष्ठ"
 
-#: includes/settings/general/quoteup-multiproduct-enquiry-and-quote-options.php:63
+#: includes/settings/general/quoteup-multiproduct-enquiry-and-quote-options.php:64
 msgid "Select Enquiry & Quote cart page. This is a page where Enquiry & Quote Cart is shown."
 msgstr "पूछताछ और कोटेशन कार्ट पेज का चयन करें। इस एक पृष्ठ जहाँ पूछताछ और कोटेशन कार्ट दिखाया गया है।"
 
-#: includes/settings/general/quoteup-multiproduct-enquiry-and-quote-options.php:66
-#: includes/settings/quote/quoteup-approval-rejection.php:36
+#: includes/settings/general/quoteup-multiproduct-enquiry-and-quote-options.php:67
+#: includes/settings/quote/quoteup-approval-rejection.php:57
 msgid "Select Page"
 msgstr "पृष्ठ का चयन"
 
-#: includes/settings/general/quoteup-redirection-page-url.php:20
+#: includes/settings/general/quoteup-redirection-page-url.php:21
 msgid "Redirect Page URL"
 msgstr "अनुप्रेषित पृष्ठ यूआरएल"
 
-#: includes/settings/general/quoteup-redirection-page-url.php:24
+#: includes/settings/general/quoteup-redirection-page-url.php:25
 msgid "Page Url"
 msgstr "पेज यूआरएल"
 
-#: includes/settings/general/quoteup-redirection-page-url.php:28
+#: includes/settings/general/quoteup-redirection-page-url.php:29
 msgid "User will be forwarded to this on successful Quote request. Leave blank if not needed"
 msgstr "उपयोगकर्ता सफल बोली का अनुरोध पर यह करने के लिए भेजा जाएगा। खाली छोड़ डीजीए अगर जरूरत नहीं हैं "
 
-#: includes/settings/quote/quoteup-approval-rejection.php:19
-msgid "Quotation Approval/Rejection Page"
-msgstr "कोटेशन अनुमोदन / अस्वीकृति पृष्ठ"
+#: includes/settings/quote/quoteup-approval-rejection.php:20
+msgid "Quotation Approval/Rejection"
+msgstr "कोटेशन अनुमोदन / अस्वीकृति"
 
-#: includes/settings/quote/quoteup-approval-rejection.php:23
+#: includes/settings/quote/quoteup-approval-rejection.php:44
 msgid "Approval/Rejection Page"
 msgstr "अनुमोदन / अस्वीकृति पृष्ठ"
 
-#: includes/settings/quote/quoteup-approval-rejection.php:27
+#: includes/settings/quote/quoteup-approval-rejection.php:48
 msgid ""
 "Plugin will automatically add shortcode [APPROVAL_REJECTION_CHOICE] on the selected page, if "
 "it is not already present in the page's content"
@@ -1495,58 +1510,158 @@ msgstr ""
 "प्लगइन स्वचालित रूप से चयनित पृष्ठ पर शोर्ट [ APPROVAL_REJECTION_CHOICE ] जोड़ देगा अगर यह पहले पेज की "
 "सामग्री में मौजूद नहीं है"
 
-#: includes/settings/quote/quoteup-pdf-settings.php:38
+#: includes/settings/quote/quoteup-approval-rejection.php:88
+msgid " Approve Button Label "
+msgstr "बटन लेबल स्वीकृत"
+
+#: includes/settings/quote/quoteup-approval-rejection.php:93
+msgid "Add custom label for approve quotation button."
+msgstr "कस्टम लेबल जोड़ें उद्धरण बटन को मंजूरी के लिए।"
+
+#: includes/settings/quote/quoteup-approval-rejection.php:97
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:171
+msgid "Approve Quote"
+msgstr "उद्धरण स्वीकृत"
+
+#: includes/settings/quote/quoteup-approval-rejection.php:122
+msgid " Reject Button Label "
+msgstr "बटन लेबल अस्वीकार"
+
+#: includes/settings/quote/quoteup-approval-rejection.php:127
+msgid "Add custom label for reject quotation button."
+msgstr "कस्टम लेबल जोड़ें उद्धरण बटन को अस्वीकार करने के लिए।"
+
+#: includes/settings/quote/quoteup-approval-rejection.php:131
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:177
+msgid "Reject Quote"
+msgstr "उद्धरण अस्वीकार"
+
+#: includes/settings/quote/quoteup-approval-rejection.php:156
+msgid " Reject Message "
+msgstr "संदेश को अस्वीकार"
+
+#: includes/settings/quote/quoteup-approval-rejection.php:161
+msgid "Add custom message to display when customer rejects quote."
+msgstr "प्रदर्शित करने के लिए जब ग्राहक को खारिज कर दिया बोली कस्टम संदेश जोड़ें।"
+
+#: includes/settings/quote/quoteup-approval-rejection.php:190
+msgid " Alternate word for Quote "
+msgstr "उद्धरण के लिए वैकल्पिक शब्द"
+
+#: includes/settings/quote/quoteup-approval-rejection.php:195
+msgid "Alternate word for Quote and Quotation."
+msgstr "उद्धरण और उद्धरण के लिए वैकल्पिक शब्द।"
+
+#: includes/settings/quote/quoteup-pdf-settings.php:39
 msgid ""
 "These settings will add details to the generated quote when the Quotation System is enabled."
 msgstr "जब कोटेशन प्रणाली सक्षम होता है ये सेटिंग्स उत्पन्न बोली के लिए विवरण जोड़ देगा।"
 
-#: includes/settings/quote/quoteup-pdf-settings.php:40
+#: includes/settings/quote/quoteup-pdf-settings.php:41
 msgid "PDF Settings "
 msgstr "पीडीएफ सेटिंग "
 
-#: includes/settings/quote/quoteup-pdf-settings.php:46
+#: includes/settings/quote/quoteup-pdf-settings.php:47
 msgid "Company Name"
 msgstr "कंपनी का नाम"
 
-#: includes/settings/quote/quoteup-pdf-settings.php:56
+#: includes/settings/quote/quoteup-pdf-settings.php:57
 msgid "Company Email"
 msgstr "कंपनी ईमेल"
 
-#: includes/settings/quote/quoteup-pdf-settings.php:66
+#: includes/settings/quote/quoteup-pdf-settings.php:67
 msgid "Company Address"
 msgstr "कंपनी का पता"
 
-#: includes/settings/quote/quoteup-pdf-settings.php:77
+#: includes/settings/quote/quoteup-pdf-settings.php:78
 msgid "Logo for PDF"
 msgstr "पीडीएफ के लिए लोगो"
 
-#: includes/settings/quote/quoteup-pdf-settings.php:81
+#: includes/settings/quote/quoteup-pdf-settings.php:82
 msgid "Upload Image"
 msgstr "तस्वीर डालिये"
 
-#: includes/settings/settings-tabs.php:18
+#: includes/settings/settings-tabs.php:21
 msgid "General"
 msgstr "सामान्य"
 
-#: includes/settings/settings-tabs.php:20
+#: includes/settings/settings-tabs.php:25
 msgid "Display"
 msgstr "प्रदर्शन"
 
-#: product_enquiry_pro.php:113
+#: includes/settings/settings-tabs.php:27
+msgid "Quotation  "
+msgstr "उद्धरण"
+
+#: product_enquiry_pro.php:285
 msgid ""
-"WooCommerce plugin is not active. In order to make the 'QuoteUp' plugin work, you need to "
-"install and activate WooCommerce first."
+"WooCommerce plugin is not active. In order to make the Product Enquiry Pro for WooCommerce (A."
+"K.A QuoteUp) plugin work, you need to install and activate WooCommerce first."
 msgstr ""
-"WooCommerce प्लगइन सक्रिय नहीं है। आदेश ' QuoteUp ' प्लगइन का काम करने के लिए, आप को स्थापित करने और "
-"पहले WooCommerce को सक्रिय करने की जरूरत है।"
 
-#: product_enquiry_pro.php:129
-msgid "QuoteUp requires PHP VERSION 5.3 or greater. Please update your PHP."
-msgstr "QuoteUp PHP संस्करण 5.3 या अधिक से अधिक की आवश्यकता है। अपने PHP अपडेट करें।"
+#: quoteup-functions.php:103
+msgid "Please Enter Email Address"
+msgstr "कृपया ईमेल दर्ज करें"
 
-#: product_enquiry_pro.php:139
-msgid "In order to make the 'QuoteUp' plugin work, Product Enquiry Pro needs to be deactivated."
-msgstr "QuoteUp ' प्लगइन का काम करने के लिए, उत्पाद पूछताछ प्रो जरूरतों को निष्क्रिय किया जा सके।"
+#: quoteup-functions.php:108
+msgid "Name*"
+msgstr "नाम *"
+
+#: quoteup-functions.php:109
+msgid "Email*"
+msgstr "ईमेल*"
+
+#: quoteup-functions.php:110
+msgid "Please Enter"
+msgstr "कृपया दर्ज करें"
+
+#: quoteup-functions.php:111
+msgid "Please Select"
+msgstr "कृपया चुने"
+
+#: quoteup-functions.php:119
+msgid "products added in Quote Cart"
+msgstr "उत्पादों कोटेशन कार्ट में जोड़ा गया है"
+
+#: quoteup-functions.php:120
+msgid "Please select variation before sending enquiry"
+msgstr "कृपया जांच भेजने से पहले भिन्नता का चयन"
+
+#: quoteup-functions.php:121
+msgid "product added in Quote Cart"
+msgstr "उत्पादों कोटेशन कार्ट में जोड़ा गया है"
+
+#: quoteup-functions.php:122
+msgid "Enter valid Quantity"
+msgstr "वैध मात्रा दर्ज करे"
+
+#: quoteup-functions.php:236
+msgid "Invalid URL Provided."
+msgstr "अमान्य URL दर्ज किया गया है"
+
+#: quoteup-functions.php:241
+msgid "Could not create Temporary file."
+msgstr "अस्थायी फ़ाइल नहीं बना सका।"
+
+#: quoteup-functions.php:354
+#, php-format
+msgid "Stock for %s is only %d. Please make quotation for less quantity"
+msgstr "%s के लिए स्टॉक केवल %d है । कृपया कम मात्रा के लिए कोटेशन बनाएं "
+
+#: quoteup-functions.php:376
+#, php-format
+msgid "Stock for %s(%s) is only %d. Please make quotation for less quantity"
+msgstr ""
+
+#: quoteup-functions.php:416
+#, php-format
+msgid "Stock not available for %s."
+msgstr "स्टॉक % s के लिए उपलब्ध नहीं है।"
+
+#: quoteup-functions.php:437
+#, php-format
+msgid "Stock not available for %s(%s)."
+msgstr " %s(%s) स्टॉक के लिए उपलब्ध नहीं"
 
 #: templates/lPage_display.php:34
 msgid "No response from server. Please try again later."
@@ -1608,113 +1723,105 @@ msgstr "%s लाइसेंस विकल्प"
 msgid "License Key"
 msgstr "लाइसेंस कुंजी"
 
-#: templates/lPage_display.php:145
+#: templates/lPage_display.php:149
 msgid "License Status"
 msgstr "लाइसेंस स्थिति"
 
-#: templates/lPage_display.php:149 templates/lPage_display.php:161
+#: templates/lPage_display.php:154 templates/lPage_display.php:170
 msgid "Active"
 msgstr "सक्रिय"
 
-#: templates/lPage_display.php:153 templates/lPage_display.php:157
-#: templates/lPage_display.php:164 templates/lPage_display.php:168
+#: templates/lPage_display.php:160 templates/lPage_display.php:165
+#: templates/lPage_display.php:174 templates/lPage_display.php:180
 msgid "Not Active"
 msgstr "अक्रिय"
 
-#: templates/lPage_display.php:176 templates/lPage_display.php:189
-#: templates/lPage_display.php:206
+#: templates/lPage_display.php:190 templates/lPage_display.php:210
+#: templates/lPage_display.php:241
 msgid "Activate License"
 msgstr "लाइसेंस को सक्रिय"
 
-#: templates/lPage_display.php:182 templates/lPage_display.php:197
+#: templates/lPage_display.php:199 templates/lPage_display.php:226
 msgid "Deactivate License"
 msgstr "लाइसेंस प्रयोग"
 
-#: templates/lPage_display.php:192 templates/lPage_display.php:200
+#: templates/lPage_display.php:216 templates/lPage_display.php:231
 msgid "Renew License"
 msgstr "लाइसेंस नवीनीकृत"
 
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:104
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:157
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:80
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:137
 msgid "Remarks"
 msgstr "टिप्पणियों"
 
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:155
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:135
 msgid "Expected price and remarks"
 msgstr "उम्मीद की कीमत और टिप्पणियों"
 
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:170
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:211
 msgid "Update Enquiry Cart"
 msgstr "अद्यतन पूछताछ की टोकरी"
 
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:174
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:215
 msgid "Update Enquiry & Quote Cart"
 msgstr "अद्यतन पूछताछ और भाव गाड़ी"
 
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:183
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:224
 msgid "Requestor Information"
 msgstr "निवेदन कर्ता सूचना"
 
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:192
-#: templates/public/class-quoteup-single-product-modal.php:196
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:233
+#: templates/public/class-quoteup-single-product-modal.php:205
 msgid "Indicates required fields"
 msgstr "आवश्यक स्थान को दर्शाएं"
 
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:212
-#: templates/public/class-quoteup-single-product-modal.php:249
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:253
+#: templates/public/class-quoteup-single-product-modal.php:262
 msgid "Send me a copy"
 msgstr "मुझे एक कॉपी भेजें"
 
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:242
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:282
 msgid "Enquiry sent successfully!"
 msgstr "पूछताछ सफलतापूर्वक भेजा !"
 
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:242
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:249
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:254
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:107
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:282
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:289
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:294
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:120
 msgid "Return To Shop"
 msgstr "दुकान पर लौटें"
 
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:248
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:288
 msgid "Your enquiry cart is currently empty."
 msgstr "अपनी पूछतछ कार्ट वर्तमान में खाली है।"
 
-#: templates/public/class-quoteup-handle-enquiry-cart-view.php:253
+#: templates/public/class-quoteup-handle-enquiry-cart-view.php:293
 msgid "Your enquiry and quotation cart is currently empty."
 msgstr "अपनी जांच और उद्धरण कार्ट  वर्तमान में खाली है।"
 
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:65
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:141
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:76
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:155
 msgid "The quotation has expired."
 msgstr "उद्धरण समाप्त हो गया है "
 
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:71
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:83
 #, php-format
 msgid "'%s%s' is not in stock. Contact site admin to make this order"
 msgstr "'%s%s' स्टॉक में नहीं है । संपर्क साइट व्यवस्थापक इस आदेश बनाने के लिए"
 
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:84
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:97
 msgid "An earlier session seems to be in progress "
 msgstr "एक पहले सत्र प्रगति में किया जा रहा है"
 
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:157
-msgid "Approve Quote"
-msgstr "उद्धरण स्वीकृत"
-
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:158
-msgid "Reject Quote"
-msgstr "उद्धरण अस्वीकार"
-
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:160
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:195
 msgid "Please add your reason behind rejecting the quote"
 msgstr "पूछताछ पीछे अपने कारण जोड़ें"
 
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:161
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:198
 msgid "Reject This Quote"
 msgstr "कोटेशन अस्वीकार करें "
 
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:177
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:216
 #, php-format
 msgid ""
 "%s is not a valid email address or Quotation has been updated. Please contact site admin for "
@@ -1723,19 +1830,19 @@ msgstr ""
 "%s एक मान्य ईमेल पता या उद्धरण अद्यतन किया गया है नहीं है। नई कोटेशन मेल के लिए साइट व्यवस्थापक से संपर्क करें "
 "%s"
 
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:193
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:233
 msgid "Please provide your email address associated with the quote:"
 msgstr "कोटेशन के साथ जुड़े अपना ईमेल पता प्रदान करें:"
 
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:205
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:246
 msgid "Submit"
 msgstr "जमा करें"
 
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:311
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:306
 msgid "Qty"
 msgstr "मात्रा"
 
-#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:419
+#: templates/public/class-quoteup-handle-quote-approval-rejection-view.php:518
 msgid ""
 "One or more products from the quotation have been deleted from the store and are currently "
 "unavailable. Please contact site admin for more information."
@@ -1743,17 +1850,47 @@ msgstr ""
 "एक या एक से अधिक उत्पादों उद्धरण से की दुकान से हटा दिया गया है और वर्तमान में अनुपलब्ध हैं। अधिक जानकारी के "
 "लिए साइट व्यवस्थापक से संपर्क करें।"
 
-#: templates/public/class-quoteup-single-product-modal.php:161
+#: templates/public/class-quoteup-single-product-modal.php:169
 msgid "Send Enquiry for"
 msgstr "के लिए पूछताछ भेजें"
 
-#: templates/public/class-quoteup-single-product-modal.php:202
+#: templates/public/class-quoteup-single-product-modal.php:211
 msgid "Unauthorized enquiry"
 msgstr "अनधिकृत जांच"
 
-#: templates/public/class-quoteup-single-product-modal.php:232
+#: templates/public/class-quoteup-single-product-modal.php:243
 msgid "Enquiry email sent successfully!"
 msgstr "पूछताछ ईमेल सफलतापूर्वक भेजा!"
+
+#~ msgid "Please select valid variation for all products."
+#~ msgstr "कृपया सभी उत्पादों के लिए मान्य भिन्नता का चयन करें।"
+
+#~ msgid "Note"
+#~ msgstr "टिप्पणी"
+
+#~ msgid ""
+#~ "When checked, sends enquiry email to 'Email Address' specified under Settings -> General"
+#~ msgstr "जब जाँच की, करने के लिए 'ईमेल एड्रेस' सेटिंग के तहत निर्दिष्ट भेजता जांच ईमेल -> सामान्य"
+
+#~ msgid " Button Label "
+#~ msgstr "बटन लेबल"
+
+#~ msgid "Quotation Approval/Rejection Page"
+#~ msgstr "कोटेशन अनुमोदन / अस्वीकृति पृष्ठ"
+
+#~ msgid ""
+#~ "WooCommerce plugin is not active. In order to make the 'QuoteUp' plugin work, you need to "
+#~ "install and activate WooCommerce first."
+#~ msgstr ""
+#~ "WooCommerce प्लगइन सक्रिय नहीं है। आदेश ' QuoteUp ' प्लगइन का काम करने के लिए, आप को स्थापित करने और "
+#~ "पहले WooCommerce को सक्रिय करने की जरूरत है।"
+
+#~ msgid "QuoteUp requires PHP VERSION 5.3 or greater. Please update your PHP."
+#~ msgstr "QuoteUp PHP संस्करण 5.3 या अधिक से अधिक की आवश्यकता है। अपने PHP अपडेट करें।"
+
+#~ msgid ""
+#~ "In order to make the 'QuoteUp' plugin work, Product Enquiry Pro needs to be deactivated."
+#~ msgstr "QuoteUp ' प्लगइन का काम करने के लिए, उत्पाद पूछताछ प्रो जरूरतों को निष्क्रिय किया जा सके।"
 
 #~ msgid "Display button only when 'Out of Stock'"
 #~ msgstr "प्रदर्शन बटन केवल जब 'स्टॉक से बाहर'"

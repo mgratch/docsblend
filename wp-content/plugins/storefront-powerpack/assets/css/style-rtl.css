@@ -1,6 +1,3 @@
-.sp-archive-hide-product-titles ul.products h3 {
-  display: none; }
-
 .sp-shop-alignment-left ul.products li.product {
   text-align: right; }
   .sp-shop-alignment-left ul.products li.product .star-rating,
@@ -53,7 +50,7 @@
   .single-product.sp-product-gallery-hidden div.product .summary,
   .single-product.sp-product-gallery-hidden.storefront-full-width-content div.product .summary {
     width: 100%;
-    float: none;
+    float: right;
     margin-right: 0;
     margin-left: 0; }
   .single-product.sp-product-gallery-stacked div.product .images,
@@ -61,7 +58,7 @@
   .single-product.sp-product-gallery-stacked.storefront-full-width-content div.product .images,
   .single-product.sp-product-gallery-stacked.storefront-full-width-content div.product .summary {
     width: 100%;
-    float: none;
+    float: right;
     margin-right: 0;
     margin-left: 0; }
   .single-product.sp-product-gallery-stacked div.product .images .thumbnails a.zoom {

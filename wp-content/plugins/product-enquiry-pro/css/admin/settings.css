@@ -16,16 +16,8 @@
     margin-bottom: 10px;
 }
 #ask_product_form fieldset {
-    /*    border: 1px solid #ddd;*/
     padding: 0 0.5em 0.5em;
     margin-bottom:3%;
-
-}
-
-#ask_product_form, #wquoteupfrm {
-    /*    background: none repeat scroll 0 0 #FFFFFF;*/
-    /*    border: 1px solid #EEEEEE;
-    padding: 1em;*/
 }
 
 .nav-tab:hover, .nav-tab:focus {
@@ -57,9 +49,6 @@
 }
 .clear {
     clear: both;
-}
-.license_div{
-    width:98%
 }
 
 
@@ -112,11 +101,6 @@ ul.etabs:after {
     color: inherit;
 }
 
-.nav-tab-active,.nav-tab-active:hover {
-    border-bottom: none;
-    background: none;
-    color: inherit;
-}
 .tab a:hover,
 .tab a.active {
     color: #961914;
@@ -165,22 +149,6 @@ ul.etabs:after {
     opacity: 1;
 }
 
-#ask_abt_product_panel input[type="text"]
-{
-    border-color: #AAAAAA;
-}
-
-#ask_abt_product_panel input[type="text"]:focus
-{
-    border-color: #5897FB;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-#ask_abt_product_panel label
-{
-    color: #111111;
-}
-
 .wdm_wpi_text
 {
     width: 45%;
@@ -188,21 +156,6 @@ ul.etabs:after {
 
 #ask_product_form select {
     width: 45%;
-}
-
-#ask_product_table{
-    width:100%;
-}
-
-#ask_product_table tr th{
-    height:30px;
-    width:30%;
-    text-align: left
-
-}
-
-#ask_product_table tr th{
-    padding:10px;
 }
 
 .email_error{
@@ -239,4 +192,9 @@ ul.etabs:after {
 
 #save_notice{
     margin-left: 1.1%;
+}
+
+.new_page_link{
+    font-size: 11px;
+    font-style: italic;
 }

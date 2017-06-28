@@ -1,44 +1,27 @@
 <?php
 
 /**
- * This file sets quote expired who meet the expiration date
+ * This file sets quote expired who meet the expiration date.
  */
-
-if (! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
-}
-
-function quoteupRegisterExpireQuotes()
-{
-    $timestamp = strtotime('tomorrow') - (get_option('gmt_offset')*3600);
-    // Make sure this event hasn't been scheduled
-    if (!wp_next_scheduled('quoteupExpireQuotes')) {
-        // Schedule the event
-        wp_schedule_event($timestamp, 'daily', 'quoteupExpireQuotes');
-    }
-}
-
-//Function will clear the cron on deactivation of plugin
-function quoteDeregisterExpireQuotes()
-{
-    wp_clear_scheduled_hook('quoteupExpireQuotes');
 }
 
 add_action('quoteupExpireQuotes', 'quoteupExpireQuotesCallback');
 
 /**
- * Function that actually expires quotes
+ * Function that actually expires quotes.
  */
 function quoteupExpireQuotesCallback()
 {
+    require_once QUOTEUP_PLUGIN_DIR.'/includes/class-quoteup-manage-history.php';
     global $wpdb, $quoteupManageHistory;
-    
+
     $today = current_time('Y-m-d');
     //Search all enquiries whose expiration date is last day or before
-    $table = $wpdb->prefix . 'enquiry_detail_new';
+    $table = $wpdb->prefix.'enquiry_detail_new';
     $enquiry_ids = $wpdb->get_col($wpdb->prepare("SELECT enquiry_id FROM $table WHERE DATE(expiration_date)  < %s AND DATE(expiration_date) IS NOT NULL ", $today));
 
-    
     if ($enquiry_ids) {
         $all_enquiries = implode(', ', $enquiry_ids);
         // Find all Enquries whose last status was either Sent, Saved or Approved.
@@ -48,7 +31,6 @@ function quoteupExpireQuotesCallback()
                 //Expire all such enquiries
                 $quoteupManageHistory->addQuoteHistory($singleEnquiryId, '-', 'Expired');
             }
-            
         }
     }
 }

@@ -3,11 +3,11 @@
  * Plugin Name:			Title Toggle for Storefront Theme
  * Plugin URI:			https://wordpress.org/plugins/storefront-title-toggle/
  * Description:			Hide titles on a per post/page basis. Must be using the Storefront theme.
- * Version:				1.2.2
+ * Version:				1.2.3
  * Author:				Wooassist
  * Author URI:			http://wooassist.com/
  * Requires at least:	4.0.0
- * Tested up to:		4.1.0
+ * Tested up to:		4.7.3
  *
  * Text Domain: storefront-title-toggle
  * Domain Path: /languages/
@@ -83,7 +83,7 @@ final class Storefront_Title_Toggle {
 		$this->token 			= 'storefront-title-toggle';
 		$this->plugin_url 		= plugin_dir_url( __FILE__ );
 		$this->plugin_path 		= plugin_dir_path( __FILE__ );
-		$this->version 			= '1.1.0';
+		$this->version 			= '1.2.3';
 
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 
@@ -257,8 +257,8 @@ final class Storefront_Title_Toggle {
 		// Add an nonce field so we can check for it later.
 		wp_nonce_field( 'woa_sf_title_toggle', 'woa_sf_title_toggle_nonce' );
 
-		$title 	= 	get_post_meta( $post->ID, 'woa_sf_title_toggle', true );
-		$meta 	= 	get_post_meta( $post->ID, 'woa_sf_meta_toggle', true );
+		$title = self::get_meta( $post->ID, 'woa_sf_title_toggle' );
+		$meta  = self::get_meta( $post->ID, 'woa_sf_meta_toggle' );
 
 		// start html content ?>
 			<p>
@@ -333,8 +333,8 @@ final class Storefront_Title_Toggle {
 		if ( ! is_object( $post ) )
 			return;
 
-		$title = get_post_meta( $post->ID, 'woa_sf_title_toggle', true );
-		$meta = get_post_meta( $post->ID, 'woa_sf_meta_toggle', true );
+		$title = self::get_meta( $post->ID, 'woa_sf_title_toggle' );
+		$meta  = self::get_meta( $post->ID, 'woa_sf_meta_toggle' );
 
 		if ( $title == 'true' ) {
 			remove_action( 'storefront_single_post', 'storefront_post_header' );
@@ -375,6 +375,27 @@ final class Storefront_Title_Toggle {
 		?>
 			<div class="margin-fix" style="height:0.618em"></div>
 		<?php
+	}
+
+	/**
+	 * Helper function to get the meta data.
+	 * added filter to set the default value of the checkbox
+	 *
+	 * @since 1.2.3
+	 * @return string	'true'/'false'
+	 */
+	function get_meta( $id, $key ) {
+
+		if ( ! $id || ! $key )
+			return;
+
+		// dynamic filter to set the default value of the meta
+		$value = apply_filters( $key . '_default', 'false', $id );
+
+		if ( $fetch = get_post_meta( $id, $key, true ) )
+			$value = $fetch;
+
+		return $value;
 	}
 
 } // End Class

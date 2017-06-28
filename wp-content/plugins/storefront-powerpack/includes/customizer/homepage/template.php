@@ -29,7 +29,7 @@ if ( ! function_exists( 'sp_homepage_product_categories_view_more' ) ) {
 	 * @return void
 	 */
 	function sp_homepage_product_categories_view_more() {
-		sp_homepage_product_section_view_more_button( 'sp_homepage_category_more_url', 'View more product categories' );
+		sp_homepage_product_section_view_more_button( 'sp_homepage_category_more_url', __( 'View more product categories', 'storefront-powerpack' ) );
 	}
 }
 
@@ -40,7 +40,7 @@ if ( ! function_exists( 'sp_homepage_recent_products_view_more' ) ) {
 	 * @return void
 	 */
 	function sp_homepage_recent_products_view_more() {
-		sp_homepage_product_section_view_more_button( 'sp_homepage_recent_products_more_url', 'View more new products' );
+		sp_homepage_product_section_view_more_button( 'sp_homepage_recent_products_more_url', __( 'View more new products', 'storefront-powerpack' ) );
 	}
 }
 
@@ -51,7 +51,7 @@ if ( ! function_exists( 'sp_homepage_featured_products_view_more' ) ) {
 	 * @return void
 	 */
 	function sp_homepage_featured_products_view_more() {
-		sp_homepage_product_section_view_more_button( 'sp_homepage_featured_products_more_url', 'View more featured products' );
+		sp_homepage_product_section_view_more_button( 'sp_homepage_featured_products_more_url', __( 'View more featured products', 'storefront-powerpack' ) );
 	}
 }
 
@@ -62,7 +62,7 @@ if ( ! function_exists( 'sp_homepage_top_rated_products_view_more' ) ) {
 	 * @return void
 	 */
 	function sp_homepage_top_rated_products_view_more() {
-		sp_homepage_product_section_view_more_button( 'sp_homepage_top_rated_products_more_url', 'View more popular products' );
+		sp_homepage_product_section_view_more_button( 'sp_homepage_top_rated_products_more_url', __( 'View more popular products', 'storefront-powerpack' ) );
 	}
 }
 
@@ -73,7 +73,7 @@ if ( ! function_exists( 'sp_homepage_on_sale_products_view_more' ) ) {
 	 * @return void
 	 */
 	function sp_homepage_on_sale_products_view_more() {
-		sp_homepage_product_section_view_more_button( 'sp_homepage_on_sale_products_more_url', 'View more products on sale' );
+		sp_homepage_product_section_view_more_button( 'sp_homepage_on_sale_products_more_url', __( 'View more products on sale', 'storefront-powerpack' ) );
 	}
 }
 
@@ -84,7 +84,7 @@ if ( ! function_exists( 'sp_homepage_best_selling_products_view_more' ) ) {
 	 * @return void
 	 */
 	function sp_homepage_best_selling_products_view_more() {
-		sp_homepage_product_section_view_more_button( 'sp_homepage_best_sellers_products_more_url', 'View more best selling products' );
+		sp_homepage_product_section_view_more_button( 'sp_homepage_best_sellers_products_more_url', __( 'View more best selling products', 'storefront-powerpack' ) );
 	}
 }
 

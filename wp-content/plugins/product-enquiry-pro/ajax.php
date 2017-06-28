@@ -1,11 +1,13 @@
 <?php
 
-if (! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
+if (!defined('DOING_AJAX')) {
+    return; // Exit if accessed directly
+}
 //Ajax for CSV Generation
-add_action('wp_ajax_wdm_return_rows', 'wdm_return_rows');
-// add_action('wp_ajax_nopriv_wdm_return_rows', 'wdm_return_rows');
+add_action('wp_ajax_wdm_return_rows', 'quoteupReturnRows');
 //Ajax to add products in enquiry cart
 add_action('wp_ajax_wdm_add_product_in_enq_cart', 'quoteupAddProductInEnqCart');
 add_action('wp_ajax_nopriv_wdm_add_product_in_enq_cart', 'quoteupAddProductInEnqCart');
@@ -26,12 +28,11 @@ add_action('wp_ajax_quoteupSubmitWooEnquiryForm', 'quoteupSubmitWooEnquiryForm')
 add_action('wp_ajax_nopriv_quoteupSubmitWooEnquiryForm', 'quoteupSubmitWooEnquiryForm');
 
 //Ajax to send reply to customer
-add_action('wp_ajax_wdmSendReply', 'wdmSendReply');
-add_action('wp_ajax_nopriv_wdmSendReply', 'wdmSendReply');
+add_action('wp_ajax_wdmSendReply', 'quoteupSendReply');
+add_action('wp_ajax_nopriv_wdmSendReply', 'quoteupSendReply');
 
 //Ajax to update customer data
 add_action('wp_ajax_modify_user_data', 'quoteupModifyUserQuoteData');
-
 
 /*
  * Ajax To set the global setting option of add_to_cart to individual product.
@@ -39,62 +40,140 @@ add_action('wp_ajax_modify_user_data', 'quoteupModifyUserQuoteData');
  */
 add_action('wp_ajax_wdm_set_add_to_cart_value', 'quoteupSetAddToCartValue');
 
-/**
+/*
  * Ajax to add product in Enquiry/Quote Cart
  */
 add_action('wp_ajax_wdm_trigger_add_to_enq_cart', 'wdmTriggerAddToEnqCart');
 add_action('wp_ajax_nopriv_wdm_trigger_add_to_enq_cart', 'wdmTriggerAddToEnqCart');
+/*
+ * Ajax call to fetch variation details and display those.
+ */
+add_action('wp_ajax_get_variations', 'getVariationsDropdown');
 
+add_action('wp_ajax_woocommerce_wpml_json_search_products_and_variations', array('Includes\Admin\QuoteupCreateDashboardQuotation', 'jsonSearchProductsAndVariations'));
+
+/**
+ * Ajax callback for adding products in cart.
+ *
+ * @return [type] [description]
+ */
 function wdmTriggerAddToEnqCart()
 {
     quoteupAddProductInEnqCart();
 }
 
-function displaymsg($message)
+function getVariationsDropdown()
 {
+    $variationData = $_POST['perProductDetail'];
+    $language = isset($variationData['language']) ? $variationData['language'] : '';
+    do_action('quoteup_change_lang', $language);
+    ob_start();
+    $productID = $variationData['productID'];
+    $count = $variationData['count'];
+    $variationID = $variationData['variationID'];
+    $productImage = $variationData['product_image'];
 
-    return $message;
+    if (isset($GLOBALS['product'])) {
+        $GLOBALS['oldProduct'] = $GLOBALS['product'];
+    }
+
+    //Defining a global variable here because quoteupVariationDropdown() needs a global variable $product
+    $GLOBALS[ 'product' ] = wc_get_product($productID);
+    /*
+     * Below WC 2.6, we also need global $post variable because it is used in variable.php
+     */
+    if (version_compare(WC_VERSION, '2.6', '<')) {
+        $GLOBALS[ 'post' ] = get_post($productID);
+    }
+    $product = $GLOBALS[ 'product' ];
+    // Get Available variations?
+    $get_variations = sizeof($product->get_children()) <= apply_filters('woocommerce_ajax_variation_threshold', 30, $product);
+    $available_variations = $get_variations ? $product->get_available_variations() : false;
+
+    /*
+     * we are using quoteupVariationDropdown() instead of woocommerce_variable_add_to_cart(). quoteupVariationDropdown() is just a copy of woocommerce_variable_add_to_cart() loading our template instead of woocommerce variable.php
+     *
+     * woocommerce_variable_add_to_cart() includes woocommerce/templates/single-product/add-to-cart/variable.php. This file has a form tag and dropdowns are shown in a form tag. Since we are already inside a table, form tag can not be used here and therefore, we are creating a div tag which is very similar to form tag created in variable.php
+     */
+    ?>
+    <div class="product">
+        <div id="variation-<?php echo $count ?>" class="variations_form cart" data-product_id="<?php echo absint($productID);
+    ?>" data-product_variations="<?php echo htmlspecialchars(json_encode($available_variations)) ?>">
+<?php
+            $variation = $variationData[ 'rawVariationAttributes' ];
+    quoteupVariationDropdown($count, $variationID, $productImage, $productID, $product, $variation);
+    ?>
+        </div>
+    </div>
+    <?php
+    $html = ob_get_clean();
+    echo json_encode($html);
+
+    //Reset product data
+    if (isset($GLOBALS['oldProduct'])) {
+        $GLOBALS['product'] = $GLOBALS['oldProduct'];
+    }
+
+    do_action('quoteup_reset_lang');
+    die;
+}
+
+/**
+ * Verify nonce for CSV generation.
+ *
+ * @return [type] [description]
+ */
+function checkSecurity()
+{
+    if (!wp_verify_nonce($_POST[ 'security' ], 'quoteup-nonce')) {
+        die('SECURITY_ISSUE');
+    }
+
+    if (!current_user_can('manage_options')) {
+        die('SECURITY_ISSUE');
+    }
 }
 
 /*
  * Callback for CSV generation ajax
  */
-if (! function_exists('wdm_return_rows')) {
-
-    function wdm_return_rows()
+if (!function_exists('quoteupReturnRows')) {
+    function quoteupReturnRows()
     {
-        if (! wp_verify_nonce($_POST[ 'security' ], 'quoteup-nonce')) {
-            die('SECURITY_ISSUE');
-        }
-
-        if (! current_user_can('manage_options')) {
-            die('SECURITY_ISSUE');
-        }
+        checkSecurity();
         global $wpdb;
         $ids = array();
 
         $arr = getarr($ids);
 
         $tel = '';
+        $dateFiels = '';
 
-        $form = get_option('wdm_form_data');
+        $form = quoteupSettings();
 
         if (isset($form[ 'enable_telephone_no_txtbox' ])) {
             $tel = $form[ 'enable_telephone_no_txtbox' ];
         }
 
-        $table   = $wpdb->prefix . 'enquiry_detail_new';
-        $table2  = $wpdb->prefix . 'enquiry_meta';
-        $qry     = array();
+        if (isset($form[ 'enable_date_field' ])) {
+            $dateFiels = $form[ 'enable_date_field' ];
+        }
 
-        $name    = apply_filters('pep_export_csv_customer_name_column', 'name');
-        $name    = apply_filters('quoteup_export_csv_customer_name_column', $name);
+        $table = $wpdb->prefix.'enquiry_detail_new';
+        $table2 = $wpdb->prefix.'enquiry_meta';
+        $qry = array();
 
-        $email   = apply_filters('pep_export_csv_customer_email_column', 'email');
-        $email   = apply_filters('quoteup_export_csv_customer_email_column', $email);
+        $name = apply_filters('pep_export_csv_customer_name_column', 'name');
+        $name = apply_filters('quoteup_export_csv_customer_name_column', $name);
 
-        $phone_number    = apply_filters('pep_export_csv_customer_telephone_column', 'phone_number');
-        $phone_number    = apply_filters('quoteup_export_csv_customer_telephone_column', $phone_number);
+        $email = apply_filters('pep_export_csv_customer_email_column', 'email');
+        $email = apply_filters('quoteup_export_csv_customer_email_column', $email);
+
+        $phone_number = apply_filters('pep_export_csv_customer_telephone_column', 'phone_number');
+        $phone_number = apply_filters('quoteup_export_csv_customer_telephone_column', $phone_number);
+
+        $date_label = apply_filters('pep_export_csv_customer_telephone_column', 'date_field');
+        $date_label = apply_filters('quoteup_export_csv_customer_telephone_column', $date_label);
 
         $subject = apply_filters('pep_export_csv_subject_column', 'subject');
         $subject = apply_filters('quoteup_export_csv_subject_column', $subject);
@@ -105,23 +184,27 @@ if (! function_exists('wdm_return_rows')) {
         $product_details = apply_filters('pep_export_csv_product_details_column', 'product_details');
         $product_details = apply_filters('quoteup_export_csv_product_details_column', $product_details);
 
-        $qry[]       = 'SELECT';
-        $columns[]   = 'enquiry_id';
-        $columns[]   = 'enquiry_date';
-        $columns[]   = 'enquiry_ip';
-        $columns[]   = $product_details;
-        $columns[]   = $name;
-        $columns[]   = $email;
+        $qry[] = 'SELECT';
+        $columns[] = 'enquiry_id';
+        $columns[] = 'enquiry_date';
+        $columns[] = 'enquiry_ip';
+        $columns[] = $product_details;
+        $columns[] = $name;
+        $columns[] = $email;
 
         if ($tel == 1) {
             $columns[] = $phone_number;
         }
 
-        $columns[]   = $subject;
-        $columns[]   = $message;
-        $meta_key    = array();
-        $sql         = 'SELECT distinct meta_key FROM ' . $table2;
-        $results     = $wpdb->get_results($sql);
+        if ($dateFiels == 1) {
+            $columns[] = $date_label;
+        }
+
+        $columns[] = $subject;
+        $columns[] = $message;
+        $meta_key = array();
+        $sql = 'SELECT distinct meta_key FROM '.$table2;
+        $results = $wpdb->get_results($sql);
 
         foreach ($results as $k => $v) {
             $meta_key[] = $v->meta_key;
@@ -129,13 +212,13 @@ if (! function_exists('wdm_return_rows')) {
         }
 
         $all_columns = implode(', ', $columns);
-        $qry[]       = $all_columns;
+        $qry[] = $all_columns;
 
         unset($columns);
         $columns = explode(',', $all_columns);
 
         array_walk($columns, 'quoteupTrimNamesOfAllColumns');
-        $array_of_default_columns = array( 'name', 'email', 'subject', 'message', 'product_details' );
+        $array_of_default_columns = array('name', 'email', 'subject', 'message', 'product_details', 'date_field');
         foreach ($array_of_default_columns as $single_default_name) {
             $key_to_be_removed = array_search($single_default_name, $columns);
             unset($columns[ $key_to_be_removed ]);
@@ -144,51 +227,74 @@ if (! function_exists('wdm_return_rows')) {
 
         $qry[] = "FROM $table ";
 
-        if (! empty($arr) && $arr != '') {
-            $qry[] = "WHERE $table.enquiry_id in ($arr)";
-        } elseif (isset($_POST[ 'status' ]) && 'all' != $_POST[ 'status' ]) {
-            $resultSet = getSqlStatus($_POST[ 'status' ]);
-            if (isset($resultSet)) {
-                $qry[] = "WHERE $table.enquiry_id in ($resultSet)";
-            }
-        }
+        $qry = appendConditionInQUery($qry, $table, $arr);
 
         $result = $wpdb->get_results(implode(' ', $qry));
 
-        $single_result   = forEachEnquiry($result, $columns);
-        $result          = forEachMetaValue($result, $meta_key, $table2);
+        $single_result = forEachEnquiry($result, $columns);
+        $result = forEachMetaValue($result, $meta_key, $table2);
 
-        $data    = array();
-        $data    = forEachProduct($result, $data);
+        $data = array();
+        $data = forEachProduct($result, $data);
 
         echo json_encode($data);
         unset($single_result);
         die();
     }
-
 }
 
 /**
- * This function gives sql query as per status
+ * This function is used to apped the where clause in query depending upon condition.
+ *
+ * @param [type] $qry [description]
+ *
+ * @return [type] [description]
+ */
+function appendConditionInQUery($qry, $table, $arr)
+{
+    $status = filter_var($_POST[ 'status' ], FILTER_SANITIZE_STRING);
+    if (!empty($arr) && $arr != '') {
+        $qry[] = "WHERE $table.enquiry_id in ($arr)";
+    } elseif (isset($status) && 'all' != $status) {
+        $resultSet = getSqlStatus($status);
+        if (isset($resultSet)) {
+            $qry[] = "WHERE $table.enquiry_id in ($resultSet)";
+        }
+    }
+
+    return $qry;
+}
+
+/**
+ * This function gives sql query as per status.
+ *
  * @return [type] [description]
  */
 function getSqlStatus($filter)
 {
     global $wpdb;
-    $tableName = $wpdb->prefix . 'enquiry_history';
+    $tableName = $wpdb->prefix.'enquiry_history';
 
     $sql = "SELECT s1.enquiry_id
                 FROM $tableName s1
                 LEFT JOIN $tableName s2 ON s1.enquiry_id = s2.enquiry_id
                 AND s1.id < s2.id
-                WHERE s2.enquiry_id IS NULL AND s1.status ='" . $filter . "'AND s1.enquiry_id > 0 AND s1.ID > 0";
+                WHERE s2.enquiry_id IS NULL AND s1.status ='".$filter."'AND s1.enquiry_id > 0 AND s1.ID > 0";
     $res = $wpdb->get_col($sql);
     if (isset($res)) {
-        $resultSet = join(',', $res);
+        $resultSet = implode(',', $res);
     }
+
     return $resultSet;
 }
 
+/**
+ * get all ids in array for CSV generation.
+ *
+ * @param [type] $ids [description]
+ *
+ * @return [type] [description]
+ */
 function getarr($ids)
 {
     if (isset($_POST[ 'ids' ])) {
@@ -203,46 +309,67 @@ function getarr($ids)
     return $arr;
 }
 
+/**
+ * Trim column names for CSV generation.
+ *
+ * @param [type] $ids [description]
+ *
+ * @return [type] [description]
+ */
 function quoteupTrimNamesOfAllColumns(&$array_item)
 {
     $array_item = trim($array_item);
 }
 
+/**
+ * This function is used to trace through each enquriy id for CSV generation.
+ *
+ * @param [type] $result  [description]
+ * @param [type] $columns [description]
+ *
+ * @return [type] [description]
+ */
 function forEachEnquiry($result, $columns)
 {
     foreach ($result as &$single_result) {
         $single_result->name = apply_filters('pep_export_csv_customer_name_data', $single_result->name);
         $single_result->name = apply_filters('quoteup_export_csv_customer_name_data', $single_result->name);
 
-        $single_result->email    = apply_filters('pep_export_csv_customer_email_data', $single_result->email);
-        $single_result->email    = apply_filters('quoteup_export_csv_customer_email_data', $single_result->email);
+        $single_result->email = apply_filters('pep_export_csv_customer_email_data', $single_result->email);
+        $single_result->email = apply_filters('quoteup_export_csv_customer_email_data', $single_result->email);
 
-        $single_result->subject  = apply_filters('pep_export_csv_subject_data', $single_result->subject);
-        $single_result->subject  = apply_filters('quoteup_export_csv_subject_data', $single_result->subject);
+        $single_result->subject = apply_filters('pep_export_csv_subject_data', $single_result->subject);
+        $single_result->subject = apply_filters('quoteup_export_csv_subject_data', $single_result->subject);
 
-        $single_result->message  = apply_filters('pep_export_csv_message_data', $single_result->message);
-        $single_result->message  = apply_filters('quoteup_export_csv_message_data', $single_result->message);
+        $single_result->message = apply_filters('pep_export_csv_message_data', $single_result->message);
+        $single_result->message = apply_filters('quoteup_export_csv_message_data', $single_result->message);
 
-        $single_result->product_details  = apply_filters('pep_export_csv_product_details_data', $single_result->product_details);
-        $single_result->product_details  = apply_filters('quoteup_export_csv_product_details_data', $single_result->product_details);
+        $single_result->product_details = apply_filters('pep_export_csv_product_details_data', $single_result->product_details);
+        $single_result->product_details = apply_filters('quoteup_export_csv_product_details_data', $single_result->product_details);
 
         foreach ($columns as $single_custom_column) {
-            $single_result->{$single_custom_column}  = apply_filters('pep_export_csv_' . $single_custom_column . '_data', $single_result->{$single_custom_column});
-            $single_result->{$single_custom_column}  = apply_filters('quoteup_export_csv_' . $single_custom_column . '_data', $single_result->{$single_custom_column});
+            $single_result->{$single_custom_column} = apply_filters('pep_export_csv_'.$single_custom_column.'_data', $single_result->{$single_custom_column});
+            $single_result->{$single_custom_column} = apply_filters('quoteup_export_csv_'.$single_custom_column.'_data', $single_result->{$single_custom_column});
         }
     }
-
-    return $single_result;
 }
 
+/**
+ * This function is used to get meta values for all enquiries for CSV.
+ *
+ * @param [type] $result   [description]
+ * @param [type] $meta_key [description]
+ * @param [type] $table2   [description]
+ *
+ * @return [type] [description]
+ */
 function forEachMetaValue($result, $meta_key, $table2)
 {
     global $wpdb;
     foreach ($result as $k => $v) {
         $id = $v->enquiry_id;
         foreach ($meta_key as $key => $value) {
-            $sql = $wpdb->prepare("SELECT meta_value FROM $table2 WHERE meta_key like %s AND enquiry_id = %s", $value, $id);
-            // $sql = "SELECT meta_value FROM $table2 WHERE meta_key like '$value' AND enquiry_id = $id";
+            $sql = $wpdb->prepare("SELECT meta_value FROM $table2 WHERE meta_key like %s AND enquiry_id = %d", $value, $id);
             $res = $wpdb->get_results($sql);
 
             if (count($res) == 1) {
@@ -257,26 +384,46 @@ function forEachMetaValue($result, $meta_key, $table2)
     return $result;
 }
 
+/**
+ * This function is used to get individual product details for all enquiries (CSV).
+ *
+ * @param [type] $result [description]
+ * @param [type] $data   [description]
+ *
+ * @return [type] [description]
+ */
 function forEachProduct($result, $data)
 {
     foreach ($result as $k => $v) {
         $dm = array();
         foreach ($v as $key => $val) {
             if ($key == 'product_details') {
-                $dt  = maybe_unserialize($val);
+                $dt = maybe_unserialize($val);
                 $val = '';
                 if ($dt == null) {
                     continue;
                 }
                 foreach ($dt as $dv) {
-                    $price   = html_entity_decode(strip_tags($dv[ 0 ][ 'price' ]));
-                    $price   = getSalePrice($price);
-                    $str     = '';
+                    $price = html_entity_decode(strip_tags($dv[ 0 ][ 'price' ]));
+                    $price = getSalePrice($price);
+                    $str = '';
                     if ($dv[ 0 ][ 'remark' ] != '') {
                         $str = "Remark: {$dv[ 0 ][ 'remark' ]}";
                     }
                     $val .= "{Name: {$dv[ 0 ][ 'title' ]};SKU: {$dv[ 0 ][ 'sku' ]};Quantity: {$dv[ 0 ][ 'quant' ]};Price: {$price};{$str}}\n";
                 }
+            }
+            if ($key == 'date_field') {
+                $dateField = '';
+                if (!empty($val) && $val != '0000-00-00 00:00:00') {
+                    $dateField = date('M d, Y', strtotime($val));
+                }
+
+                if (empty($dateField)) {
+                    $dateField = '-';
+                }
+
+                $val = $dateField;
             }
             $dm[ $key ] = $val;
         }
@@ -288,38 +435,55 @@ function forEachProduct($result, $data)
 }
 
 /**
+ * This function is used to convert variation name and value in required format
+ * array[variation name] = variation value;.
+ *
+ * @param [type] $variation_detail [description]
+ *
+ * @return [type] [description]
+ */
+function getNewVariation($variation_detail)
+{
+    foreach ($variation_detail as $individualVariation) {
+        $keyValue = explode(':', $individualVariation);
+        $keyValue[0] = stripslashes($keyValue[0]);
+        $keyValue[1] = stripcslashes($keyValue[1]);
+        $newVariation[trim($keyValue[0])] = trim($keyValue[1]);
+    }
+
+    return $newVariation;
+}
+
+function getAuthorMail()
+{
+    return isset($_POST['author_email']) ? filter_var($_POST['author_email'], FILTER_SANITIZE_EMAIL) : "";
+}
+
+/**
  * Callback for Add products to enquiry cart ajax.
  */
 function quoteupAddProductInEnqCart()
 {
-
-    if (! isset($_SESSION)) {
-        @session_start();
-    }
+    @session_start();
     $data = $_POST;
 
-    $product_id  = $_POST[ 'product_id' ];
-    $prod_quant  = $_POST[ 'product_quant' ];
-    $title   = get_the_title($product_id);
-    $remark  = isset($_POST[ 'remark' ]) ? $_POST[ 'remark' ] : '';
+    $product_id = filter_var($_POST[ 'product_id' ], FILTER_SANITIZE_NUMBER_INT);
+    $prod_quant = filter_var($_POST[ 'product_quant' ], FILTER_SANITIZE_NUMBER_INT);
+    $title = get_the_title($product_id);
+    $remark = isset($_POST[ 'remark' ]) ? $_POST[ 'remark' ] : '';
     $id_flag = 0;
     $counter = 0;
-    $authorEmail = $_POST['author_email'];
+    $authorEmail = getAuthorMail();
     $variation_id = $_POST['variation'];
-    $variation_detail ='';
+    $variation_detail = '';
 
     //Variable Product
-    if ($variation_id!='') {
-        $product = new WC_Product_Variation($variation_id);
-        $var_product = new WC_Product($variation_id);
-        $sku = $var_product->get_sku();
-        $variation_detail =  $_POST['variation_detail'];
-        foreach ($variation_detail as $individualVariation) {
-            $keyValue = explode(':', $individualVariation);
-            $newVariation[trim($keyValue[0])] = trim($keyValue[1]);
-        }
-        $variation_detail = $newVariation;
-        $price = $var_product->get_price();
+    if ($variation_id != '') {
+        $product = wc_get_product($variation_id);
+        $sku = $product->get_sku();
+        $variation_detail = $_POST['variation_detail'];
+        $variation_detail = getNewVariation($variation_detail);
+        $price = quoteupGetPriceToDisplay($product);
         $img = wp_get_attachment_url(get_post_thumbnail_id($variation_id));
         if ($img != '') {
             $img_url = $img;
@@ -327,31 +491,30 @@ function quoteupAddProductInEnqCart()
             $img_url = wp_get_attachment_url(get_post_thumbnail_id($product_id));
         }
     } else {
-        $product = new WC_Product($product_id);
-        // $price = $product->get_price_html();
-        $price = $product->get_price();
-         
+        $product = wc_get_product($product_id);
+        $price = quoteupGetPriceToDisplay($product);
+
         $sku = $product->get_sku();
         $img_url = wp_get_attachment_url(get_post_thumbnail_id($product_id));
     }
     //End of Variable Product
 
-    $flag_counter    = setFlag($product_id, $id_flag, $counter, $variation_detail, $variation_id);
-    $id_flag         = $flag_counter[ 'id_flag' ];
-    $counter         = $flag_counter[ 'counter' ];
+    $flag_counter = setFlag($product_id, $id_flag, $counter, $variation_detail, $variation_id);
+    $id_flag = $flag_counter[ 'id_flag' ];
+    $counter = $flag_counter[ 'counter' ];
 
     if ($id_flag == 0) {
         $product_array = array();
-        $prod            = array( 'id'   => $product_id,
-            'title'  => $title,
-            'price'  => $price,
-            'quant'  => $prod_quant,
-            'img'    => $img_url,
+        $prod = array('id' => $product_id,
+            'title' => $title,
+            'price' => $price,
+            'quant' => $prod_quant,
+            'img' => $img_url,
             'remark' => $remark,
             'sku' => $sku,
-            'variation_id'=> $variation_id,
-            'variation'=> $variation_detail,
-            'author_email' => $authorEmail);
+            'variation_id' => $variation_id,
+            'variation' => $variation_detail,
+            'author_email' => $authorEmail, );
         $product_array[] = apply_filters('wdm_filter_product_data', $prod, $data);
         if (isset($_SESSION[ 'wdm_product_count' ])) {
             if ($_SESSION[ 'wdm_product_count' ] != '') {
@@ -359,19 +522,54 @@ function quoteupAddProductInEnqCart()
             }
         }
         $_SESSION[ 'wdm_product_info' ][ $counter ] = $product_array;
-        if (isset($_SESSION[ 'wdm_product_count' ]) && ! empty($_SESSION[ 'wdm_product_count' ])) {
-            $_SESSION[ 'wdm_product_count' ] = $_SESSION[ 'wdm_product_count' ] + 1;
-        } else {
-            $_SESSION[ 'wdm_product_count' ] = 1;
-        }
+        getWpmlLanguage();
+        setProductCount();
     } else {
-        if ($remark != '') {
-            $_SESSION[ 'wdm_product_info' ][ $counter ][ 0 ][ 'remark' ] = $remark;
-        }
-        $_SESSION[ 'wdm_product_info' ][ $counter ][ 0 ][ 'quant' ] += $prod_quant;
-        $_SESSION[ 'wdm_product_info' ][ $counter ][ 0 ][ 'price' ] = $price;
+        setProductInfo($counter, $remark, $prod_quant, $price);
     }
     echo $_SESSION[ 'wdm_product_count' ];
+    die;
+}
+
+/**
+ * This function is used to set cart language if WPML is active.
+ *
+ * @return [type] [description]
+ */
+function getWpmlLanguage()
+{
+    $_SESSION[ 'wdm_cart_language' ] = $_POST['language'];
+}
+
+/**
+ * This function is used to update total count of products in cart.
+ *
+ * @param [int] $productCount [total number of products in cart]
+ */
+function setProductCount()
+{
+    if (isset($_SESSION[ 'wdm_product_count' ]) && !empty($_SESSION[ 'wdm_product_count' ]) && is_int($_SESSION[ 'wdm_product_count' ])) {
+        $_SESSION[ 'wdm_product_count' ] = $_SESSION[ 'wdm_product_count' ] + 1;
+    } else {
+        $_SESSION[ 'wdm_product_count' ] = 1;
+    }
+}
+
+/**
+ * This function is used to update remart, product quantity and price in cart.
+ *
+ * @param [type] $counter    [description]
+ * @param [type] $remark     [description]
+ * @param [type] $prod_quant [description]
+ * @param [type] $price      [description]
+ */
+function setProductInfo($counter, $remark, $prod_quant, $price)
+{
+    if ($remark != '') {
+        $_SESSION[ 'wdm_product_info' ][ $counter ][ 0 ][ 'remark' ] = $remark;
+    }
+    $_SESSION[ 'wdm_product_info' ][ $counter ][ 0 ][ 'quant' ] += $prod_quant;
+    $_SESSION[ 'wdm_product_info' ][ $counter ][ 0 ][ 'price' ] = $price;
 }
 
 /**
@@ -381,8 +579,8 @@ function quoteupAddProductInEnqCart()
  */
 function setFlag($product_id, $id_flag, $counter, $variation_detail, $variation_id)
 {
-    if (isset($_SESSION[ 'wdm_product_info' ]) && ! empty($_SESSION[ 'wdm_product_info' ])) {
-        for ($search = 0; $search < count($_SESSION[ 'wdm_product_info' ]); ++ $search) {
+    if (isset($_SESSION[ 'wdm_product_info' ]) && !empty($_SESSION[ 'wdm_product_info' ])) {
+        for ($search = 0; $search < count($_SESSION[ 'wdm_product_info' ]); ++$search) {
             if ($product_id == $_SESSION[ 'wdm_product_info' ][ $search ][ 0 ][ 'id' ]) {
                 if ($variation_detail != '' && $variation_id != '') {
                     if ($_SESSION['wdm_product_info'][$search][0]['variation'] == $variation_detail && $_SESSION['wdm_product_info'][$search][0]['variation_id'] == $variation_id) {
@@ -398,9 +596,27 @@ function setFlag($product_id, $id_flag, $counter, $variation_detail, $variation_
     }
 
     return array(
-        'id_flag'    => $id_flag,
-        'counter'    => $counter,
+        'id_flag' => $id_flag,
+        'counter' => $counter,
     );
+}
+
+/**
+ * THis function returns the quantity to update in session.
+ *
+ * @param [int] $pid [Product ID]
+ *
+ * @return [type] [description]
+ */
+function getQuantity()
+{
+    if (isset($_POST[ 'clickcheck' ]) && $_POST[ 'clickcheck' ] == 'remove') {
+        $quant = 0;
+    } else {
+        $quant = filter_var($_POST[ 'quantity' ], FILTER_SANITIZE_NUMBER_INT);
+    }
+
+    return $quant;
 }
 
 /**
@@ -409,28 +625,23 @@ function setFlag($product_id, $id_flag, $counter, $variation_detail, $variation_
 function quoteupUpdateEnqCartSession()
 {
     @session_start();
-    $status  = false;
-    $pid     = $_POST[ 'product_id' ];
-    $vid = $_POST['product_var_id'];
+    $pid = filter_var($_POST[ 'product_id' ], FILTER_SANITIZE_NUMBER_INT);
+    $vid = filter_var($_POST['product_var_id'], FILTER_SANITIZE_NUMBER_INT);
     $variation_detail = $_POST['variation'];
-    $status  = isSoldIndividually($pid);
-    if ($status == true) {
-        if (isset($_POST[ 'clickcheck' ]) && $_POST[ 'clickcheck' ] == 'remove') {
-            $quant = 0;
-        } else {
-            $quant = 1;
+    if (!empty($vid)) {
+        foreach ($variation_detail as $key => $value) {
+            $variation_detail[$key] = stripcslashes($value);
         }
-    } else {
-        $quant = $_POST[ 'quantity' ];
     }
+    $quant = getQuantity();
     if (isset($_POST[ 'remark' ])) {
-        $remark = $_POST[ 'remark' ];
+        $remark = stripcslashes($_POST[ 'remark' ]);
     }
-    $product = new WC_Product($pid);
-    $pri     = $product->get_price();
-    $price   = $product->get_price_html();
+    $product = wc_get_product($pid);
+    $pri = quoteupGetPriceToDisplay($product);
+    $price = $product->get_price_html();
     $priceStatus = get_post_meta($pid, '_enable_price', true);
-    for ($search = 0; $search < count($_SESSION[ 'wdm_product_info' ]); ++ $search) {
+    for ($search = 0; $search < count($_SESSION[ 'wdm_product_info' ]); ++$search) {
         if ($pid == $_SESSION[ 'wdm_product_info' ][ $search ][ 0 ][ 'id' ]) {
             if ($vid != '') {
                 if ($_SESSION['wdm_product_info'][$search][0]['variation_id'] == $vid && $_SESSION['wdm_product_info'][$search][0]['variation'] == $variation_detail) {
@@ -438,37 +649,40 @@ function quoteupUpdateEnqCartSession()
                         array_splice($_SESSION['wdm_product_info'], $search, 1);
                         $_SESSION['wdm_product_count'] = $_SESSION['wdm_product_count'] - 1;
                     } else {
-                        $product = new WC_Product($vid);
-                        $pri = $product->get_price();
+                        $product = wc_get_product($vid);
+                        $pri = quoteupGetPriceToDisplay($product);
                         $price = $product->get_price_html();
                         $price = wc_price($pri * $quant);
-                        if ($priceStatus=='yes') {
-                            echo json_encode(array( 'product_id' => $pid, 'variation_id' => $vid,  'variation_detail' => $variation_detail,  'price' => $price ));
+                        if ($priceStatus == 'yes') {
+                            echo json_encode(array('product_id' => $pid, 'variation_id' => $vid,  'variation_detail' => $variation_detail,  'price' => $price));
                         } else {
-                            echo json_encode(array( 'product_id' => $pid, 'variation_id' => $vid,  'variation_detail' => $variation_detail,  'price' => "-" ));
+                            echo json_encode(array('product_id' => $pid, 'variation_id' => $vid, 'variation_detail' => $variation_detail, 'price' => '-'));
                         }
                         $_SESSION['wdm_product_info'][$search][0]['quant'] = $quant;
-                        $_SESSION[ 'wdm_product_info' ][ $search ][ 0 ][ 'price' ]   = $pri;
+                        $_SESSION[ 'wdm_product_info' ][ $search ][ 0 ][ 'price' ] = $pri;
                         $_SESSION['wdm_product_info'][$search][0]['remark'] = $remark;
                     }
                 }
             } else {
                 if ($quant == 0) {
-                        array_splice($_SESSION['wdm_product_info'], $search, 1);
-                        $_SESSION['wdm_product_count'] = $_SESSION['wdm_product_count'] - 1;
+                    array_splice($_SESSION['wdm_product_info'], $search, 1);
+                    $_SESSION['wdm_product_count'] = $_SESSION['wdm_product_count'] - 1;
                 } else {
                     $price = wc_price($pri * $quant);
-                    if ($priceStatus=='yes') {
-                        echo json_encode(array( 'product_id' => $pid, 'price' => $price ));
+                    if ($priceStatus == 'yes') {
+                        echo json_encode(array('product_id' => $pid, 'price' => $price));
                     } else {
-                        echo json_encode(array( 'product_id' => $pid, 'price' => '-' ));
+                        echo json_encode(array('product_id' => $pid, 'price' => '-'));
                     }
                     $_SESSION['wdm_product_info'][$search][0]['quant'] = $quant;
-                    $_SESSION[ 'wdm_product_info' ][ $search ][ 0 ][ 'price' ]   = $pri;
+                    $_SESSION[ 'wdm_product_info' ][ $search ][ 0 ][ 'price' ] = $pri;
                     $_SESSION['wdm_product_info'][$search][0]['remark'] = $remark;
                 }
             }
         }
+    }
+    if ($_SESSION['wdm_product_count'] == 0) {
+        unset($_SESSION['wdm_cart_language']);
     }
     die();
 }
@@ -476,58 +690,57 @@ function quoteupUpdateEnqCartSession()
 /*
  * Callback for script migration ajax
  */
-if (! function_exists('migrateScript')) {
-
+if (!function_exists('migrateScript')) {
     function migrateScript()
     {
-        if (! wp_verify_nonce($_POST[ 'security' ], 'migratenonce')) {
+        if (!wp_verify_nonce($_POST[ 'security' ], 'migratenonce')) {
             die('SECURITY_ISSUE');
         }
 
-        if (! current_user_can('manage_options')) {
+        if (!current_user_can('manage_options')) {
             die('SECURITY_ISSUE');
         }
 
         $migrated = get_option('wdm_enquiries_migrated');
         if ($migrated != 1) {
             global $wpdb;
-            $enquiry_tbl         = $wpdb->prefix . 'enquiry_details';
-            $enquiry_tbl_new     = $wpdb->prefix . 'enquiry_detail_new';
-            $enquiry_meta_tbl    = $wpdb->prefix . 'enquiry_meta';
-            $enquiries           = $wpdb->get_results("SELECT * FROM {$enquiry_tbl}");
+            $enquiry_tbl = $wpdb->prefix.'enquiry_details';
+            $enquiry_tbl_new = $wpdb->prefix.'enquiry_detail_new';
+            $enquiry_meta_tbl = $wpdb->prefix.'enquiry_meta';
+            $enquiries = $wpdb->get_results("SELECT * FROM {$enquiry_tbl}");
             foreach ($enquiries as $enquiry) {
-                $pid     = $enquiry->product_id;
-                $pname   = $enquiry->product_name;
-                $psku    = $enquiry->product_sku;
-                $price   = get_post_meta($pid, '_regular_price', true);
-                $id      = $enquiry->enquiry_id;
-                $sql     = $wpdb->prepare("select meta_key,meta_value FROM {$enquiry_meta_tbl} WHERE enquiry_id=%s", $id);
-                $meta    = $wpdb->get_results($sql);
+                $pid = $enquiry->product_id;
+                $pname = $enquiry->product_name;
+                $psku = $enquiry->product_sku;
+                $price = get_post_meta($pid, '_regular_price', true);
+                $id = $enquiry->enquiry_id;
+                $sql = $wpdb->prepare("select meta_key,meta_value FROM {$enquiry_meta_tbl} WHERE enquiry_id=%d", $id);
+                $meta = $wpdb->get_results($sql);
 
-                $cust_name   = $enquiry->name;
-                $cust_email  = $enquiry->email;
-                $ip          = $enquiry->enquiry_ip;
-                $dt          = $enquiry->enquiry_date;
-                $sub         = $enquiry->subject;
-                $number      = $enquiry->phone_number;
-                $msg         = $enquiry->message;
-                $img_url     = wp_get_attachment_url(get_post_thumbnail_id($pid));
+                $cust_name = $enquiry->name;
+                $cust_email = $enquiry->email;
+                $ip = $enquiry->enquiry_ip;
+                $dt = $enquiry->enquiry_date;
+                $sub = $enquiry->subject;
+                $number = $enquiry->phone_number;
+                $msg = $enquiry->message;
+                $img_url = wp_get_attachment_url(get_post_thumbnail_id($pid));
 
-                $products_arr        = array();
-                $products_arr[][ 0 ] = array( 'id' => $pid, 'title' => $pname, 'quant' => 1, 'sku' => $psku, 'img' => $img_url, 'price' => $price, 'remark' => '' );
-                $record              = serialize($products_arr);
+                $products_arr = array();
+                $products_arr[][ 0 ] = array('id' => $pid, 'title' => $pname, 'quant' => 1, 'sku' => $psku, 'img' => $img_url, 'price' => $price, 'remark' => '');
+                $record = serialize($products_arr);
                 $wpdb->insert(
                     $enquiry_tbl_new,
-                    array( 'name'              => $cust_name,
-                    'email'              => $cust_email,
-                    'message'            => $msg,
-                    'phone_number'       => $number,
-                    'subject'            => $sub,
-                    'enquiry_ip'         => $ip,
-                    'product_details'    => $record,
-                    'enquiry_date'       => $dt,
+                    array('name' => $cust_name,
+                    'email' => $cust_email,
+                    'message' => $msg,
+                    'phone_number' => $number,
+                    'subject' => $sub,
+                    'enquiry_ip' => $ip,
+                    'product_details' => $record,
+                    'enquiry_date' => $dt,
                     ),
-                    array( '%s',
+                    array('%s',
                     '%s',
                     '%s',
                     '%s',
@@ -537,19 +750,19 @@ if (! function_exists('migrateScript')) {
                     '%s',
                     )
                 );
-                echo $insert_id          = $wpdb->insert_id;
+                echo $insert_id = $wpdb->insert_id;
 
                 foreach ($meta as $pair) {
-                    $key     = $pair->meta_key;
-                    $value   = $pair->meta_value;
+                    $key = $pair->meta_key;
+                    $value = $pair->meta_value;
                     $wpdb->insert(
                         $enquiry_meta_tbl,
                         array(
                         'enquiry_id' => $insert_id,
-                        'meta_key'   => $key,
+                        'meta_key' => $key,
                         'meta_value' => $value,
                         ),
-                        array( '%d',
+                        array('%d',
                         '%s',
                         '%s',
                         )
@@ -558,32 +771,30 @@ if (! function_exists('migrateScript')) {
             }
             update_option('wdm_enquiries_migrated', 1);
 
-            $table_name          = $wpdb->prefix . "enquiry_history";
-            $enquiryDetailTable  = $wpdb->prefix . "enquiry_detail_new";
-            $sql                 = "SELECT enquiry_id,enquiry_date FROM  $enquiryDetailTable WHERE  enquiry_id NOT IN (SELECT enquiry_id FROM $table_name)";
-            $oldEnquiryIDs       = $wpdb->get_results($sql, ARRAY_A);
+            $table_name = $wpdb->prefix.'enquiry_history';
+            $enquiryDetailTable = $wpdb->prefix.'enquiry_detail_new';
+            $sql = "SELECT enquiry_id,enquiry_date FROM  $enquiryDetailTable WHERE  enquiry_id NOT IN (SELECT enquiry_id FROM $table_name)";
+            $oldEnquiryIDs = $wpdb->get_results($sql, ARRAY_A);
             foreach ($oldEnquiryIDs as $enquiryID) {
-                $enquiry     = $enquiryID[ 'enquiry_id' ];
-                $date        = $enquiryID[ 'enquiry_date' ];
-                $table_name  = $wpdb->prefix . "enquiry_history";
+                $enquiry = $enquiryID[ 'enquiry_id' ];
+                $date = $enquiryID[ 'enquiry_date' ];
+                $table_name = $wpdb->prefix.'enquiry_history';
                 $performedBy = null;
                 $wpdb->insert(
                     $table_name,
                     array(
-                    'enquiry_id'     => $enquiry,
-                    'date'           => $date,
-                    'message'        => '-',
-                    'status'         => "Requested",
-                    'performed_by'   => $performedBy,
+                    'enquiry_id' => $enquiry,
+                    'date' => $date,
+                    'message' => '-',
+                        'status' => 'Requested',
+                    'performed_by' => $performedBy,
                     )
                 );
             }
         }
 
-
         die();
     }
-
 }
 
 /**
@@ -595,67 +806,145 @@ function quoteupValidateNonce()
     die();
 }
 
+function addLanguageToEnquiryMeta($enquiryID, $metaKey, $currentLocale)
+{
+    global $wpdb;
+    $metaTbl = $wpdb->prefix.'enquiry_meta';
+
+    if (isset($_POST['globalEnquiryID']) && $_POST['globalEnquiryID'] != 0) {
+        $wpdb->update(
+            $metaTbl,
+            array(
+                'meta_value' => $currentLocale,
+                ),
+            array(
+                    'enquiry_id' => $_POST['globalEnquiryID'],
+                    'meta_key' => $metaKey,
+                    ),
+            array(
+                '%s',
+                ),
+            array('%d', '%s')
+        );
+    } else {
+        $wpdb->insert(
+            $metaTbl,
+            array(
+            'enquiry_id' => $enquiryID,
+            'meta_key' => $metaKey,
+            'meta_value' => $currentLocale,
+            ),
+            array(
+            '%d',
+            '%s',
+            '%s',
+            )
+        );
+    }
+}
+
+
+function addEnquiryMeta($enquiryID, $metaKey, $metaValue)
+{
+    global $wpdb;
+    $metaTbl = $wpdb->prefix.'enquiry_meta';
+
+    if (isset($_POST['globalEnquiryID']) && $_POST['globalEnquiryID'] != 0) {
+        $wpdb->update(
+            $metaTbl,
+            array(
+                'meta_value' => $metaValue,
+                ),
+            array(
+                    'enquiry_id' => $_POST['globalEnquiryID'],
+                    'meta_key' => $metaKey,
+                    ),
+            array(
+                '%s',
+                ),
+            array('%d', '%s')
+        );
+    } else {
+        $wpdb->insert(
+            $metaTbl,
+            array(
+            'enquiry_id' => $enquiryID,
+            'meta_key' => $metaKey,
+            'meta_value' => $metaValue,
+            ),
+            array(
+            '%d',
+            '%s',
+            '%s',
+            )
+        );
+    }
+}
+
 /**
  * Callback for submitting enquiry form ajax.
  */
 function quoteupSubmitWooEnquiryForm()
 {
     @session_start();
-
-    if (isset($_POST[ 'security' ]) && wp_verify_nonce($_POST[ 'security' ], 'nonce_for_enquiry')
-    ) {
-        global $wpdb;
-        $data_obtained_from_form = $_POST;
-        $form_data_for_mail      = json_encode($data_obtained_from_form);
-        $name                    = wp_kses($_POST[ 'custname' ], array());
-        $email                   = $_POST[ 'txtemail' ];
-        $phone                   = phoneNumber();
-        $subject                 = '';
-        $authorEmail             = '';
+    if (isset($_POST[ 'security' ]) && wp_verify_nonce($_POST[ 'security' ], 'nonce_for_enquiry')) {
+        $form_data = quoteupSettings();
+        if (isset($form_data['enable_google_captcha']) && $form_data['enable_google_captcha'] == 1) {
+            $secretKey = $form_data[ 'google_secret_key' ];
+            $response= isset($_POST["captcha"])?$_POST["captcha"] : '';
+            $verify=file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secretKey}&response={$response}");
+            $captcha_success=json_decode($verify);
+            if (!$captcha_success->success) {
+                //This user was not verified by recaptcha.
+                echo json_encode(
+                    array(
+                    'status'     => 'failed',
+                    'message'    => __('could not be verified by captcha', 'quoteup'),
+                    )
+                );
+                die();
+            }
+        }
+        global $wpdb, $quoteup;
+        $name = wp_kses($_POST[ 'custname' ], array());
+        $email = filter_var($_POST[ 'txtemail' ], FILTER_SANITIZE_EMAIL);
+        $phone = quoteupPhoneNumber();
+        $dateField = quoteupDateField();
+        $subject = '';
+        $authorEmail = '';
         if (isset($_POST[ 'txtsubject' ])) {
             $subject = wp_kses($_POST[ 'txtsubject' ], array());
+            $subject = stripcslashes($subject);
+            $subject = (strlen($subject) > 50) ? substr($subject, 0, 47).'...' : $subject;
         }
 
-        $product_table   = '';
-        $msg             = wp_kses($_POST[ 'txtmsg' ], array());
-        $form_data       = get_option('wdm_form_data');
+        $validMedia = validateAttachField($quoteup);
 
-
-        $product_table_and_details   = emailAndDbDataOfProducts($form_data, $product_table);
-        $product_details             = setProductDetails($product_table_and_details);
-        if (isset($product_table_and_details[ 'product_table' ])) {
-            $product_table = $product_table_and_details[ 'product_table' ];
-        } else {
-            $product_table = '';
-        }
-
-        if (isset($product_table_and_details[ 'customer_product_table' ])) {
-            $customer_product_table = $product_table_and_details[ 'customer_product_table' ];
-        } else {
-            $customer_product_table = '';
-        }
-
+        $msg = wp_kses($_POST[ 'txtmsg' ], array());
+        $msg = stripcslashes($msg);
+        $product_table_and_details = getEmailAndDbDataOfProducts($form_data);
+        $product_details = setProductDetails($product_table_and_details);
         $authorEmail = setAuthorEmail($product_table_and_details);
-
         $address = getEnquiryIP();
-
-        $type    = 'Y-m-d H:i:s';
-        $date    = current_time($type);
-        $tbl     = $wpdb->prefix . 'enquiry_detail_new';
+        $type = 'Y-m-d H:i:s';
+        $date = current_time($type);
+        $tbl = $wpdb->prefix.'enquiry_detail_new';
 
         if ($wpdb->insert(
             $tbl,
             array(
-            'name'               => $name,
-            'email'              => $email,
-            'phone_number'       => $phone,
-            'subject'            => $subject,
-            'enquiry_ip'         => $address,
-            'product_details'    => $product_details,
-            'message'            => $msg,
-            'enquiry_date'       => $date,
+            'name' => $name,
+            'email' => $email,
+            'phone_number' => $phone,
+            'subject' => $subject,
+            'enquiry_ip' => $address,
+            'product_details' => $product_details,
+            'message' => $msg,
+            'enquiry_date' => $date,
+            'date_field' => $dateField,
             ),
             array(
+            '%s',
             '%s',
             '%s',
             '%s',
@@ -667,6 +956,7 @@ function quoteupSubmitWooEnquiryForm()
             )
         )
         ) {
+            $enquiryID = $wpdb->insert_id;
             do_action('mpe_form_entry_added_in_db', $wpdb->insert_id);
             do_action('quoteup_form_entry_added_in_db', $wpdb->insert_id);
             do_action('pep_form_entry_added_in_db', $wpdb->insert_id);
@@ -675,56 +965,96 @@ function quoteupSubmitWooEnquiryForm()
             do_action('quoteup_add_custom_field_in_db', $wpdb->insert_id);
             do_action('pep_add_custom_field_in_db', $wpdb->insert_id);
 
-            $blg_name        = get_option('blogname');
-            $admin_emails    = array();
-            $admin_subject   = '';
+            deleteDirectoryIfExists($enquiryID);
+            uploadAttachedFile($quoteup, $validMedia, $enquiryID);
 
-            $email_data = get_option('wdm_form_data');
-            if ($email_data[ 'user_email' ] != '') {
-                $admin_emails = explode(',', $email_data[ 'user_email' ]);
-            }
-            $admin_emails = array_map('trim', $admin_emails);
 
-            //Send email to admin only if 'Send mail to Admin' settings is checked
-            if (isset($email_data[ 'send_mail_to_admin' ]) && $email_data[ 'send_mail_to_admin' ] == 1) {
-                $admin = get_option('admin_email');
-                if (! in_array($admin, $admin_emails)) {
-                    $admin_emails[] = $admin;
-                }
-            }
+            //add Locale in enquiry meta
+            addLanguageToEnquiryMeta($enquiryID, 'enquiry_lang_code', $_POST['wdmLocale']);
+            addLanguageToEnquiryMeta($enquiryID, 'quotation_lang_code', $_POST['wdmLocale']);
+            //End of locale insertion
+            
+            addEnquiryMeta($enquiryID, '_unread_enquiry', 'yes');
 
-            //Send email to author only if 'Send mail to Author' settings is checked
-            if (isset($email_data[ 'send_mail_to_author' ]) && $email_data[ 'send_mail_to_author' ] == 1) {
-                if (!empty($authorEmail)) {
-                    $admin_emails = array_merge($admin_emails, $authorEmail);
-                }
-            }
-
-            $wdm_sitename    = '[' . trim(get_bloginfo('name')) . '] ';
-            $admin_subject   = adminSubject($subject, $email_data, $wdm_sitename);
-            $admin_emails    = array_unique($admin_emails);
-
-            if (empty($admin_emails)) {
-                return;
-            }
-
-            foreach ($admin_emails as $admin_email) {
-                forEachAdminEmails($admin_email, $blg_name, $form_data_for_mail, $product_table, $email, $name, $admin_subject);
-            }
-            do_action('wdm_after_send_admin_email');
-
-            sendCopyIfChecked($name, $blg_name, $form_data_for_mail, $admin_subject, $email, $customer_product_table);
-
-            $_SESSION[ 'wdm_product_info' ]  = '';
+            $emailObject = Includes\Frontend\SendEnquiryMail::getInstance($enquiryID, $authorEmail, $subject);
+            do_action('quoteup_send_enquiry_email', $emailObject);
+            $_SESSION[ 'wdm_product_info' ] = '';
             $_SESSION[ 'wdm_product_count' ] = 0;
+            unset($_SESSION['wdm_cart_language']);
             unset($_SESSION[ 'wdm_product_info' ]);
         }
     }
-    //Sending output to screen so that browsers other than Chrome wait till response received from the server.
-    echo 'COMPLETED';
+    echo json_encode(
+        array(
+        'status'     => 'COMPLETED',
+        'message'    => 'COMPLETED',
+        )
+    );
     die();
 }
 
+/**
+ * This function is used to validate files if attach field is activated.
+ * @param  [type] $quoteup [description]
+ * @return [type]          [description]
+ */
+function validateAttachField($quoteup)
+{
+    $validMedia = false;
+    if (isset($_FILES) && !empty($_FILES)) {
+        $validMedia = $quoteup->QuoteupFileUpload->validateFileUpload();
+    }
+    return $validMedia;
+}
+
+/**
+ * This function is used to delete existing folder of files if exists
+ * @param  int $enquiryID enquiry id of current enquiry
+ */
+function deleteDirectoryIfExists($enquiryID)
+{
+    $upload_dir = wp_upload_dir();
+    $path = $upload_dir[ 'basedir' ].'/QuoteUp_Files/';
+    $files = glob($path.$enquiryID.'/*'); // get all file names
+    foreach ($files as $file) { // iterate files
+        if (is_file($file)) {
+            unlink($file); // delete file
+        }
+    }
+}
+
+/**
+ * This function is used to upload files if attach field is activated
+ * @param  obejct $quoteup    Global object for classes
+ * @param  boolean $validMedia true if media is valid
+ * @param  int $enquiryID  enquiry id of current enquiry
+ * @return [type]             [description]
+ */
+function uploadAttachedFile($quoteup, $validMedia, $enquiryID)
+{
+    $success = true;
+    if (isset($_FILES) && !empty($_FILES) && $validMedia) {
+        $success =  $quoteup->QuoteupFileUpload->quoteupUploadFiles($enquiryID);
+        if (!$success) {
+            echo json_encode(
+                array(
+                'status'     => 'failed',
+                'message'    => __('Some issue with file upload', 'quoteup'),
+                )
+            );
+            die();
+        }
+    }
+}
+
+
+
+
+/**
+ * This function is used to set author mail.
+ *
+ * @param [type] $product_table_and_details [description]
+ */
 function setAuthorEmail($product_table_and_details)
 {
     if (isset($product_table_and_details[ 'authorEmail' ])) {
@@ -742,10 +1072,10 @@ function setAuthorEmail($product_table_and_details)
  *
  * @return [type] [description]
  */
-function phoneNumber()
+function quoteupPhoneNumber()
 {
     if (isset($_POST[ 'txtphone' ])) {
-        $phone = $_POST[ 'txtphone' ];
+        $phone = filter_var($_POST[ 'txtphone' ], FILTER_SANITIZE_NUMBER_INT);
     } else {
         $phone = '';
     }
@@ -754,246 +1084,143 @@ function phoneNumber()
 }
 
 /**
+ * set Date Field Value
+ * sets Date field value if entered by customer or keeps it blank.
+ *
+ * @return [type] [description]
+ */
+function quoteupDateField()
+{
+    if (isset($_POST[ 'txtdate' ])) {
+        $dateField = $_POST[ 'txtdate' ];
+        if (!empty($dateField)) {
+            $dateField = date('Y-m-d', strtotime($dateField));
+        }
+    } else {
+        $dateField = null;
+    }
+
+    return $dateField;
+}
+
+/**
+ * This function is used to get img url of product.
+ *
+ * @param [type] $img [description]
+ *
+ * @return [type] [description]
+ */
+function getImgUrl($img, $product_id)
+{
+    if ($img != '') {
+        $img_url = $img;
+    } else {
+        $img_url = wp_get_attachment_url(get_post_thumbnail_id($product_id));
+    }
+
+    return $img_url;
+}
+
+/**
+ * This function is used to get variation details of the product.
+ *
+ * @param [type] $variation_detail [description]
+ *
+ * @return [type] [description]
+ */
+function getVariationDetails($variation_detail)
+{
+    $variation_detail = explode(",", $variation_detail);
+    foreach ($variation_detail as $individualVariation) {
+        $keyValue = explode(':', $individualVariation);
+        $newVariation[trim($keyValue[0])] = trim($keyValue[1]);
+    }
+
+    return $newVariation;
+}
+
+/**
  * Returns email content to be sent to customer and admin. It also returns content
  * to be saved in the database. Checks whether multi product enquiry mode is enabled
- * or not and returns data accordingly
+ * or not and returns data accordingly.
  *
  * @param [array] $form_data     [settings stored by admin]
  * @param [type]  $product_table [description]
- *
  */
-function emailAndDbDataOfProducts($form_data, $product_table)
+function getEmailAndDbDataOfProducts($form_data)
 {
     @session_start();
-    $product_details         = '';
-    $product_table           = '';
-    $customer_product_table  = '';
+    $product_details = '';
     $authorEmail = array();
     if (isset($form_data[ 'enable_disable_mpe' ]) && $form_data[ 'enable_disable_mpe' ] == 1) {
-        $product_details = serialize($_SESSION[ 'wdm_product_info' ]);
-
-        $product_table .= "<tr>
-                                    <th colspan='2'><h3>". __('Products', 'quoteup') ."</h3></th>
-                                    </tr>
-                                    <tr>
-                                    <td colspan='2'>
-                                    <table style='width: 100%;' cellspacing='0' cellpadding='0'>
-                                    <tbody><tr>
-                                    <td style='background:none;border: 1px solid #999999;border-width:1px 0 0 0;height:1px;width:100%;margin:0px 0px 0px 0px;padding-top: 0;padding-bottom: 0;'>&nbsp;</td>
-                                    </tr>
-                                    </tbody>
-                                    </table>
-                                    </td>
-                                    </tr>";
-        $customer_product_table = $product_table;
+        $product_details = getProductDetails();
         foreach ($_SESSION[ 'wdm_product_info' ] as $arr) {
-            $combined_table          = forEachProductInfo($arr, $product_table, $customer_product_table);
             array_push($authorEmail, $arr[0]['author_email']);
-            $product_table           = $combined_table[ 'admin_product_table' ];
-            $customer_product_table  = $combined_table[ 'customer_product_table' ];
         }
     } else {
-        $product_id  = $_POST[ 'product_id' ];
-        $prod_quant  = $_POST[ 'product_quant' ];
-        $title   = get_the_title($product_id);
-        $prod_permalink  = $_POST[ 'product_url' ];
-        $remark  = isset($_POST[ 'remark' ]) ? $_POST[ 'remark' ] : '';
-        $id_flag = 0;
-        $counter = 0;
-        $variation_id = $_POST['variation_id'];
-        $variation_detail ='';
+        $product_id = $_POST[ 'product_id' ];
+        $prod_quant = filter_var($_POST[ 'product_quant' ], FILTER_SANITIZE_NUMBER_INT);
+        $title = get_the_title($product_id);
+        $variation_id = filter_var($_POST['variation_id'], FILTER_SANITIZE_NUMBER_INT);
+        $variation_detail = '';
         $authorEmail = array();
         array_push($authorEmail, isset($_POST[ 'uemail' ]) ? $_POST[ 'uemail' ] : '');
 
     //Variable Product
-        if ($variation_id!='') {
-            $product = new WC_Product_Variation($variation_id);
-            $var_product = new WC_Product($variation_id);
-            $sku = $var_product->get_sku();
-            $variation_detail =  $_POST['variation_detail'];
-            $price = $var_product->get_price();
-            $img = wp_get_attachment_url(get_post_thumbnail_id($variation_id));
-            if ($img != '') {
-                $img_url = $img;
-            } else {
-                $img_url = wp_get_attachment_url(get_post_thumbnail_id($product_id));
-            }
-            foreach ($variation_detail as $individualVariation) {
-                $keyValue = explode(':', $individualVariation);
-                $newVariation[trim($keyValue[0])] = trim($keyValue[1]);
-            }
-
-            $variation_detail = $newVariation;
-            $variationString ="";
-            foreach ($variation_detail as $attributeName => $attributeValue) {
-                if (!empty($variationString)) {
-                    $variationString .= ",";
-                }
-                $variationString .= "<b> ".wc_attribute_label($attributeName)."</b> : ".$attributeValue;
-            }
-        } else {
-            $product = new WC_Product($product_id);
-            // $price = $product->get_price_html();
+        if ($variation_id != '') {
+            $product = wc_get_product($variation_id);
+            $sku = $product->get_sku();
+            $variation_detail = $_POST['variation_detail'];
             $price = $product->get_price();
-         
+            $img = wp_get_attachment_url(get_post_thumbnail_id($variation_id));
+            $img_url = getImgUrl($img, $product_id);
+            $variation_detail = getVariationDetails($variation_detail);
+        } else {
+            $product = wc_get_product($product_id);
+            $enable_price = get_post_meta($product_id, '_enable_price', true);
+            $price = $product->get_price();
             $sku = $product->get_sku();
             $img_url = wp_get_attachment_url(get_post_thumbnail_id($product_id));
         }
     //End of Variable Product
-        $enable_price    = get_post_meta($product_id, '_enable_price', true);
-        $prod[][ 0 ]     = array( 'id'   => $product_id,
-            'title'  => $title,
-            'price'  => $price,
-            'quant'  => $prod_quant,
-            'img'    => $img_url,
+        $enable_price = get_post_meta($product_id, '_enable_price', true);
+        $prod[][ 0 ] = array('id' => $product_id,
+            'title' => $title,
+            'price' => $price,
+            'quant' => $prod_quant,
+            'img' => $img_url,
             'remark' => '',
-            'sku' => $sku ,
-                        'variation_id' =>$variation_id,
-            'variation' =>$variation_detail);
-        if ($price == '') {
-            $price = 0;
-        }
-
-
-        $product_table           = "<tr>
-                            <th style='width:25%;text-align:left'>". __('Product Name', 'quoteup') ."</th>
-                            <td style='width:75%'>:<a href='{$prod_permalink}'>{$title}</a></td>
-                            </tr>";
-        if (!empty($variationString)) {
-            $product_table.=    "<tr>
-                            <th style='width:25%;text-align:left'>". __('Variation', 'quoteup') ."</th>
-                            <td style='width:75%'>:{$variationString}</td>
-                            </tr>";
-        }
-
-
-        $product_table.=    "<tr>
-                            <th style='width:25%;text-align:left'>". __('Product Price', 'quoteup') ."</th>
-                            <td style='width:75%'>:{$price}</td>
-                            </tr>
-                            ";
-        $customer_product_table  = "<tr>
-                            <th style='width:25%;text-align:left'>".__('Product Name', 'quoteup') ."</th>
-                            <td style='width:75%'>:<a href='{$prod_permalink}'>{$title}</a></td>
-                            </tr>";
-
-        if (!empty($variationString)) {
-            $customer_product_table.=    "<tr>
-                            <th style='width:25%;text-align:left'>". __('Variation', 'quoteup') ."</th>
-                            <td style='width:75%'>:{$variationString}</td>
-                            </tr>";
-        }
-
-        if ($enable_price != 'no') {
-            $customer_product_table .= "<tr>
-                            <th style='width:25%;text-align:left'>". __('Product Price', 'quoteup') ."</th>
-							<td style='width:75%'>:{$price}</td>
-                            </tr>
-                            ";
-        }
-
+            'sku' => $sku,
+            'variation_id' => $variation_id,
+            'variation' => $variation_detail, );
 
         $product_details = serialize($prod);
     }
 
     return array(
-        'product_details'        => $product_details,
-        'product_table'          => $product_table,
-        'customer_product_table' => $customer_product_table,
-        'authorEmail'            => $authorEmail,
+        'product_details' => $product_details,
+        'authorEmail' => $authorEmail,
     );
 }
 
-function forEachProductInfo($arr, $product_table, $customer_product_table)
+
+function getProductDetails()
 {
-    foreach ($arr as $element) {
-        $id                  = $element[ 'id' ];
-        $url                 = get_permalink($id);
-        $product             = new WC_Product($id);
-        $sku                 = $product->get_sku();
-        if ($element['variation_id'] != '') {
-            $product             = new WC_Product($element['variation_id']);
-            $variation_sku                 = $product->get_sku();
-            if (!empty($variation_sku)) {
-                $sku                 = $variation_sku;
-            }
-        }
-        $enable_price        = get_post_meta($id, '_enable_price', true);
-        $customer_prod_price = ($enable_price == 'no') ? '-' : wc_price($element[ 'price' ]);
-        $product_table .= "<tr>
-                                    <th colspan='2' style='text-align: justify;'><a href='{$url}'>{$element[ 'title' ]}</a>:</th>
-                                    </tr>
-                                    <tr>
-                                    <td colspan='2'>
-                                    <table border='1' cellspacing='0' cellpadding='10' style='text-align: center; border-color: #ddd; width: 60%;'>
-                                    <tr>
-                                    <th>". __('Price', 'quoteup') ."</th>
-                                    <th>". __('Quantity', 'quoteup') ."</th>
-                                    <th>". __('Expected Price', 'quoteup') ."</th>
-                                    <th>". __('SKU', 'quoteup') ."</th>";
-            $product_table .="<th>". __('Variation', 'quoteup') ."</th>";
-
-                                $product_table .="</tr>
-                                    <tr>
-                                    <td>" . wc_price($element[ 'price' ]) . "</td>
-                                    <td>{$element[ 'quant' ]}</td>
-                                    <td>{$element[ 'remark' ]}</td>
-                                    <td>{$sku}</td>";
-        if ($element['variation'] != '') {
-            $variationString = "";
-            foreach ($element['variation'] as $attributeName => $attributeValue) {
-                            $variationString .= "<br>".wc_attribute_label($attributeName).":".$attributeValue;
-            }
-            $product_table .="<td>{$variationString}</td>";
-                                    
+    @session_start();
+    $data = array();
+    foreach ($_SESSION[ 'wdm_product_info' ] as $key => $value) {
+        if ($value[0]['variation_id'] != '') {
+            $product = wc_get_product($value[0]['variation_id']);
+            $price = $product->get_price();
         } else {
-            $product_table .="<td>-</td>";
+            $product = wc_get_product($value[0]['id']);
+            $price = $product->get_price();
         }
-
-                                $product_table .="</tr>
-                                    </table>
-                                    </td>
-                                    </tr>";
-        $customer_product_table .= "<tr>
-                                    <th colspan='2' style='text-align: justify;'><a href='{$url}'>{$element[ 'title' ]}</a>:</th>
-                                    </tr>
-                                    <tr>
-                                    <td colspan='2'>
-                                    <table border='1' cellspacing='0' cellpadding='10' style='text-align: center; border-color: #ddd; width: 60%;'>
-                                    <tr>
-                                    <th>". __('Price', 'quoteup') ."</th>
-                                    <th>". __('Quantity', 'quoteup') ."</th>
-                                    <th>". __('Expected Price', 'quoteup') ."</th>
-                                    <th>". __('SKU', 'quoteup') ."</th>";
-            $customer_product_table .="<th>". __('Variation', 'quoteup') ."</th>";
-
-                                $customer_product_table .="</tr>
-                                    <tr>
-									<td>{$customer_prod_price}</td>
-                                    <td>{$element[ 'quant' ]}</td>
-                                    <td>{$element[ 'remark' ]}</td>
-                                    <td>{$sku}</td>";
-        if ($element['variation'] != '') {
-            $variationString = "";
-            foreach ($element['variation'] as $attributeName => $attributeValue) {
-                            $variationString .= "<br>".wc_attribute_label($attributeName).":".$attributeValue;
-            }
-            $customer_product_table .="<td>{$variationString}</td>";
-                                    
-        } else {
-            $customer_product_table .="<td>-</td>";
-        }
-
-                                $customer_product_table .="</tr>
-                                    </table>
-                                    </td>
-                                    </tr>";
+        $value[0]['price'] = $price;
+        array_push($data, $value);
+        unset($key);
     }
-
-    return array(
-        'admin_product_table'    => $product_table,
-        'customer_product_table' => $customer_product_table,
-    );
+    return serialize($data);
 }
 
 /**
@@ -1019,10 +1246,14 @@ function setProductDetails($product_table_and_details)
  */
 function getEnquiryIP()
 {
-    if (! empty($_SERVER[ 'HTTP_CLIENT_IP' ])) {   //check ip from share internet
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        //check ip from share internet
         $address = $_SERVER[ 'HTTP_CLIENT_IP' ];
-    } elseif (! empty($_SERVER[ 'HTTP_X_FORWARDED_FOR' ])) {   //to check ip is pass from proxy
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        //to check ip is pass from proxy
         $address = $_SERVER[ 'HTTP_X_FORWARDED_FOR' ];
+        $address = explode(',', $address);
+        $address = $address[0];
     } else {
         $address = $_SERVER[ 'REMOTE_ADDR' ];
     }
@@ -1030,186 +1261,28 @@ function getEnquiryIP()
     return $address;
 }
 
-/**
- * Send mail to admin on successful enquiry.
- *
- * @param [type] $admin_email        [email id of admin]
- * @param [type] $blg_name           [name of website]
- * @param [type] $form_data_for_mail [description]
- * @param [type] $product_table      [Table of products in enquiry]
- * @param [type] $email              [Site email]
- * @param [type] $name               [admin name]
- * @param [type] $admin_subject      [Subject of mail]
- *
- * @return [type] [description]
- */
-function forEachAdminEmails($admin_email, $blg_name, $form_data_for_mail, $product_table, $email, $name, $admin_subject)
-{
-    global $quoteupEmail;
-    $optionData = get_option('wdm_form_data');
-    do_action('wdm_before_send_admin_email', trim($admin_email));
-
-    if (isset($optionData[ 'enable_disable_quote' ]) && $optionData[ 'enable_disable_quote' ] == 1) {
-        $enquiry_email = "<div style=background-color:#ddd>
-            <h2 style='text-align:center;margin-bottom:0px !important;padding:10px;border-bottom: 1px solid #ddd;border-top:1px solid #ddd;' >
-           <b>" . __('Enquiry from', 'quoteup') . "  $blg_name </b></h2>
-           
-           <table style='width: 100%;
-                    background: #F7F7F7;
-                    border-bottom: 1px solid #ddd;
-                    margin-bottom: 0px;
-                    'cellspacing='10px'>";
-    } else {
-        $enquiry_email = "<div style=background-color:#ddd>
-            <h2 style='text-align:center;margin-bottom:0px !important;padding:10px;border-bottom: 1px solid #ddd;border-top:1px solid #ddd;' >
-           <b>" . __('Enquiry And Quote Request From', 'quoteup') . "  $blg_name </b></h2>
-           
-           <table style='width: 100%;
-                    background: #F7F7F7;
-                    border-bottom: 1px solid #ddd;
-                    margin-bottom: 0px;
-                    'cellspacing='10px'>";
-    }
-
-    //$enquiry_email .= apply_filters('pep_add_custom_field_admin_email', $enquiry_email);
-    $enquiry_email   = apply_filters('pep_add_custom_field_admin_email', $enquiry_email);
-    $enquiry_email   = apply_filters('quoteup_add_custom_field_admin_email', $enquiry_email);
-    $enquiry_email   = apply_filters('pep_before_product_name_in_admin_email', $enquiry_email, $form_data_for_mail);
-    $enquiry_email   = apply_filters('quoteup_before_product_name_in_admin_email', $enquiry_email, $form_data_for_mail);
-    $enquiry_email   = apply_filters('pep_before_price_in_admin_email', $enquiry_email, $form_data_for_mail);
-    $enquiry_email   = apply_filters('quoteup_before_price_in_admin_email', $enquiry_email, $form_data_for_mail);
-    $enquiry_email .= $product_table;
-    $enquiry_email   = apply_filters('pep_after_price_in_admin_email', $enquiry_email, $form_data_for_mail);
-    $enquiry_email   = apply_filters('quoteup_after_price_in_admin_email', $enquiry_email, $form_data_for_mail);
-    $enquiry_email .= '</table>';
-
-    $enquiry_email .= '<div>';
-    $admin_headers   = array();
-    //echo "admin<br>".$enquiry_mail;
-    $admin_headers[] = 'Content-Type: text/html; charset=UTF-8';
-    $admin_headers[] = 'MIME-Version: 1.0';
-    $admin_headers[] = "Reply-to: {$email}";
-    //Customer name in From field of email
-    $admin_headers[] = 'From:' . $name . ' <' . $email . '>' . "\r\n";
-    $admin_subject   = html_entity_decode($admin_subject, ENT_QUOTES, 'UTF-8');
-    $enquiry_email   = html_entity_decode($enquiry_email, ENT_QUOTES, 'UTF-8');
-    $admin_subject   = apply_filters('pep_admin_email_subject', $admin_subject);
-    $enquiry_email   = apply_filters('pep_admin_email_content', $enquiry_email);
-    $admin_subject   = stripcslashes($admin_subject);
-    $enquiry_email   = stripcslashes($enquiry_email);
-
-    $quoteupEmail->send($admin_email, apply_filters('quoteup_admin_email_subject', $admin_subject), apply_filters('quoteup_admin_email_content', $enquiry_email), $admin_headers);
-}
-
-/**
- * This function is used to set default subject for mail if subject is blank
- * or set the subject entered by customer.
- *
- * @param [type] $subject      [description]
- * @param [type] $email_data   [description]
- * @param [type] $wdm_sitename [description]
- *
- * @return [type] [description]
- */
-function adminSubject($subject, $email_data, $wdm_sitename)
-{
-    if ($subject == '') {
-        $admin_subject = $wdm_sitename . $email_data[ 'default_sub' ];
-        if ($admin_subject == '') {
-            $admin_subject = $wdm_sitename . __('Enquiry or Quote Request for Products from  ', 'quoteup') . get_bloginfo('name');
-        }
-    } else {
-        $admin_subject = $wdm_sitename . $subject;
-    }
-
-    return $admin_subject;
-}
-
-/**
- * Send enquiry copy to customer if he has checked 'send me a copy'.
- *
- * @param [type] $name               [description]
- * @param [type] $blg_name           [name of website]
- * @param [type] $form_data_for_mail [description]
- * @param [type] $admin_subject      [subject for mail]
- * @param [type] $email              [customer email]
- * @param [type] $product_table      [Table of products in enquiry]
- *
- * @return [type] [description]
- */
-function sendCopyIfChecked($name, $blg_name, $form_data_for_mail, $admin_subject, $email, $product_table)
-{
-    global $quoteupEmail;
-    $optionData = get_option('wdm_form_data');
-    if ($_POST[ 'cc' ] == 'checked') {
-        $cust_email_name     = $name;
-        $admin_email_address = get_option('admin_email');
-        $client_headers[]    = 'Content-Type: text/html; charset=UTF-8';
-        $client_headers[]    = 'MIME-Version: 1.0';
-        $client_headers[]    = "Reply-to: {$admin_email_address}";
-        //Customer name in From field of email
-        //$client_headers[] = 'From:'.$cust_email_name.' <'.$admin_email_address.' >'."\r\n";
-
-        if (isset($optionData[ 'enable_disable_quote' ]) && $optionData[ 'enable_disable_quote' ] == 1) {
-            $cust_email_heading = "<div style='background-color:#ddd'><h2 style='text-align:center;margin:0px !important;padding:10px;border-bottom: 1px solid #ddd;border-top:2px solid #ddd;' >
-              " . __('Your enquiry at', 'quoteup') . " $blg_name </h2>";
-
-            $cust_email = '<b>' . __('Thank you for your enquiry. We will get back to you soon.', 'quoteup') . '</b><br><br>';
-        } else {
-            $cust_email_heading = "<div style='background-color:#ddd'><h2 style='text-align:center;margin:0px !important;padding:10px;border-bottom: 1px solid #ddd;border-top:2px solid #ddd;' >
-              " . __('Your enquiry/quote request at', 'quoteup') . " $blg_name </h2>";
-
-            $cust_email = '<b>' . __('Thank you for your enquiry/quote request. We will get back to you soon.', 'quoteup') . '</b><br><br>';
-        }
-        $cust_email .= $cust_email_heading;
-        $cust_email .= "<table style='width: 100%;
-                          background: #f7f7f7;
-                          border-bottom: 1px solid #ddd; margin-bottom:0px;' cellspacing='10px'>";
-
-        $cust_email  = apply_filters('pep_before_product_name_in_customer_email', $cust_email, $form_data_for_mail);
-        $cust_email  = apply_filters('quoteup_before_product_name_in_customer_email', $cust_email, $form_data_for_mail);
-        $cust_email  = apply_filters('pep_add_custom_field_customer_email', $cust_email);
-        $cust_email  = apply_filters('quoteup_add_custom_field_customer_email', $cust_email);
-        $cust_email  = $cust_email . $product_table;
-
-        $cust_email .= '</table>';
-
-        $cust_email .= '</div>';
-
-        $admin_subject   = html_entity_decode($admin_subject, ENT_QUOTES, 'UTF-8');
-        $cust_email      = html_entity_decode($cust_email, ENT_QUOTES, 'UTF-8');
-        $admin_subject   = apply_filters('pep_customer_email_subject', $admin_subject);
-        $cust_email      = apply_filters('quoteup_customer_email_content', $cust_email);
-        $admin_subject   = stripcslashes($admin_subject);
-        $cust_email      = stripcslashes($cust_email);
-        $quoteupEmail->send($email, apply_filters('quoteup_customer_email_subject', $admin_subject), apply_filters('quoteup_customer_email_content', $cust_email), $client_headers);  /* 'Product Enquiry' */
-    }
-}
-
 /*
  * Function to check input currency and return only sale price
  * @param  [string] $original_price Original string containing price.
  * @return [int]                    Sale price
  */
-if (! function_exists('getSalePrice')) {
-
+if (!function_exists('getSalePrice')) {
     function getSalePrice($original_price)
     {
         // Trim spaces
-        $original_price  = trim($original_price);
+        $original_price = trim($original_price);
         // Extract Sale Price
-        $price           = extractSalePrice($original_price);
+        $price = extractSalePrice($original_price);
         $sanitized_price = filter_var($price, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-        if (false == $sanitized_price) {
+        if (!$sanitized_price) {
             return $original_price;
         }
 
         return $sanitized_price;
     }
-
 }
-if (! function_exists('extractSalePrice')) {
 
+if (!function_exists('extractSalePrice')) {
     function extractSalePrice($price)
     {
         //Check if more than 1 value is present
@@ -1220,7 +1293,6 @@ if (! function_exists('extractSalePrice')) {
 
         return $prices[ 0 ]; //  Else return same string.
     }
-
 }
 
 /*
@@ -1228,15 +1300,14 @@ if (! function_exists('extractSalePrice')) {
  * To set the global setting option of quoteup_enquiry to individual product.
  * To set the global setting option of show price to individual product.
  */
-
 function quoteupSetAddToCartValue()
 {
-    if (! current_user_can('manage_options')) {
+    if (!current_user_can('manage_options')) {
         die('SECURITY_ISSUE');
     }
-    $add_to_cart_option              = $_POST[ 'option_add_to_cart' ];
-    $global_quoteup_enquiry_option   = $_POST[ 'option_quoteup_enquiry' ];
-    $quoteup_price                   = $_POST[ 'option_quoteup_price' ];
+    $add_to_cart_option = $_POST[ 'option_add_to_cart' ];
+    $global_quoteup_enquiry_option = $_POST[ 'option_quoteup_enquiry' ];
+    $quoteup_price = $_POST[ 'option_quoteup_price' ];
     if ($global_quoteup_enquiry_option == 'yes') {
         $individual_quoteup_enquiry_option = 'yes';
     }
@@ -1246,11 +1317,11 @@ function quoteupSetAddToCartValue()
 
     global $post;
 
-    $args        = array(
-        'post_type'      => 'product',
+    $args = array(
+        'post_type' => 'product',
         'posts_per_page' => '-1',
     );
-    $wp_query    = new WP_Query($args);
+    $wp_query = new WP_Query($args);
 
     if ($wp_query->have_posts()) :
         while ($wp_query->have_posts()) :
@@ -1267,91 +1338,100 @@ function quoteupSetAddToCartValue()
     unset($product);
 }
 
-if (! function_exists('quoteupModifyUserQuoteData')) {
-
+/*
+ * Ajax callback to modify user name and email on enquiry/quote edit page
+ */
+if (!function_exists('quoteupModifyUserQuoteData')) {
     function quoteupModifyUserQuoteData()
     {
-
-        if (! wp_verify_nonce($_POST[ 'security' ], 'quoteup')) {
-            die('SECURITY_ISSUE');
-        }
-
-        if (! current_user_can('manage_options')) {
+        if (!current_user_can('manage_options')) {
             die('SECURITY_ISSUE');
         }
 
         global $wpdb;
-        $enq_tbl     = $wpdb->prefix . 'enquiry_detail_new';
-        $name        = $_POST[ 'cname' ];
-        $email       = $_POST[ 'email' ];
-        $enquiry_id  = $_POST[ 'enquiry_id' ];
+        $enq_tbl = $wpdb->prefix.'enquiry_detail_new';
+        $name = filter_var($_POST[ 'cname' ], FILTER_SANITIZE_STRING);
+        $email = filter_var($_POST[ 'email' ], FILTER_SANITIZE_EMAIL);
+        $enquiry_id = filter_var($_POST[ 'enquiry_id' ], FILTER_SANITIZE_NUMBER_INT);
         $wpdb->update(
             $enq_tbl,
             array(
-            'name'   => $name, // string
-            'email'  => $email, // integer (number)
+            'name' => $name, // string
+            'email' => $email, // integer (number)
             ),
-            array( 'enquiry_id' => $enquiry_id ),
+            array('enquiry_id' => $enquiry_id),
             array(
             '%s',
             '%s',
             ),
-            array( '%d' )
+            array('%d')
         );
-        echo "Saved Successfully.";
+        echo 'Saved Successfully.';
         die;
     }
-
 }
 
-if (! function_exists("wdmSendReply")) {
-
-    function wdmSendReply()
+/*
+ * Ajax callback to send reply from enquiry edit page
+ */
+if (!function_exists('quoteupSendReply')) {
+    function quoteupSendReply()
     {
-        global $wpdb;
+        global $wpdb, $quoteupEmail;
 
-        $wdm_reply_message   = $wpdb->prefix . 'enquiry_thread';
-        $uemail              = $_POST[ 'email' ];
-        $subject             = $_POST[ 'subject' ];
-        $message             = $_POST[ 'msg' ];
-        $id                  = $_POST[ 'eid' ];
-        $type                = 'Y-m-d H:i:s';
-        $date                = current_time($type);
-        $parent              = $_POST[ 'parent_id' ];
-        $email_data          = get_option('wdm_form_data');
-        $admin_emails        = array();
+        $wdm_reply_message = $wpdb->prefix.'enquiry_thread';
+        $uemail = filter_var($_POST[ 'email' ], FILTER_SANITIZE_EMAIL);
+        $subject = wp_kses($_POST[ 'subject' ], array());
+        $subject = stripcslashes($subject);
+        $message = wp_kses($_POST[ 'msg' ], array());
+        $message = stripcslashes($message);
+        $enquiryID = filter_var($_POST[ 'eid' ], FILTER_SANITIZE_NUMBER_INT);
+        $type = 'Y-m-d H:i:s';
+        $date = current_time($type);
+        $parent = filter_var($_POST[ 'parent_id' ], FILTER_SANITIZE_NUMBER_INT);
+        $email_data = quoteupSettings();
+        $admin_emails = array();
         if ($email_data[ 'user_email' ] != '') {
             $admin_emails = explode(',', $email_data[ 'user_email' ]);
         }
-        $admin_emails    = array_map('trim', $admin_emails);
-        $admin           = get_option('admin_email');
-        if (! in_array($admin, $admin_emails)) {
+        $admin_emails = array_map('trim', $admin_emails);
+        $admin = get_option('admin_email');
+        if (!in_array($admin, $admin_emails)) {
             $admin_emails[] = $admin;
         }
-        $emails              = implode(',', $admin_emails);
-        $client_headers[]    = 'Content-Type: text/html; charset=UTF-8';
-        $client_headers[]    = 'MIME-Version: 1.0';
-        $client_headers[]    = "Reply-to: {$emails}";
+        if (class_exists('Postman')) {
+            $emails = implode(';', $admin_emails);
+        } else {
+            $emails = implode(',', $admin_emails);
+        }
+        $client_headers[] = 'Content-Type: text/html; charset=UTF-8';
+        $client_headers[] = 'MIME-Version: 1.0';
+        $client_headers[] = "Reply-to: {$emails}";
+
+        $uemail = apply_filters('quoteup_send_reply_email', $uemail, $_POST);
+        $subject = apply_filters('quoteup_subject', $subject, $_POST);
+        $message = apply_filters('quoteup_msg', $message, $_POST);
+        $client_headers = apply_filters('quoteup_client_headers', $client_headers, $_POST);
 
         $wpdb->insert(
             $wdm_reply_message,
             array(
-            'enquiry_id'     => $id,
-            'subject'        => $subject,
-            'message'        => $message,
-            'parent_thread'  => $parent,
-            'date'           => $date
+            'enquiry_id' => $enquiryID,
+            'subject' => $subject,
+            'message' => $message,
+            'parent_thread' => $parent,
+            'date' => $date,
             ),
             array(
             '%d',
             '%s',
             '%s',
             '%d',
-            '%s'
+            '%s',
             )
         );
-        wp_mail($uemail, $subject, $message, $client_headers);
+        echo $wpdb->insert_id;
+        $quoteupEmail->send($uemail, $subject, $message, $client_headers);
         die();
     }
-
 }

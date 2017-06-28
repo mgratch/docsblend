@@ -1,8 +1,8 @@
 === Title Toggle for Storefront Theme ===
 Contributors: wooassist
 Tags: title, remove, storefront, toggle
-Requires at least: 3.0.1
-Tested up to: 4.5.1
+Requires at least: 4.0.0
+Tested up to: 4.7.3
 Stable tag: 4.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -53,6 +53,10 @@ Yes.
 1. Metabox that will be displayed in the edit screen. This should be located below the content editor.
 
 == Changelog ==
+
+= 1.2.3 =
+* tested with WP version 4.7.3, WooCommerce 2.6.14 and Storefront 2.1.8
+* added filter to set the default values of the title and meta toggles by code
 
 = 1.2.2 =
 * fixed - notice showing on 404 pages

@@ -39,3 +39,17 @@ th#product_details{
 th#amount{
     width: 8%;
 }
+
+.status-span {
+    display: none;
+}
+
+.woocommerce .search-box {
+    margin: -8px 0 0;
+}
+
+.unread-enquiry {
+    background-color: #ECECEC !important;    
+}
+
+

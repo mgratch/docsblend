@@ -80,9 +80,9 @@ if ( class_exists( 'GFForms' ) ) {
 
 			add_rewrite_rule( GFWEBAPI_SLUG . '/(.*)', 'index.php?' . GFWEBAPI_ROUTE_VAR . '=$matches[1]', $after = 'top' );
 
-			if ( ! get_option( 'gravityforms_rewrite_rules_flushed' ) ) {
+			$rules = get_option( 'rewrite_rules' );
+			if ( ! isset( $rules[ GFWEBAPI_SLUG . '/(.*)' ] ) ) {
 				flush_rewrite_rules();
-				update_option( 'gravityforms_rewrite_rules_flushed', true );
 			}
 
 			add_filter( 'query_vars', array( $this, 'query_vars' ) );
@@ -1846,6 +1846,10 @@ if ( class_exists( 'GFForms' ) ) {
 			require_once GFCommon::get_base_path() . '/includes/phpqrcode/phpqrcode.php';
 			$settings = get_option( 'gravityformsaddon_gravityformswebapi_settings' );
 			if ( empty( $settings ) ) {
+				die();
+			}
+
+			if ( ! GFAPI::current_user_can_any( 'gravityforms_api_settings' ) ) {
 				die();
 			}
 

@@ -1,12 +1,12 @@
 /**
  * This file is used to include media in settings
  */
-jQuery(document).ready(function($){
+jQuery(document).ready(function ($) {
     // Prepare the variable that holds our custom media manager.
     var tgm_media_frame;
     
     // Bind to our click event in order to open up the new media experience.
-    $(document.body).on('click.tgmOpenMediaManager', '.tgm-open-media', function(e){
+    $(document.body).on('click.tgmOpenMediaManager', '.tgm-open-media', function (e) {
         // Prevent the default action from occuring.
         e.preventDefault();
 
@@ -120,7 +120,7 @@ jQuery(document).ready(function($){
          * insert the data into our custom input field. Specifically, our
          * media_attachment object will hold a key titled 'url' that we want to use.
          */
-        tgm_media_frame.on('select', function(){
+        tgm_media_frame.on('select', function () {
             // Grab our attachment selection and construct a JSON representation of the model.
             var media_attachment = tgm_media_frame.state().get('selection').first().toJSON();
 

@@ -1,5 +1,10 @@
 /*# Product Details
 --------------------------------------------------------------------------------------------------*/
+
+#post-body-content {
+    display: none;
+}
+
 .wdm-tbl-gen,
 .wdm-tbl-gen * {
     -webkit-box-sizing: border-box;
@@ -25,35 +30,30 @@
     clear: both;
 }
 
-#post-body-content,
+.wdm-input-expiration-date:hover {
+    cursor: pointer;
+    cursor: hand;
+}
+
+/*#post-body-content,
 #editCustomerData .handlediv,
 #editCustomerData h3.hndle {
     display: none;
-}
-
-#editCustomerData .inside {
-    padding: 0;
-    margin: 0;
-}
-
-.cust_section {
-    padding: 23px 24px 12px;
-}
-
-.send-row {
-    margin-bottom: 2%;
-}
-
-/*#poststuff h2.wdm-tbl-gen-header {
-    color: #23282d;
-    font-family: HelveticaNeue-Light,"Helvetica Neue Light","Helvetica Neue",sans-serif;
-    font-weight: 400;
-    margin: 0 0 20px 0;
-    font-size: 21px;
-    line-height: 1.2;
-    text-shadow: 1px 1px 1px #fff;
-    padding: 0;
     }*/
+
+    #editCustomerData .inside {
+        padding: 0;
+        margin: 0;
+    }
+
+    .cust_section {
+        padding: 23px 24px 12px;
+    }
+
+    .send-row {
+        margin-bottom: 2%;
+    }
+
     .wdm-tbl-gen-sec,
     .wdm-tbl-gen-heading,
     .wdm-tbl-gen-detail {
@@ -116,142 +116,178 @@
 }
 
 .wdmpe-detailtbl td {
+
     /*    border: 1px solid lightgray;*/
     padding: 1%;
 }
 
-/*.wdmpe-detailtbl tr.wdmpe-detailtbl-head-row {
+.wdmpe-detailtbl .wdmpe-detailtbl-content > tr:nth-child(odd) {
+    background: #F9F9F9;
+}
+
+.wdmpe-detailtbl th {
+    padding: 1%;
+    margin: 1%;
+    border-bottom: 1px solid lightgray;
+    border-top: 1px solid lightgray;
+}
+
+.total_amount_row {
+    font-weight: bold;
+}
+
+.wdmpe-detailtbl-head-item {
+    text-align: center;
+    font-weight: bold;
+}
+
+.item-head-cost,
+.item-content-cost {
+    width: 10%;
+    text-align: right;
+}
+
+.item-head-count,
+.item-content-count {
+    width: 3%;
+}
+
+.item-head-img,
+.wdmpe-detailtbl td.item-content-img {
+    width: 5%;
+    padding: 1%;
+}
+
+.item-head-detail,
+.item-content-link {
+    width: 12%;
+    text-align: left;
+}
+
+.item-head-Variations,
+.item-content-variations {
+    width: 23%;
+    text-align: left;
+}
+
+.item-head-sku,
+.item-content-sku {
+    width: 7%;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.item-head-remark,
+.item-content-remark {
+    width: 15%;
+    text-align: left;
+}
+
+.item-content-remark {
+    text-align: justify;
+}
+
+.item-head-old-cost,
+.item-head-newcost,
+.item-head-qty,
+.item-content-old-cost,
+.item-content-newcost,
+.item-content-qty {
+    width: 8%;
+}
+
+.item-head-add-to-quote,
+.item-content-add-to-quote {
+    width: 8%;
+    text-align: center;
+}
+
+.deleted-product, .quote-disableCheckBox {
+    opacity: 0.5;
+    background-color: #cccccc !important;
+    cursor: default;
+}
+
+.item-head-old-cost,
+.item-content-old-cost {
+    text-align: right;
+}
+
+.unchecked,
+.varProduct {
+    border: none !important;
+    color: #505560 !important;
+    background-color: transparent !important;
+}
+
+.wdmpe-detailtbl td.item-content-newcost,
+.wdmpe-detailtbl td.item-content-qty {
+    padding-left: 0px;
+    text-align: center;
+}
+
+.item-content-newcost input,
+.item-content-qty input {
+    width: 95%;
+    box-shadow: none;
+    text-align: center;
+    margin-left: 10%;
+}
+
+.item-content-newcost input:focus,
+.item-content-qty input:focus {
+    box-shadow: none;
     background: rgba(223, 233, 236, 0.57);
+}
+
+.wdm-prod-img {
+    vertical-align: middle;
+    width: 100%;
+}
+
+.wdm-prod-head-img {
+    width: 16px;
+}
+
+.item-content-cost {
+    white-space: nowrap;
+}
+
+.variations select {
+    width: 67%;
+}
+
+.display-attachment-main {
+    clear: both;
+    padding-left: 1%;
+    padding-bottom: 2%;
+}
+
+.wdm-attachment-img {
+    height: 20px;
+    width: 20px;
+}
+
+.attachment-div {
+    display: inline-block;
+    padding: 0.5%;
+    padding-right: 1%;
+    border-radius: 25px;
+    border: 1px solid #999;
+    margin: 0.6%;
+}
+
+.attachment-div a {
+    vertical-align: super;
+}
+
+/*form.variations_form.cart > * {
+    display: none;
+}
+
+form.variations_form.cart .variations {
+    display: table;
     }*/
-
-    .wdmpe-detailtbl .wdmpe-detailtbl-content > tr:nth-child(odd) {
-        background: #F9F9F9;
-    }
-
-    .wdmpe-detailtbl th {
-        padding: 1%;
-        margin: 1%;
-        border-bottom: 1px solid lightgray;
-        border-top: 1px solid lightgray;
-    }
-
-    .total_amount_row {
-        font-weight: bold;
-    }
-
-    .wdmpe-detailtbl-head-item {
-        text-align: center;
-        font-weight: bold;
-    }
-
-    .item-head-cost,
-    .item-content-cost {
-        width: 10%;
-        text-align: right;
-    }
-
-    .item-head-count,
-    .item-content-count {
-        width: 3%;
-    }
-
-    .item-head-img,
-    .wdmpe-detailtbl td.item-content-img {
-        width: 5%;
-        padding: 1%;
-    }
-
-    .item-head-detail,
-    .item-content-link {
-        width: 12%;
-        text-align: left;
-    }
-
-    .item-head-Variations,
-    .item-content-variations {
-        width: 23%;
-        text-align: left;
-    }
-
-    .item-head-sku,
-    .item-content-sku {
-        width: 7%;
-        text-align: left;
-        word-wrap: break-word;
-    }
-
-    .item-head-remark,
-    .item-content-remark {
-        width: 15%;
-        text-align: left;
-    }
-
-    .item-content-remark{
-        text-align: justify;
-    }
-
-    .item-head-old-cost,
-    .item-head-newcost,
-    .item-head-qty,
-    .item-content-old-cost,
-    .item-content-newcost,
-    .item-content-qty{
-        width: 8%;
-    }
-
-    .item-head-add-to-quote,
-    .item-content-add-to-quote{
-        width: 8%;
-        text-align: center;
-    }
-
-    .deleted-product{
-        opacity: 0.5;
-        background-color: #cccccc !important;
-        cursor: default;
-    }
-    .item-head-old-cost,
-    .item-content-old-cost{
-        text-align: right;
-    }
-
-    .unchecked, .varProduct{
-        border: none !important;
-        color: #505560 !important;
-        background-color: transparent !important;
-    }
-
-    .wdmpe-detailtbl td.item-content-newcost,
-    .wdmpe-detailtbl td.item-content-qty {
-        padding-left: 0px;
-        text-align: center;
-    }
-
-    .item-content-newcost input,
-    .item-content-qty input {
-        width: 73%;
-        box-shadow: none;
-        text-align: center;
-    }
-
-    .item-content-newcost input:focus,
-    .item-content-qty input:focus {
-        box-shadow: none;
-        background: rgba(223, 233, 236, 0.57);
-    }
-
-    .wdm-prod-img {
-        vertical-align: middle;
-        width: 100%;
-    }
-
-    .wdm-prod-head-img{
-        width: 16px;
-    }
-
-    .item-content-cost {
-        white-space: nowrap;
-    }
 
     .enquiry-history-table-parent {
         margin-top: -1%;
@@ -268,20 +304,16 @@
         border-bottom: 1px solid lightgray;
         border-top: 1px solid lightgray;
     }
+
     .enquiry-history-table th,
     .enquiry-history-table td {
-        width: 25%;
-        /*    border: 1px solid lightgray;*/
+        width: 25%;            /*    border: 1px solid lightgray;*/
         padding-top: 1%;
         padding-bottom: 1%;
         padding-left: 1%;
     }
 
-/*.enquiry-history-table th {
-    background: #F8F8E8;
-    }*/
-
-    .enquiry-history-table tr:nth-child(even){
+    .enquiry-history-table tr:nth-child(even) {
         background: #F9F9F9;
     }
 
@@ -293,13 +325,63 @@
     .quotation-related-buttons {
         margin-bottom: 1%;
         margin-left: 1.6%;
-        margin-top: 1%;
+        margin-top: 2%;
+        width: 95%;
+        float: left;
     }
 
-    .wdm-status-box{
-        margin-bottom: 1%;
-        /*margin-top: 1%;*/
+    .show-hide-details {
+        float: right;
     }
+
+    #editMainEnquiry {
+        display: none;
+    }
+
+    .quote-products-selection {
+        margin-left: 1%;
+        margin-top: 0.5%;
+    }
+
+    .wpml-language-options {
+        display: inline;
+    }
+
+    .quote-options {
+        border-bottom: 1px solid #DFDFDF;
+        height: 60px;
+        border-top: 1px solid #DFDFDF;
+        padding-top: 2%;
+        padding-bottom: 2%;
+    }
+
+    .show-price-option {
+        margin-left: 1%;
+        margin-top: 0.5%;
+        width: 35%;
+        float: left;
+    }
+
+    .quote-expiration-date {
+        width: 32%;
+        float: right;
+    }
+
+   /* .wdm-user-expiration-date {
+        margin-right: 2%;
+        }*/
+
+        .wpml-language-options {
+            margin-top: 0.3%;
+        }
+
+        .quoteup-pdf-language {
+            width: 50%;
+        }
+
+        .wdm-status-box {
+            margin-bottom: 1%;        /*margin-top: 1%;*/
+        }
 
 /*## Enquiry Actions & Enquiry Notes
 --------------------------------------------------------------------------------------------------*/
@@ -497,20 +579,16 @@ hr.msg-border {
     padding-left: 20px;
 }
 
-.msg-wrapper:nth-of-type(1){
+.msg-wrapper:nth-of-type(1) {
     padding: 5px 0px;
 }
 
-/*.msg-wrapper:last-of-type {
-    background-color: lime;
-    }*/
-
-    @media only screen and (max-width:560px) {
-        .reply-div {
-            width: 100%;
-        }
-
+@media only screen 
+and (max-width:320px) {
+    .wdm-input {
+        width: 380%;
     }
+}
 
 /**
  * Making the page responsive
@@ -518,8 +596,11 @@ hr.msg-border {
 
  /* Smartphones (portrait and landscape) ----------- */
  @media only screen 
- and (min-width:320px) 
  and (max-width:560px) {
+
+    .reply-div {
+        width: 100%;
+    }
 
     /**
      * Customer Data Section
@@ -527,7 +608,6 @@ hr.msg-border {
      .wdm-tbl-gen-detail div {
         float: none;
     }
-
 }
 
 @media only screen 
@@ -602,6 +682,106 @@ only screen and (max-width:760px) {
         width: 48%;
     }
 
+    .variations_form .label {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 1%;
+        padding-right: 2%;
+        padding-bottom: 2%;
+        margin-top: 2%;
+        width: 100%;
+        text-align: center;
+        display: inline-block;
+        font-size: 1em;
+    }
+
+    .variations_form .value {
+        border: none;        /*border-bottom: 0px    solid #eee;*/
+        position: relative;
+        padding-left: 1%;
+        padding-right: 2%;
+        padding-bottom: 2%;
+        margin-top: 2%;
+        width: 100%;
+        text-align: center;
+        display: inline-block;
+        font-size: 1em;
+    }
+
+    .variations_form .value a {
+        display: none;
+    }
+
+    .quote-options {
+        /*        height: 90px;*/
+        margin-bottom: 2%;
+        width: 98%;
+    }
+
+    .show-price-option {
+        width: 100%;
+        margin-bottom: 3%;
+    }
+
+    .wpml-language-options {
+        width: 100%;
+        display: block;
+        margin-bottom: 3%;
+    }
+
+    .left-label {
+        float: left;
+        width: 39%;
+    }
+
+    .quotation-related-buttons {
+        width: 98%;
+        margin-right: 1%;
+    }
+
+    .quote-language, .expiration-date {
+        margin-left: 11px;
+        margin-top: 2%;
+    }
+
+
+    .quote-expiration-date {
+        width: 100%;
+        float: none;
+    }
+
+    .wdm-input-expiration-date {
+        width: 56%;
+        /*        margin-left: 5%; */       /*height: 35px;*/
+    }
+
+    .quoteup-pdf-language {
+        width: 56%;
+    }
+
+    #btnPQuote {
+        padding: 0%;
+        padding-right: 0%;
+        width: 36%;
+        padding-bottom: 2%;
+        padding-top: 2%;
+    }
+
+    #send {
+        padding: 0%;
+        width: 30%;
+        padding-bottom: 2%;
+        padding-top: 2%;
+    }
+
+    #downloadPDF {
+        padding: 0%;
+        width: 29%;
+        padding-bottom: 2%;
+        padding-top: 2%;
+    }
+
     .wdmpe-detailtbl tr:nth-child(odd) {
         background-color: rgba(125, 123, 123, 0.06);
     }
@@ -615,6 +795,7 @@ only screen and (max-width:760px) {
         width: 45%;
         padding-right: 10px;
         white-space: nowrap;
+        font-weight: bold;
     }
 
     .wdmpe-detailtbl td.item-content-newcost,
@@ -626,105 +807,106 @@ only screen and (max-width:760px) {
 
     .wdmpe-detailtbl td.item-content-cost,
     .wdmpe-detailtbl td.item-content-old-cost,
-    .wdmpe-detailtbl td.item-content-add-to-quote{
+    .wdmpe-detailtbl td.item-content-add-to-quote {
         text-align: left;
     }
 
-    .unchecked{
-     text-align: left !important;
- }
+    .unchecked {
+        text-align: left !important;
+    }
 
- .item-content-newcost input,
- .item-content-qty input {
-    width: 40%;
-    font-size: inherit;
-    height: auto;
-    padding-top: 0px;
-    padding-bottom: 0px;
-}
+    .item-content-newcost input,
+    .item-content-qty input {
+        width: 40%;
+        font-size: inherit;
+        height: 30px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
 
-   /* .item-head-cost,
-    .item-content-cost {
-        text-align: left;
-        }*/
+    /*This is for responsive design of Quotation table*/
+    .wdmpe-quotation-table.wdmpe-detailtbl .item-content-add-to-quote:before {
+        content: "#:";
+    }
 
-        .wdmpe-quotation-table.wdmpe-detailtbl td:nth-of-type(1):before {
-            content: "#";
-        }
+    .wdmpe-quotation-table.wdmpe-detailtbl .item-content-img:before {
+        content: "Product Image:";
+    }
 
-        .wdmpe-quotation-table.wdmpe-detailtbl td:nth-of-type(2):before {
-            content: "Product Image";
-        }
+    .wdmpe-quotation-table.wdmpe-detailtbl .item-content-link:before {
+        content: "Item:";
+    }
 
-        .wdmpe-quotation-table.wdmpe-detailtbl td:nth-of-type(3):before {
-            content: "Item";
-        }
+    .wdmpe-quotation-table.wdmpe-detailtbl .item-content-variations:before {
+        content: "Variation:";
+    }
 
-        .wdmpe-quotation-table.wdmpe-detailtbl td:nth-of-type(4):before {
-            content: "SKU";
-        }
+    .wdmpe-quotation-table.wdmpe-detailtbl .item-content-sku:before {
+        content: "SKU:";
+    }
 
-        .wdmpe-quotation-table.wdmpe-detailtbl td:nth-of-type(5):before {
-            content: "Expected Price";
-        }
+    .wdmpe-quotation-table.wdmpe-detailtbl .item-content-remark:before {
+        content: "Expected Price:";
+    }
 
-        .wdmpe-quotation-table.wdmpe-detailtbl td:nth-of-type(6):before {
-            content: "Price";
-        }
+    .wdmpe-quotation-table.wdmpe-detailtbl .item-content-old-cost:before {
+        content: "Price:";
+    }
 
-        .wdmpe-quotation-table.wdmpe-detailtbl td:nth-of-type(7):before {
-            content: "New Price";
-        }
+    .wdmpe-quotation-table.wdmpe-detailtbl .item-content-newcost:before {
+        content: "New Price:";
+    }
 
-        .wdmpe-quotation-table.wdmpe-detailtbl td:nth-of-type(8):before {
-            content: "Quantity";
-        }
+    .wdmpe-quotation-table.wdmpe-detailtbl .item-content-qty:before {
+        content: "Quantity:";
+    }
 
-        .wdmpe-quotation-table.wdmpe-detailtbl td:nth-of-type(9):before {
-            content: "Amount";
-        }
+    .wdmpe-quotation-table.wdmpe-detailtbl .item-content-cost:before {
+        content: "Amount:";
+    }
 
-        .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(1):before {
-            content: "Produc Image";
-        }
+    /*This is for responsive design of enquiry table*/
+    .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(1):before {
+        content: "Product Image:";
+    }
 
-        .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(2):before {
-            content: "Item";
-        }
+    .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(2):before {
+        content: "Item:";
+    }
 
-        .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(3):before {
-            content: "SKU";
-        }
+    .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(3):before {
+        content: "SKU:";
+    }
 
-        .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(4):before {
-            content: "Remark";
-        }
+    .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(4):before {
+        content: "Remark:";
+    }
 
-        .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(5):before {
-            content: "Price";
-        }
+    .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(5):before {
+        content: "Price:";
+    }
 
-        .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(6):before {
-            content: "Quantity";
-        }
+    .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(6):before {
+        content: "Quantity:";
+    }
 
-        .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(7):before {
-            content: "Total Price";
-        }
+    .wdmpe-enquiry-table.wdmpe-detailtbl td:nth-of-type(7):before {
+        content: "Total Price:";
+    }
 
     /**
      * Last Row of Total Calculation
      */
-     .wdmpe-detailtbl tr:last-child td:nth-of-type(1) {
+     .wdmpe-detailtbl tr:last-child .total_span {
         display: none;
     }
 
-    .wdmpe-detailtbl tr:last-child td:nth-of-type(2) {
+    .wdmpe-detailtbl tr:last-child .amount-total-label {
         display: none;
     }
 
     .wdmpe-detailtbl tr:last-child td:nth-of-type(3):before {
-        content: "Total";
+        content: "Total:";
     }
 
     /**
@@ -778,22 +960,23 @@ only screen and (max-width:760px) {
         width: 45%;
         padding-right: 10px;
         white-space: nowrap;
+        font-weight: bold;
     }
 
     .enquiry-history-table td:nth-of-type(1):before {
-        content: "Action";
+        content: "Date and Time:";
     }
 
     .enquiry-history-table td:nth-of-type(2):before {
-        content: "Performed by";
+        content: "Action:";
     }
 
     .enquiry-history-table td:nth-of-type(3):before {
-        content: "Message";
+        content: "Performed by:";
     }
 
     .enquiry-history-table td:nth-of-type(4):before {
-        content: "Date and Time";
+        content: "Message:";
     }
 
 }
@@ -816,6 +999,7 @@ only screen and (max-width:760px) {
         width: 450px;
         height: 550px;
     }
+
 }
 
 @media only screen and (min-width:700px and max-width:768px) {
@@ -823,6 +1007,7 @@ only screen and (max-width:760px) {
         width: 600px;
         height: 550px;
     }
+
 }
 
 @media only screen and (min-width:769px) {
@@ -830,6 +1015,24 @@ only screen and (max-width:760px) {
         width: 700px;
         height: 550px;
     }
+
+}
+
+@media only screen and (max-width:350px) {
+    #btnPQuote {
+        width: 48%;
+    }
+
+    #send {
+        width: 48%;
+    }
+
+    #downloadPDF {
+        width: 48%;
+        margin-left: 25%;
+        margin-top: 1%;
+    }
+
 }
 
 .wdm-pdf-iframe {
@@ -848,75 +1051,82 @@ only screen and (max-width:760px) {
 /**
 Style Checkbox
 */
+.wdm-checkbox,
+.wdm-checkbox-quote {
 
-.wdm-checkbox, .wdm-checkbox-quote {
     /* Hide the input, but have it still be clickable */
     opacity: 0;
 }
-input[type="checkbox"]:disabled{
+
+input[type="checkbox"]:disabled {
     opacity: 0;
 }
 
-.wdm-checkbox + label, .wdm-checkbox-quote + label {
+.wdm-checkbox + label,
+.wdm-checkbox-quote + label {
     margin: -10px;
-    clear: none;
-    /* Left padding makes room for image */
-    padding: 5px 0 4px 24px;
-
-    /* Make look clickable because they are */
+    clear: none;    /* Left padding makes room for image */
+    padding: 5px 0 4px 24px;    /* Make look clickable because they are */
     cursor: pointer;
-    background: url('../../images/off.png') left center no-repeat; 
+    background: url('../../images/off.png') left center no-repeat;
 }
 
-.wdm-checkbox:checked + label, .wdm-checkbox-quote:checked + label {
+.wdm-checkbox:checked + label,
+.wdm-checkbox-quote:checked + label {
     background-image: url('../../images/check.png');
 }
 
 @media only screen and (max-width:782px) {
-    .wdm-checkbox + label, .wdm-checkbox-quote + label {
+    .wdm-checkbox + label,
+    .wdm-checkbox-quote + label {
         margin: -22px;
     }
+
 }
+
 @media only screen and (min-width:783px) {
-    .wdm-checkbox + label, .wdm-checkbox-quote + label {
+    .wdm-checkbox + label,
+    .wdm-checkbox-quote + label {
         margin: -14px;
     }
 }
 
-div #text,#txt{
+div #text,
+#txt {
     visibility: hidden;
     color: #2081b9;
     margin-top: 1%;
     display: inline-block;
     font-weight: bold;
 }
-#update-text{
-    /*display:none;*/
+
+#update-text {
     visibility: hidden;
     margin-top: 1%;
     font-weight: 600;
     padding-left: 2.5%;
-    padding: 0.5%;    
+    padding: 0.5%;
 }
 
 #txt {
     margin-bottom: 4%;
 }
 
-#header{
+#header {
     text-align: right;
 }
 
-
-#Enquiry{
+#Enquiry {
     vertical-align: center;
 }
 
-.wdm_quoteup_pages_list{
+.wdm_quoteup_pages_list {
     width: 30%;
 }
 
-#PdfLoad,#Load,#update-customerdata-load{
+#PdfLoad,
+#Load,
+#update-customerdata-load {
     visibility: hidden;
     display: inline-block;
     vertical-align: sub;
@@ -927,31 +1137,30 @@ div #text,#txt{
     vertical-align: middle;
 }
 
-#MessageQuote{
+#MessageQuote {
     vertical-align: center;
 }
 
 fieldset {
     border: 1px solid #ddd;
     padding: 0 0.5em 0.5em;
-    margin-top:10px
-
+    margin-top: 10px
 }
 
-.popup-modal-textarea-note{
+.popup-modal-textarea-note {
     display: inline-block;
     vertical-align: top;
 }
 
-#MessageQuote label{
+#MessageQuote label {
     vertical-align: top;
 }
 
 .enquiry-history-table tbody tr {
-   -webkit-transition: background-color 5s ease;
-   -moz-transition: background-color 5s ease;
-   -o-transition: background-color 5s ease;
-   transition: background-color 5s ease;
+    -webkit-transition: background-color 5s ease;
+    -moz-transition: background-color 5s ease;
+    -o-transition: background-color 5s ease;
+    transition: background-color 5s ease;
 }
 
 .enquiry-history-table .highlight {
@@ -971,10 +1180,8 @@ fieldset {
     vertical-align: top;
 }
 
-
 td {
-    position: relative;
-    /*padding: 5px 10px;*/
+    position: relative;    /*padding: 5px 10px;*/
 }
 
 tr.strikeout td:before {
@@ -985,14 +1192,15 @@ tr.strikeout td:before {
     border-bottom: 1px solid #111;
     width: 100%;
 }
+
 td > a {
     text-decoration: none;
-}           
-
-.product .product_meta, .images{
-    display: none;
 }
 
+.product .product_meta,
+.images {
+    display: none;
+}
 
 .enquiry-message {
     text-align: justify;
@@ -1001,9 +1209,134 @@ td > a {
 td.history-message {
     text-align: justify !important;
     padding-right: 15px;
+    word-wrap: break-word;
+}
+
+.variations select {
+    width: 67%;
+    font-size: 1em !important;
+}
+
+.wdm-input-expiration-date {
+    border-color: #ccc !important;
+    height: 28px;
+    margin-top: 1px;
+}
+
+.wdm-input-expiration-date:valid + label:before {
+    content: attr(alt);
+    color: #444;
+    font-weight: bold;
+}
+
+/*form.variations_form.cart > * {
+    display: none;
+    attribute_name
+}
+
+form.variations_form.cart .variations {
+    display: table;
+    }*/
+
+    .quoteup-variation-price,
+    .quoteup-regular-price,
+    .quoteup-price {
+        display: none;
+    }
+
+    .wdmpe-quotation-table .variation-unchecked-data {
+        display: none;
+    }
+
+    .product .single_variation_wrap,
+    .single_variation {
+        display: none !important;
+    }
+
+
+/**
+ * CSS for versions meta box
+ */
+
+ #editVersions.postbox .inside {
+    padding: 0;
+    margin-top: 0;
+}
+
+table.enquiry-versions {
+    table-layout: fixed;
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+table.version-details {
+    table-layout: fixed;
+    width: 80%;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+.enquiry-versions th {
+    padding: 1%;
+    margin: 1%;
+    border-bottom: 1px solid lightgray;
+    border-top: 1px solid lightgray;
+}
+
+tr.version-row {
+    /*border-bottom: 2px solid #ccc;*/
+}
+
+.version-number, .version-number-head {
+    width: 10%;
+    text-align: center;
+}
+
+.version-date-head, .version-date {
+    width: 15%;
+    text-align: center;
+}
+
+.version-product-details-head, .version-product-details {
+    width: 55%;
+    text-align: center;
+    padding: 1%;
+}
+
+.performed-by-head, .performed-by {
+    width: 10%;
+    text-align: center;
+}
+
+.version-total-head, .version-total {
+    width: 10%;
+    text-align: center;
+}
+
+.version-product-name-head, .version-product-name {
+    text-align: left;
+    width: 50%;
+}
+
+.version-product-qty-head, .version-product-qty {
+    text-align: center;
+    width: 25%;
+}
+
+.version-product-price-head, .version-product-price {
+    text-align: right;
+    width: 25%;
+}
+
+.no-found {
+    margin: 6px 0 0;
+    padding: 12px 12px 12px;
+}
+
+.enquiry-versions tr.version-row:nth-child(even) {
+    background: #F9F9F9;
 }
 
 
-.variations select{
-    width: 70%;
-}
+/* End of css for versions meta box*/

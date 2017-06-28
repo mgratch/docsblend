@@ -73,9 +73,15 @@ class SG_CachePress {
 
 		// Allow a check to see if this plugin is running
 		// curl -s http://domain.com/?sgCacheCheck=022870ae06716782ce17e4f6e7f69cc2
-		if ( isset( $_GET['sgCacheCheck'] ) && md5( 'wpCheck' ) === $_GET['sgCacheCheck'] )
-			die( 'OK' );
-
+		if ( isset( $_GET['sgCacheCheck'] ) && md5( 'wpCheck' ) === $_GET['sgCacheCheck'] ) {
+                  die( 'OK' );
+                }
+                
+                // Check PHP version
+//		// curl -s http://domain.com/?sgphpCheck=819483ed1511baac6c92a176da3bcfca
+//                if ( isset( $_GET['sgphpCheck'] ) && md5( 'showmeversion' ) === $_GET['sgphpCheck'] ) {
+//                  die( PHP_VERSION );
+//                }
 		$this->options_handler->upgrade();
 
 		$this->set_headers_cookies();
@@ -89,8 +95,11 @@ class SG_CachePress {
 	 * @param boolean $network_wide True if WPMU superadmin uses "Network Activate" action, false if WPMU is
 	 *                              disabled or plugin is activated on an individual blog.
 	 */
-	public static function activate( $network_wide ) {
-	    
+	public static function activate( $network_wide ) {   
+                // call versionChecker's active method
+                $versionChecker = new SG_CachePress_PHPVersionChecker(new SG_CachePress_Options);
+                $versionChecker->activate();
+                
 		if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 			if ( $network_wide  ) {
 				// Get all blog ids

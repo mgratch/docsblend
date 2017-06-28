@@ -5,17 +5,19 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * This function is used to show email settings on settings page
- * @param  [array] $form_data [Settings stored previously in database]
- * @return [type]            [description]
+ * This function is used to show email settings on settings page.
+ *
+ * @param [array] $form_data [Settings stored previously in database]
+ *
+ * @return [type] [description]
  */
 function emailSettings($form_data)
 {
-?>
+    ?>
 <div id='wdm_email'>
     <?php
-        require_once('email/quoteup-emailing-information.php');
-        do_action('quoteup_email_settings', $form_data);
+        require_once 'email/quoteup-emailing-information.php';
+    do_action('quoteup_email_settings', $form_data);
     ?>
 </div>
 <?php

@@ -18,3 +18,19 @@ table.wp-list-table .column-product_cat, table.wp-list-table .column-product_tag
     */
     width: 9% !important;
 }
+
+@media screen and (max-width: 782px) {
+    table.wp-list-table .column-quoteup_visibility::before{
+        width: auto !important;
+        top: 7px;
+    }
+    table.wp-list-table .column-quoteup_visibility {
+        text-align: inherit;
+    }
+
+    td.quoteup_visibility.column-quoteup_visibility > img {
+        padding: 0px !important;
+    }
+}
+
+

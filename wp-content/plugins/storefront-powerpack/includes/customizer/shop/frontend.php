@@ -32,8 +32,13 @@ if ( ! class_exists( 'SP_Frontend_Shop' ) ) :
 			add_action( 'wp_enqueue_scripts', array( $this, 'inline_css' ), 999 );
 			add_action( 'woocommerce_before_shop_loop', 'sp_scroll_wrapper', 4 );
 			add_action( 'woocommerce_after_shop_loop', 'sp_scroll_wrapper_close', 40 );
-			add_action( 'woocommerce_before_shop_loop', 'sp_product_loop_wrap', 40 );
-			add_action( 'woocommerce_after_shop_loop', 'sp_product_loop_wrap_close', 5 );
+
+			global $storefront_version;
+
+			if ( $storefront_version && version_compare( $storefront_version, '2.2.0', '<' ) ) {
+				add_action( 'woocommerce_before_shop_loop', 'sp_product_loop_wrap', 40 );
+				add_action( 'woocommerce_after_shop_loop', 'sp_product_loop_wrap_close', 5 );
+			}
 		}
 
 		/**
@@ -51,6 +56,7 @@ if ( ! class_exists( 'SP_Frontend_Shop' ) ) :
 			$archive_price               = get_theme_mod( 'sp_product_archive_price',         true );
 			$archive_add_to_cart         = get_theme_mod( 'sp_product_archive_add_to_cart',   true );
 			$archive_product_description = get_theme_mod( 'sp_product_archive_description',   false );
+			$archive_titles              = get_theme_mod( 'sp_product_archive_title',         true );			
 			$infinite_scroll             = get_theme_mod( 'sp_infinite_scroll',               false );
 
 
@@ -97,6 +103,12 @@ if ( ! class_exists( 'SP_Frontend_Shop' ) ) :
 				remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10 );
 			}
 
+			if ( is_shop() || is_product_taxonomy() || is_product_category() || is_product_tag() || is_page_template( 'template-homepage.php' ) ) {
+				if ( false === $archive_titles ) {
+					remove_action( 'woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10 );
+				}
+			}
+
 			if ( true === $archive_product_description ) {
 				add_action( 'woocommerce_after_shop_loop_item', 'sp_loop_product_description', 6 );
 			}
@@ -116,17 +128,10 @@ if ( ! class_exists( 'SP_Frontend_Shop' ) ) :
 		public function body_class( $classes ) {
 			$shop_layout    = get_theme_mod( 'sp_shop_layout' );
 			$shop_alignment = get_theme_mod( 'sp_shop_alignment' );
-			$archive_titles = get_theme_mod( 'sp_product_archive_title', true );
 
 			if ( is_shop() || is_product_taxonomy() || is_product_category() || is_product_tag() ) {
 				if ( 'full-width' === $shop_layout ) {
 					$classes[] = 'storefront-full-width-content';
-				}
-			}
-
-			if ( is_shop() || is_product_taxonomy() || is_product_category() || is_product_tag() || is_page_template( 'template-homepage.php' ) ) {
-				if ( false === $archive_titles ) {
-					$classes[] = 'sp-archive-hide-product-titles';
 				}
 			}
 
@@ -172,10 +177,13 @@ if ( ! class_exists( 'SP_Frontend_Shop' ) ) :
 
 			/**
 			 * Load the infinite scroll script on appropriate pages if the setting is enabled.
+			 * Uses Jetpack's infinite scroll if available.
 			 */
-			if ( ( true === $infinite_scroll ) && ( is_shop() || is_product_taxonomy() || is_product_category() || is_product_tag() ) ) {
-				wp_enqueue_script( 'jscroll', plugins_url( '../../../assets/js/jquery.jscroll.min.js', __FILE__ ), array( 'jquery' ) );
-				wp_enqueue_script( 'jscroll-init', plugins_url( '../../../assets/js/jscroll-init.min.js', __FILE__ ), array( 'jscroll' ) );
+			if ( true === $infinite_scroll && ! ( class_exists( 'Jetpack' ) && Jetpack::is_module_active( 'infinite-scroll' ) ) ) {
+				if ( is_shop() || is_product_taxonomy() || is_product_category() || is_product_tag() ) {
+					wp_enqueue_script( 'jscroll', plugins_url( '../../../assets/js/jquery.jscroll.min.js', __FILE__ ), array( 'jquery' ) );
+					wp_enqueue_script( 'jscroll-init', plugins_url( '../../../assets/js/jscroll-init.min.js', __FILE__ ), array( 'jscroll' ) );
+				}
 			}
 		}
 

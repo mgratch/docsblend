@@ -19,7 +19,13 @@ if ( ! function_exists( 'aesop_chapter_shortcode' ) ) {
 			'full'  	=> '',
 			'bgcolor'   => '',
 			'minheight' => '260px',
-			'force_fullwidth' => 'off'
+			'maxheight' => '100%',
+			'fixed_height' => '',
+			'force_fullwidth' => 'off',
+			'overlay_content'   => '',
+			'revealfx'  => '',
+			'video_autoplay' => 'on',
+			'overlay_revealfx'          => ''
 		);
 
 		$atts = apply_filters( 'aesop_chapter_defaults', shortcode_atts( $defaults, $atts ) );
@@ -33,7 +39,9 @@ if ( ! function_exists( 'aesop_chapter_shortcode' ) ) {
 
 		$inline_styles   = 'background-size:cover;background-position:center center;';
 		$styles    = apply_filters( 'aesop_chapter_img_styles_'.esc_attr( $unique ), esc_attr( $inline_styles ) );
-		if (wp_is_mobile() && 'video' == $atts['bgtype']) {
+		$is_video = 'video' == $atts['bgtype'];
+		if (wp_is_mobile() && $is_video) {
+			$is_video = false;
 			if (!empty($atts['alternate_img'])) {
 			    $atts['bgtype'] = 'img';
 			    $atts['img'] = $atts['alternate_img'];
@@ -41,49 +49,78 @@ if ( ! function_exists( 'aesop_chapter_shortcode' ) ) {
 				$atts['bgtype'] = 'color';
 			}
 		}
+		
+		
 
+		$vid_atts = null;
+		if ($is_video) {
+			$vid_atts = aesop_video_url_parse($atts['img']);
+		}
 		if ('img' == $atts['bgtype'] && $atts['img']) {
-			$img_style     =  sprintf( 'style="background:url(\'%s\');%s min-height:%s"', esc_url( $atts['img'] ), $styles, $atts['minheight'] );		
+			$img_style     =  sprintf( 'style="background:url(\'%s\');%s min-height:%s;max-height:%s;"', esc_url( $atts['img'] ), $styles, $atts['minheight'],$atts['maxheight'] );		
 		} else {
-			$img_style     =  'style="height:auto;min-height:'.$atts['minheight'].';"';
+			$img_style     =  'style="height:auto;min-height:'.$atts['minheight'].';max-height:'.$atts['maxheight'].';"';
 			if ('color' == $atts['bgtype'] && $atts['bgcolor']) {
-				$img_style = 'style="min-height:'.$atts['minheight'].';background-color: '.$atts['bgcolor'].';"';
+				$img_style = 'style="min-height:'.$atts['minheight'].';max-height:'.$atts['maxheight'].';background-color: '.$atts['bgcolor'].';"';
 				$atts['full'] ='off';
 			} 
 		}
 		$img_style_class  = 'img' == $atts['bgtype'] && $atts['img'] ? 'has-chapter-image' : 'no-chapter-image';
 		
 
-		$video_chapter_class = 'video' == $atts['bgtype'] ? 'aesop-video-chapter' : null;
+		$video_chapter_class = $is_video ? 'aesop-video-chapter' : null;
 
-		$full_class = 'on' == $atts['full'] ? 'aesop-chapter-full' : false;
+		$full_class = 'on' == $atts['full'] && !$is_video ? 'aesop-chapter-full' : false;
 		
 
 		do_action( 'aesop_chapter_before', $atts, $unique ); // action
 
 ?>
-			<div id="chapter-unique-<?php echo $unique;?>" <?php echo aesop_component_data_atts( 'chapter', $unique, $atts );?> class="aesop-article-chapter-wrap default-cover <?php echo $video_chapter_class;?> aesop-component <?php echo $img_style_class;?> <?php echo $full_class;?> " >
+			<div id="chapter-unique-<?php echo $unique;?>" <?php echo aesop_component_data_atts( 'chapter', $unique, $atts );?> class="aesop-article-chapter-wrap default-cover <?php echo $video_chapter_class;?> aesop-component <?php echo $img_style_class;?> <?php echo $full_class;?> " 
+			    <?php echo aesop_revealfx_set($atts) ? 'style="visibility:hidden;"': null ?> 
+			    data-title="<?php echo esc_attr( $atts['title'] );?>"
+			>
 
 				<?php do_action( 'aesop_chapter_inside_top', $atts, $unique ); // action ?>
 
 				<div class="aesop-article-chapter clearfix" <?php echo $img_style;?> >
 
-					<h2 class="aesop-cover-title" itemprop="title" data-title="<?php echo esc_attr( $atts['title'] );?>">
+				    <?php if (empty($atts['overlay_content'])) { ?>
+					<h2 class="aesop-cover-title" itemprop="title">
 						<span><?php echo esc_html( $atts['title'] );?></span>
 
 						<?php if ( $atts['subtitle'] ) { ?>
 							<small><?php echo esc_html( $atts['subtitle'] );?></small>
 						<?php } ?>
 					</h2>
+					<?php } ?>
 
-					<?php if ( 'video' == $atts['bgtype'] ) { ?>
+					<?php if ( $is_video)  { ?>
 					<div class="video-container">
-						<?php echo do_shortcode( '[video src="'.esc_url( $atts['img'] ).'" loop="on" autoplay="on"]' ); ?>
+						<?php 
+						$autoplay ='autoplay="on"';
+                        switch ($atts['video_autoplay']) {
+							case 'off':
+								$autoplay ='autoplay="off"';
+								break;
+							case 'play_scroll':
+								$autoplay ='viewstart="on" viewend="on"';
+								break;
+						}
+                        						
+						$vidcode = do_shortcode( '[aesop_video src="'.$vid_atts['type'].'" id="'.$vid_atts['id'].'"  hosted="'.$atts['img'].'" loop="on" '.$autoplay.' disable_for_mobile="off"]' );  
+						//echo preg_replace('/<div (id=".*?").*>/i','<div $1>', $vidcode);
+						echo $vidcode;
+						
+						?>
 					</div>
 					<?php } ?>
 
 				</div>
 
+				<div class="aesop-chapter-overlay-content">
+					<?php echo $atts['overlay_content']; ?>
+				</div>
 				<?php do_action( 'aesop_chapter_inside_bottom', $atts, $unique ); // action ?>
 
 			</div>
@@ -102,7 +139,7 @@ if ( ! function_exists( 'aesop_chapter_heading_loader' ) ) {
 
 		global $post;
 
-		$default_location  = is_single();
+		$default_location  = is_single() || is_page();
 		$location    = apply_filters( 'aesop_chapter_component_appears', $default_location );
 
 		if ( isset( $post->post_content ) && ( $location ) && has_shortcode( $post->post_content, 'aesop_chapter' ) ) {
@@ -123,8 +160,11 @@ class AesopChapterHeadingComponent {
 
 	public function aesop_chapter_loader() {
 
+
 		// allow theme developers to determine the offset amount
 		$chapterOffset = apply_filters( 'aesop_chapter_scroll_offset', 0 );
+		
+		$top = apply_filters( 'aesop_chapter_top_text', 'Top' );
 
 		// filterable content class
 		$postClass = get_post_class(); 
@@ -147,18 +187,20 @@ class AesopChapterHeadingComponent {
 					} 
 					
 					jQuery(contentClass).scrollNav({
+						
+						
 					    sections: '.aesop-article-chapter-wrap',
 					    arrowKeys: true,
 					    insertTarget: '<?php echo esc_attr( $contentHeaderClass );?>',
 					    insertLocation: 'appendTo',
-					    showTopLink: true,
+					    showTopLink: <?php echo !empty($top) ? 'true' : 'false';?>,
 					    showHeadline: false,
+						topLinkText: '<?php echo esc_attr( $top );?>',
 					    scrollOffset: <?php echo absint( $chapterOffset );?>,
 					    onRender: function() {
-					       	jQuery('.scroll-nav__section').each(function(){
-                                 
+					       	jQuery('.scroll-nav__section').each(function(){		
 					       		var id = jQuery(this).attr('id');
-					       		var title = jQuery(this).find('.aesop-cover-title').attr('data-title');
+					       		var title = jQuery(this).find('.aesop-article-chapter-wrap').attr('data-title');
 
 					       		jQuery('.scroll-nav__link').each(function(){
 					       			var match = jQuery(this).attr('href');

@@ -1,24 +1,40 @@
 <?php
-namespace Combined\Includes;
+
+namespace Includes;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
-
-
 class QuoteUpAddCustomField
 {
+    protected static $instance = null;
     public $fields = array();
     public $temp_fields = array();
     public $meta_key;
 
+    /**
+     * Function to create a singleton instance of class and return the same.
+     *
+     * @return object -Object of the class
+     */
+    public static function getInstance()
+    {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
     public function __construct()
     {
         add_action('wp_enqueue_scripts', array($this, 'addScripts'));
-        add_action('quoteup_create_enquiry_meta_db', array($this, 'createEnquiryMetaTable'));
-        add_action('quoteup_add_custom_field_in_form', array($this, 'addCustomFields')); //done
+        add_action('admin_enqueue_scripts', array($this, 'addScripts'));
+        add_action('quoteup_add_custom_field_in_form', array($this, 'addCustomFields'), 10, 1); //done
         add_action('quoteup_add_custom_field_in_db', array($this, 'addCustomFieldsDb')); //done
+        add_action('quoteup_add_dashboard_custom_field_in_db', array($this, 'addCustomFieldsDb')); // Used to add custom fields from dashboard in DB
         add_action('quoteup_create_custom_field', array($this, 'createCustomFields'));  //done
+        add_action('quoteup_create_dashboard_custom_field', array($this, 'createCustomFields'));
         add_filter('quoteup_get_custom_field', array($this, 'getCustomFields'));
         add_filter('quoteup_add_custom_field_admin_email', array($this, 'addCustomFieldsAdminEmail'), 10, 1);
         add_filter('quoteup_add_custom_field_customer_email', array($this, 'addCustomFieldsCustomerEmail'), 10, 1);
@@ -27,9 +43,46 @@ class QuoteUpAddCustomField
         add_action('mep_custom_fields', array($this, 'mpeCustomFieldDashboard'), 10, 1);
         add_action('quoteup_delete_custom_fields', array($this, 'deleteCustomFields'));
         add_action('mpe_add_custom_field_in_form', array($this, 'addCustomFieldsOnMPEForm'));
+        add_action('quote_add_custom_field_in_form', array($this, 'addCustomFieldsOnQuoteForm'));
     }
 
-    public function customTextField($val)
+    /**
+     * This function is used to add scripts.
+     */
+    public function addScripts()
+    {
+        wp_enqueue_style('multipleSelectCss', QUOTEUP_PLUGIN_URL.'/css/public/multiple-select.css');
+        wp_enqueue_script('multipleSelectJs', QUOTEUP_PLUGIN_URL.'/js/public/multiple-select.js', array(
+            'jquery', ), '', true);
+    }
+
+    /**
+     * This function is used to make field readonly.
+     *
+     * @param [array] $val        [description]
+     * @param string  $product_id [product id]
+     *
+     * @return [type] [description]
+     */
+    public function makeFieldReadonly($val)
+    {
+        $temp = '';
+        if (isset($val[ 'id' ]) && $val[ 'id' ] == 'txtdate') {
+            $temp = " readonly='readonly'";
+        }
+
+        return $temp;
+    }
+
+    /**
+     * This function is used to add text field on single product enquiry form.
+     *
+     * @param array $val        Array to create field
+     * @param int   $product_id Product ID
+     *
+     * @return string HTML string for text field
+     */
+    public function customTextField($val, $product_id)
     {
         $temp = '<div class="form_input">';
         $temp .= "<div class='form-wrap'><div class='form-wrap-inner'>";
@@ -43,19 +96,24 @@ class QuoteUpAddCustomField
         }
 
         $temp .= $this->addClassToField($val);
+        $temp .= $this->addValueToField($val);
 
-        if (isset($val[ 'value' ])) {
-            if ($val[ 'value' ] != '') {
-                $temp .= " value='".$val[ 'value' ]."'";
-            }
-        }
         $temp .= ' placeholder="'.$val[ 'placeholder' ].(($val[ 'required' ] == 'yes') ? '*' : '').'"';
-        $temp .= '/>';
-        $temp .= '</div></div></div>';
 
-        return $temp;
+        $temp .= $this->makeFieldReadonly($val);
+
+        $temp .= '/>';
+
+        return $temp.'</div></div></div>';
     }
 
+    /**
+     * This function is used to add textarea field on single product enquiry form.
+     *
+     * @param array $val Array to create field
+     *
+     * @return string HTML string for text field
+     */
     public function customTextareaField($val)
     {
         $temp = '<div class="form_input">';
@@ -71,17 +129,29 @@ class QuoteUpAddCustomField
         $temp .= $this->addClassToField($val);
 
         $temp .= ' placeholder="'.$val[ 'placeholder' ].(($val[ 'required' ] == 'yes') ? '*' : '').'"';
+        if (isset($val[ 'id' ]) && isset($val[ 'id' ]) == 'txtmsg') {
+            $temp .= "maxlength='500'";
+        }
         $temp .= " rows='5'>";
         if (isset($val[ 'value' ])) {
             $temp .= $val[ 'value' ];
         }
 
         $temp .= '</textarea>';
-        $temp .= '</div></div></div>';
+        if (isset($val[ 'id' ]) && isset($val[ 'id' ]) == 'txtmsg') {
+            $temp .= "<label class='lbl-char' id='lbl-char'><span class='wdmRemainingCount'>500 </span> ". __('characters remaining','quoteup') ."</label>";
+        }
 
-        return $temp;
+        return $temp.'</div></div></div>';
     }
 
+    /**
+     * This function is used to add Radio field on single product enquiry form.
+     *
+     * @param array $val Array to create field
+     *
+     * @return string HTML string for text field
+     */
     public function customRadioField($val)
     {
         $temp = '<div class="form_input ';
@@ -94,9 +164,7 @@ class QuoteUpAddCustomField
         if (count($val[ 'options' ]) > 0) {
             $temp = $this->forEachRadioField($val, $temp);
 
-            $temp .= '</div></div></div>';
-
-            return $temp;
+            return $temp.'</div></div></div>';
         }
     }
 
@@ -113,7 +181,7 @@ class QuoteUpAddCustomField
             }
             $temp .= ' placeholder="'.$val[ 'placeholder' ].(($val[ 'required' ] == 'yes') ? '*' : '').'"';
             if (isset($value)) {
-                $temp .= " value='".$value."'/>".$value.'&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+                $temp .= " value='".$value."'/>".$value;
             } else {
                 $temp .= '/>';
             }
@@ -123,20 +191,27 @@ class QuoteUpAddCustomField
         return $temp;
     }
 
+    /**
+     * This function is used to add Select field on single product enquiry form.
+     *
+     * @param array $val Array to create field
+     *
+     * @return string HTML string for text field
+     */
     public function customSelectField($val)
     {
         $temp = '<div class="form_input ';
         $temp .= $this->addClassToField($val);
-                    $temp .= '">';
-                    $temp .= "<div class='form-wrap'><div class='form-wrap-inner'>";
-                    $temp .= $val[ 'label' ].(($val[ 'required' ] == 'yes') ? '<sup class="req">*</sup>' : '').':&nbsp&nbsp<select ';
+        $temp .= '">';
+        $temp .= "<div class='form-wrap'><div class='form-wrap-inner'>";
+        $temp .= $val[ 'label' ].(($val[ 'required' ] == 'yes') ? '<sup class="req">*</sup>' : '').':&nbsp&nbsp<select ';
         if (isset($val[ 'id' ])) {
             $temp .= " name='".$val[ 'id' ]."'";
         }
         if (isset($val[ 'id' ])) {
             $temp .= " id='".$val[ 'id' ]."'";
         }
-                    $temp .= ' >';
+        $temp .= ' >';
 
         if (count($val[ 'options' ]) > 0) {
             if (isset($val['default_text'])) {
@@ -150,25 +225,30 @@ class QuoteUpAddCustomField
                 unset($key);
             }
         }
-                    $temp .= '</select>';
-                    $temp .= '</div></div></div>';
+        $temp .= '</select>';
 
-        return $temp;
+        return $temp.'</div></div></div>';
     }
 
+    /**
+     * This function is used to add Checkbox field on single product enquiry form.
+     *
+     * @param array $val Array to create field
+     *
+     * @return string HTML string for text field
+     */
     public function customcheckboxField($val)
     {
         $temp = '<div class="mpe_form_input ';
 
-        $temp .= $this->addClassToField($val);
+        if (isset($val[ 'class' ])) {
+            $temp .= $val[ 'class' ];
+        }
 
         $temp .= '">';
         $temp .= '<label class="mpe-left wdm-enquiry-form-label">';
         $temp .= $val[ 'label' ].(($val[ 'required' ] == 'yes') ? '<sup class="req">*</sup>' : '');
-        // $temp .= 'Select'.(($val[ 'required' ] == 'yes') ? '<sup class="req">*</sup>' : '');
-        $temp .= '</label>
-                            <div class="mpe-right"><div class="mpe-right-inner">';
-        // $temp .= $val[ 'label' ].':&nbsp&nbsp';
+        $temp .= '</label> <div class="mpe-right"><div class="mpe-right-inner">';
         if (count($val[ 'options' ]) > 0) {
             foreach ($val[ 'options' ] as $key => $value) {
                 $temp .= "<input type='checkbox' ";
@@ -179,16 +259,14 @@ class QuoteUpAddCustomField
                 if (isset($val[ 'required' ])) {
                     $temp .= ' '.(($val[ 'required' ] == 'yes') ? 'required' : '');
                 }
-                //$temp .= " class='".$val['class']."'";
                 if (isset($value)) {
-                    $temp .= " value='".$value."'>".$value.'&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+                    $temp .= " value='".$value."'>".$value;
                 }
                 unset($key);
             }
         }
-        $temp .= '</div></div></div>';
 
-        return $temp;
+        return $temp.'</div></div></div>';
     }
 
     public function forEachOption($val, $value)
@@ -204,28 +282,35 @@ class QuoteUpAddCustomField
         }
 
         if (isset($value)) {
-            $temp .= " value='".$value."'>".$value.'&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+            $temp .= " value='".$value."'>".$value;
         }
 
         return $temp;
     }
 
+    /**
+     * This function is used to add Multiple field on single product enquiry form.
+     *
+     * @param array $val Array to create field
+     *
+     * @return string HTML string for text field
+     */
     public function customMultipleField($val)
     {
         $temp = '<div class="form_input ';
         if (isset($val[ 'class' ])) {
             $temp .= $val[ 'class' ];
         }
-                    $temp .= '">';
-                    $temp .= $val[ 'label' ].(($val[ 'required' ] == 'yes') ? '<sup class="req">*</sup>' : '');
-                    $temp .= '<select class="wdm-custom-multiple-fields" ';
+        $temp .= '">';
+        $temp .= $val[ 'label' ].(($val[ 'required' ] == 'yes') ? '<sup class="req">*</sup>' : '');
+        $temp .= '<select class="wdm-custom-multiple-fields" ';
         if (isset($val[ 'id' ])) {
             $temp .= " name='".$val[ 'id' ]."'";
         }
         if (isset($val[ 'id' ])) {
             $temp .= " id='".$val[ 'id' ]."'";
         }
-                    $temp .= ' multiple>';
+        $temp .= ' multiple>';
         if (count($val[ 'options' ]) > 0) {
             foreach ($val[ 'options' ] as $key => $value) {
                 if (isset($value)) {
@@ -234,26 +319,45 @@ class QuoteUpAddCustomField
                 unset($key);
             }
         }
-                    $temp .= '</select>';
-                    $temp .= '</div>';
+        $temp .= '</select>';
 
-        return $temp;
+        return $temp.'</div>';
     }
 
-    public function addScripts()
+    public function customFileUploadField($val)
     {
-        wp_enqueue_style('multipleSelectCss', QUOTEUP_PLUGIN_URL . '/css/public/multiple-select.css');
-        wp_enqueue_script('multipleSelectJs', QUOTEUP_PLUGIN_URL . '/js/public/multiple-select.js', array('jquery'), '', true);
+        $temp = '<div class="form_input">';
+        $temp .= "<div class='form-wrap'><div class='form-wrap-inner'>";
+        $temp .= "<input type='file'";
+        if (isset($val[ 'id' ])) {
+            $temp .= " name='".$val[ 'id' ]."'";
+        }
+        $temp .= " id='".$val[ 'id' ]."'";
+        if (isset($val[ 'required' ])) {
+            $temp .= ' '.(($val[ 'required' ] == 'yes') ? 'required' : '');
+        }
+
+        $temp .= $this->addClassToField($val);
+        $temp .= $this->addValueToField($val);
+
+        $temp .= ' placeholder="'.$val[ 'placeholder' ].(($val[ 'required' ] == 'yes') ? '*' : '').'"';
+        $temp .= ' multiple />';
+
+        return $temp.'</div></div></div>';
     }
 
-    //creating custom fields html
-    public function addCustomFields()
+    /**
+     * This function is used to add custom fields on single product enquiry form.
+     *
+     * @param int $product_id Product id
+     */
+    public function addCustomFields($product_id)
     {
         $temp = '';
         foreach ($this->fields as $key => $val) {
             if (isset($val[ 'type' ])) {
                 if ($val[ 'type' ] == 'text') {
-                    $temp .= $this->customTextField($val);
+                    $temp .= $this->customTextField($val, $product_id);
                 } elseif ($val[ 'type' ] == 'textarea') {
                     $temp .= $this->customTextareaField($val);
                 } elseif ($val[ 'type' ] == 'radio') {
@@ -264,6 +368,8 @@ class QuoteUpAddCustomField
                     $temp .= $this->customcheckboxField($val);
                 } elseif ($val[ 'type' ] == 'multiple') {
                     $temp .= $this->customMultipleField($val);
+                } elseif ($val[ 'type' ] == 'file') {
+                    $temp .= $this->customFileUploadField($val);
                 }
             }
             unset($key);
@@ -271,6 +377,9 @@ class QuoteUpAddCustomField
         echo $temp;
     }
 
+    /**
+     * This function is used to add fields on MPE form.
+     */
     public function addCustomFieldsOnMPEForm()
     {
         $temp = '';
@@ -289,6 +398,8 @@ class QuoteUpAddCustomField
                     $temp .= $this->addCheckBoxField($v);
                 } elseif ($v[ 'type' ] == 'multiple') {
                     $temp .= $this->addMultipleField($v);
+                } elseif ($v[ 'type' ] == 'file') {
+                    $temp .= $this->addFileField($v);
                 }
             }
         }
@@ -296,56 +407,48 @@ class QuoteUpAddCustomField
         unset($key);
     }
 
-    public function addMultipleField($val)
+    /**
+     * This function is used to add fields on Quote form.
+     */
+    public function addCustomFieldsOnQuoteForm()
     {
-        $temp = '<div class="mpe_form_input ';
-        if (isset($val[ 'class' ])) {
-            $temp .= $val[ 'class' ];
-        }
-                    $temp .= '">';
-                    $temp .= '<label class="mpe-left wdm-enquiry-form-label">';
-                    $temp .= $val[ 'label' ].(($val[ 'required' ] == 'yes') ? '<sup class="req">*</sup>' : '');
-                    $temp .= '</label>
-                            <div class="mpe-right"><div class="mpe-right-inner">';
-                    $temp .= '<select class="wdm-custom-multiple-fields" ';
-        if (isset($val[ 'id' ])) {
-            $temp .= " name='".$val[ 'id' ]."'";
-            $temp .= " id='".$val[ 'id' ]."'";
-        }
-                    $temp .= ' multiple>';
-        if (count($val[ 'options' ]) > 0) {
-            foreach ($val[ 'options' ] as $key => $value) {
-                if (isset($value)) {
-                    $temp .= "<option value='".$value."'>".$value.'</option>';
+        $temp = '';
+
+        foreach ($this->fields as $key => $v) {
+            if (!isset($v[ 'include_in_quote_form' ]) || isset($v[ 'include_in_quote_form' ]) && $v[ 'include_in_quote_form' ] == 'yes') {
+                if (isset($v[ 'type' ])) {
+                    if ($v[ 'type' ] == 'text') {
+                        $temp .= $this->addTextField($v);
+                    } elseif ($v[ 'type' ] == 'textarea') {
+                        $temp .= $this->addTextareaField($v);
+                    } elseif ($v[ 'type' ] == 'radio') {
+                        $temp .= $this->addRadioField($v);
+                    } elseif ($v[ 'type' ] == 'select') {
+                        $temp .= $this->addSelectField($v);
+                    } elseif ($v[ 'type' ] == 'checkbox') {
+                        $temp .= $this->addCheckBoxField($v);
+                    } elseif ($v[ 'type' ] == 'multiple') {
+                        $temp .= $this->addMultipleField($v);
+                    } elseif ($v[ 'type' ] == 'file') {
+                        $temp .= $this->addFileField($v);
+                    }
                 }
-                unset($key);
             }
         }
-                    $temp .= '</select>';
-                    $temp .= '</div></div></div>';
-
-        return $temp;
-
-        // return $temp;
+        echo $temp;
         unset($key);
     }
 
+    //This functions are used to add different types of fields on MPE form
 
-    public function addClassToField($val)
-    {
-        $temp = '';
-        if (isset($val[ 'class' ])) {
-            $temp = " class='".$val[ 'class' ]."'";
-        }
-
-        return $temp;
-    }
-
+    /**
+     * This function is used to add Text field on MPE form.
+     */
     public function addTextField($val)
     {
         $temp = '<div class="mpe_form_input">';
         $temp .= '<label class="mpe-left wdm-enquiry-form-label">';
-        $temp .= $val[ 'placeholder' ].(($val[ 'required' ] == 'yes') ? '<sup class="req">*</sup>' : '');
+        $temp .= $val[ 'label' ].(($val[ 'required' ] == 'yes') ? '<sup class="req">*</sup>' : '');
         $temp .= '</label>
                             <div class="mpe-right"><div class="mpe-right-inner">';
         $temp .= "<input type='text'";
@@ -356,22 +459,20 @@ class QuoteUpAddCustomField
         if (isset($val[ 'required' ])) {
             $temp .= ' '.(($val[ 'required' ] == 'yes') ? 'required' : '');
         }
+        $temp .= ' placeholder="'.$val[ 'placeholder' ].'"';
 
         $temp .= $this->addClassToField($val);
+        $temp .= $this->addValueToField($val);
 
-        if (isset($val[ 'value' ])) {
-            if ($val[ 'value' ] != '') {
-                $temp .= " value='".$val[ 'value' ]."'";
-            } else {
-                $temp .= " placeholder='".$val[ 'placeholder' ]."'";
-            }
-        }
+        $temp .= $this->makeFieldReadonly($val);
         $temp .= '>';
-        $temp .= '</div></div></div>';
 
-        return $temp;
+        return $temp.'</div></div></div>';
     }
 
+    /**
+     * This function is used to add Textarea field on MPE form.
+     */
     public function addTextareaField($val)
     {
         $temp = '<div class="mpe_form_input">';
@@ -389,19 +490,28 @@ class QuoteUpAddCustomField
             $temp .= ' '.(($val[ 'required' ] == 'yes') ? 'required' : '');
         }
 
+        $temp .= ' placeholder="'.$val[ 'placeholder' ].'"';
+
         $temp .= $this->addClassToField($val);
 
-        $temp .= " placeholder='".$val[ 'placeholder' ]."'";
+        if (isset($val[ 'id' ]) && isset($val[ 'id' ]) == 'txtmsg') {
+            $temp .= "maxlength='500'";
+        }
         $temp .= " rows='5'>";
         if (isset($val[ 'value' ])) {
             $temp .= $val[ 'value' ];
         }
         $temp .= '</textarea>';
-        $temp .= '</div></div></div>';
+        if (isset($val[ 'id' ]) && isset($val[ 'id' ]) == 'txtmsg') {
+            $temp .= "<label class='lbl-char' id='lbl-char'><span class='wdmRemainingCount'>500 </span> ".__('characters remaining','quoteup') ."</label>";
+        }
 
-        return $temp;
+        return $temp.'</div></div></div>';
     }
 
+    /**
+     * This function is used to add Radio field on MPE form.
+     */
     public function addRadioField($val)
     {
         $temp = '<div class="mpe_form_input ';
@@ -425,79 +535,55 @@ class QuoteUpAddCustomField
                 if (isset($val[ 'required' ])) {
                     $temp .= ' '.(($val[ 'required' ] == 'yes') ? 'required' : '');
                 }
-                //$temp .= " class='".$val['class']."'";
                 if (isset($value)) {
-                    $temp .= " value='".$value."'>".$value.'&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+                    $temp .= " value='".$value."'>".$value;
                 }
                 unset($key);
             }
         }
-        $temp .= '</div></div></div>';
 
-        return $temp;
+        return $temp.'</div></div></div>';
     }
 
-    public function setID($val, $temp)
-    {
-        if (isset($val[ 'id' ])) {
-            $temp = " id='".$val[ 'id' ]."'";
-        }
-        return $temp;
-    }
-
+    /**
+     * This function is used to add Select field on MPE form.
+     */
     public function addSelectField($val)
     {
-        $temp    = '<div class="mpe_form_input">';
+        $temp = '<div class="mpe_form_input">';
         $temp .= '<label class="mpe-left wdm-enquiry-form-label">';
-        $temp .= $val[ 'label' ]. (($val[ 'required' ] == 'yes') ? '<sup class="req">*</sup>' : '');
+        $temp .= $val[ 'label' ].(($val[ 'required' ] == 'yes') ? '<sup class="req">*</sup>' : '');
         $temp .= '</label>
                             <div class="mpe-right"><div class="mpe-right-inner">';
-        $temp .= "<select";
+        $temp .= '<select';
         if (isset($val[ 'id' ])) {
             $temp .= " name='".$val[ 'id' ]."'";
+            $temp .= " id='".$val[ 'id' ]."'";
         }
-        $temp .= " id='".$val[ 'id' ]."'";
         if (isset($val[ 'required' ])) {
             $temp .= ' '.(($val[ 'required' ] == 'yes') ? 'required' : '');
         }
 
         $temp .= $this->addClassToField($val);
         $temp .= ' >';
-        
-        if (count($val[ 'options' ]) > 0) {
-            if (isset($val['default_text'])) {
-                $temp .= "<option value='#'>".$val['default_text'].'</option>';
-            }
-            foreach ($val[ 'options' ] as $key => $value) {
-                if (isset($value)) {
-                    $temp .= "<option value='".$value."'>".$value.'</option>';
-                }
-                unset($key);
-            }
-        }
+
+        $temp .= $this->getOptions($val);
+
         $temp .= '</select>';
-        $temp .= '</div></div></div>';
 
-        return $temp;
+        return $temp.'</div></div></div>';
     }
 
-    public function getNameID($val)
-    {
-        $temp = "";
-        if (isset($val[ 'id' ])) {
-            $temp = " name='".$val[ 'id' ]."[]'";
-        }
-        if (isset($val[ 'id' ])) {
-            $temp .= " id='".$val[ 'id' ]."'";
-        }
-        return $temp;
-    }
-
+    /**
+     * This function is used to add Checkbox field on MPE form.
+     */
     public function addCheckBoxField($val)
     {
         $temp = '<div class="mpe_form_input ';
 
-        $temp .= $this->addClassToField($val);
+        if (isset($val[ 'class' ])) {
+            $temp .= $val[ 'class' ];
+        }
 
         $temp .= '">';
         $temp .= '<label class="mpe-left wdm-enquiry-form-label">';
@@ -512,44 +598,409 @@ class QuoteUpAddCustomField
                     $temp .= ' '.(($val[ 'required' ] == 'yes') ? 'required' : '');
                 }
                 if (isset($value)) {
-                    $temp .= " value='".$value."'>".$value.'&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+                    $temp .= " value='".$value."'>".$value;
                 }
                 unset($key);
             }
         }
-        $temp .= '</div></div></div>';
+
+        return $temp.'</div></div></div>';
+    }
+
+    /**
+     * This function is used to add Multiple field on MPE form.
+     */
+    public function addMultipleField($val)
+    {
+        $temp = '<div class="mpe_form_input ';
+        if (isset($val[ 'class' ])) {
+            $temp .= $val[ 'class' ];
+        }
+        $temp .= '">';
+        $temp .= '<label class="mpe-left wdm-enquiry-form-label">';
+        $temp .= $val[ 'label' ].(($val[ 'required' ] == 'yes') ? '<sup class="req">*</sup>' : '');
+        $temp .= '</label>
+                            <div class="mpe-right"><div class="mpe-right-inner">';
+        $temp .= '<select class="wdm-custom-multiple-fields" ';
+        if (isset($val[ 'id' ])) {
+            $temp .= " name='".$val[ 'id' ]."'";
+            $temp .= " id='".$val[ 'id' ]."'";
+        }
+        $temp .= ' multiple>';
+        if (count($val[ 'options' ]) > 0) {
+            foreach ($val[ 'options' ] as $key => $value) {
+                if (isset($value)) {
+                    $temp .= "<option value='".$value."'>".$value.'</option>';
+                }
+                unset($key);
+            }
+        }
+        $temp .= '</select>';
+
+        return $temp.'</div></div></div>';
+    }
+
+    /**
+     * This function is used to add Text field on MPE form.
+     */
+    public function addFileField($val)
+    {
+        $temp = '<div class="mpe_form_input">';
+        $temp .= '<label class="mpe-left wdm-enquiry-form-label">';
+        $temp .= $val[ 'label' ].(($val[ 'required' ] == 'yes') ? '<sup class="req">*</sup>' : '');
+        $temp .= '</label>
+                            <div class="mpe-right"><div class="mpe-right-inner">';
+        $temp .= "<input type='file'";
+        if (isset($val[ 'id' ])) {
+            $temp .= " name='".$val[ 'id' ]."'";
+        }
+        $temp .= " id='".$val[ 'id' ]."'";
+        if (isset($val[ 'required' ])) {
+            $temp .= ' '.(($val[ 'required' ] == 'yes') ? 'required' : '');
+        }
+
+        $temp .= $this->addClassToField($val);
+        $temp .= $this->addValueToField($val);
+        $temp .= ' multiple >';
+
+        return $temp.'</div></div></div>';
+    }
+
+    //End of functions adding fields on MPE form
+
+    private function addClassToField($val)
+    {
+        $temp = '';
+        if (isset($val[ 'class' ])) {
+            $temp = " class='".$val[ 'class' ]."'";
+        }
+
+        return $temp;
+    }
+
+    private function addValueToField($val)
+    {
+        $temp = '';
+        if (isset($val[ 'value' ]) && $val[ 'value' ] != '') {
+                $temp = " value='".$val[ 'value' ]."'";
+        }
+
+        return $temp;
+    }
+
+    /**
+     * This function is used to get options of select field in mpe form.
+     *
+     * @param [type] $val [description]
+     *
+     * @return [type] [description]
+     */
+    private function getOptions($val)
+    {
+        $temp = '';
+        if (count($val[ 'options' ]) > 0) {
+            if (isset($val['default_text'])) {
+                $temp .= "<option value='#'>".$val['default_text'].'</option>';
+            }
+            foreach ($val[ 'options' ] as $key => $value) {
+                if (isset($value)) {
+                    $temp .= "<option value='".$value."'>".$value.'</option>';
+                }
+                unset($key);
+            }
+        }
+
+        return $temp;
+    }
+
+    /**
+     * This function is used to get name and id of MPE from checkbox field.
+     *
+     * @param array $val Value to create field
+     *
+     * @return string HTML string
+     */
+    public function getNameID($val)
+    {
+        $temp = '';
+        if (isset($val[ 'id' ])) {
+            $temp = " name='".$val[ 'id' ]."[]'";
+        }
+        if (isset($val[ 'id' ])) {
+            $temp .= " id='".$val[ 'id' ]."'";
+        }
 
         return $temp;
     }
 
     //adding custom fields to enquiry_meta table
+    /**
+     * This function is used to add custom fields in enquiry mera table.
+     *
+     * @param int $enquiryID Enquiry ID
+     */
     public function addCustomFieldsDb($enquiryID)
     {
         global $wpdb;
         $tbl = $wpdb->prefix.'enquiry_meta';
         foreach ($this->fields as $key => $v) {
-            if ($v[ 'id' ] != 'custname' && $v[ 'id' ] != 'txtemail' && $v[ 'id' ] != 'txtphone' && $v[ 'id' ] != 'txtsubject' && $v[ 'id' ] != 'txtmsg') {
-                $wpdb->insert(
-                    $tbl,
-                    array(
-                    'enquiry_id' => $enquiryID,
-                    'meta_key' => $v[ 'label' ],
-                    'meta_value' => (isset($_POST[ $v[ 'id' ] ]) ? $_POST[ $v[ 'id' ] ] : ''),
-                    ),
-                    array(
-                    '%d',
-                    '%s',
-                    '%s',
-                    )
-                );
+            if ($v[ 'id' ] != 'custname' && $v[ 'id' ] != 'txtemail' && $v[ 'id' ] != 'txtphone' && $v[ 'id' ] != 'txtsubject' && $v[ 'id' ] != 'txtmsg' && $v[ 'id' ] != 'txtmsg' && $v[ 'id' ] != 'txtdate' && $v[ 'id' ] != 'wdmFileUpload') {
+                if (isset($_POST['globalEnquiryID']) && $_POST['globalEnquiryID'] != 0) {
+                    $wpdb->update(
+                        $tbl,
+                        array(
+                        'meta_value' => (isset($_POST[ $v[ 'id' ] ]) ? $_POST[ $v[ 'id' ] ] : ''),
+                        ),
+                        array(
+                        'enquiry_id' => $_POST['globalEnquiryID'],
+                        'meta_key' => $v[ 'label' ],
+                        ),
+                        array(
+                        '%s',
+                        ),
+                        array('%d', '%s')
+                    );
+                } else {
+                    $wpdb->insert(
+                        $tbl,
+                        array(
+                        'enquiry_id' => $enquiryID,
+                        'meta_key' => $v[ 'label' ],
+                        'meta_value' => (isset($_POST[ $v[ 'id' ] ]) ? $_POST[ $v[ 'id' ] ] : ''),
+                        ),
+                        array(
+                        '%d',
+                        '%s',
+                        '%s',
+                        )
+                    );
+                }
             }
             unset($key);
         }
     }
 
+    /**
+     * This function is used to get customer name and email field array.
+     *
+     * @param [string] $name  [Name of the customer]
+     * @param [string] $email [Email of the customer]
+     *
+     * @return [array] [array of customer name and email field]
+     */
+    public function getCustNameEmail($name, $email)
+    {
+        return array(
+            array(
+                'id' => 'custname',
+                'class' => 'wdm-modal_text',
+                'type' => 'text',
+                'placeholder' => __('Name', 'quoteup'),
+                'required' => 'yes',
+                'required_message' => __('Please Enter Name', 'quoteup'),
+                'validation' => '^([^0-9@#$%^&*()+{}:;\//"<>,.?*~`]*)$', //^[a-zA-Z\u00C0-\u00ff\' ]+$
+                'validation_message' => __('Please Enter Valid Name', 'quoteup'),
+                'include_in_admin_mail' => 'yes',
+                'include_in_customer_mail' => 'no',
+                'include_in_quote_form' => 'yes',
+                'label' => __('Customer Name', 'quoteup'),
+                'value' => $name,
+            ),
+            array(
+                'id' => 'txtemail',
+                'class' => 'wdm-modal_text',
+                'type' => 'text',
+                'placeholder' => __('Email', 'quoteup'),
+                'required' => 'yes',
+                'required_message' => __('Please Enter Email', 'quoteup'),
+                'validation' => '^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$',
+                'validation_message' => __('Please Enter Valid Email Address', 'quoteup'),
+                'include_in_admin_mail' => 'yes',
+                'include_in_customer_mail' => 'no',
+                'include_in_quote_form' => 'yes',
+                'label' => __('Email', 'quoteup'),
+                'value' => $email,
+            ),
+        );
+    }
+
+    /**
+     * This function is used to get Telephone field on mpe form.
+     *
+     * @param [array] $form_data [settings stored in database]
+     * @param [array] $custname  [previous fields array]
+     *
+     * @return [type] [description]
+     */
+    public function getTelephoneField($form_data, $custname)
+    {
+        if (isset($form_data[ 'enable_telephone_no_txtbox' ]) && $form_data[ 'enable_telephone_no_txtbox' ] == '1') {
+            $ph_req = 'no';
+
+            $ph_req = $this->phoneMandatory($ph_req, $form_data);
+
+            $custname = array_merge(
+                $custname,
+                array(
+                array(
+                    'id' => 'txtphone',
+                    'class' => 'wdm-modal_text',
+                    'type' => 'text',
+                    'placeholder' => __('Phone Number', 'quoteup'),
+                    'required' => $ph_req,
+                    'required_message' => __('Please Enter Phone Number', 'quoteup'),
+                    'validation' => '^[0-9(). \-+]{1,16}$',
+                    'validation_message' => __('Please Enter Valid Telephone No', 'quoteup'),
+                    'include_in_admin_mail' => 'yes',
+                    'include_in_customer_mail' => 'no',
+                    'include_in_quote_form' => 'yes',
+                    'label' => __('Phone Number', 'quoteup'),
+                    'value' => '',
+                ),
+                )
+            );
+        }
+
+        return $custname;
+    }
+
+    /**
+     * This function is used to get Telephone field on mpe form.
+     *
+     * @param [array] $form_data [settings stored in database]
+     * @param [array] $custname  [previous fields array]
+     *
+     * @return [type] [description]
+     */
+    private function getDateField($form_data, $custname)
+    {
+        if (isset($form_data[ 'enable_date_field' ]) && $form_data[ 'enable_date_field' ] == '1') {
+            global $wp_scripts;
+            wp_enqueue_script('jquery');
+            wp_enqueue_script('jquery-ui-core');
+                // JS and css required for datepciker
+                wp_enqueue_script('datepicker', quoteupPluginUrl().'/js/public/datepicker.js', array('jquery', 'jquery-ui-core', 'jquery-effects-highlight', 'jquery-ui-datepicker'), true);
+
+                // get registered script object for jquery-ui
+                $uiObject = $wp_scripts->query('jquery-ui-core');
+                // tell WordPress to load the Smoothness theme from Google CDN
+                $protocol = is_ssl() ? 'https' : 'http';
+            $url = "$protocol://ajax.googleapis.com/ajax/libs/jqueryui/{$uiObject->ver}/themes/smoothness/jquery-ui.min.css";
+            wp_enqueue_style('jquery-ui-smoothness', $url, false, null);
+            wp_enqueue_style('jquery-ui-datepicker', QUOTEUP_PLUGIN_URL.'/css/admin/datepicker.css');
+            
+            $aryArgs = getDateLocalizationArray();
+            wp_localize_script('datepicker', 'dateData', $aryArgs);
+
+            $dt_req = 'no';
+
+            $dt_req = $this->dateMandatory($dt_req, $form_data);
+            $label = isset($form_data[ 'date_field_label' ]) ? $form_data[ 'date_field_label' ] : __('Date', 'quoteup');
+
+            if ($label == "") {
+                $label = __('Date', 'quoteup');
+            }
+
+            $custname = array_merge(
+                $custname,
+                array(
+                array(
+                    'id' => 'txtdate',
+                    'class' => 'wdm-modal_text date-field',
+                    'type' => 'text',
+                    'placeholder' => $label,
+                    'required' => $dt_req,
+                    'required_message' => __('Please Enter Date', 'quoteup'),
+                    'include_in_admin_mail' => 'yes',
+                    'include_in_customer_mail' => 'yes',
+                    'include_in_quote_form' => 'yes',
+                    'label' => $label,
+                    'value' => '',
+                ),
+                )
+            );
+        }
+
+        return $custname;
+    }
+
+    /**
+     * This function is used to add Quantity field on SPE form.
+     *
+     * @param array $form_data Settings stored in
+     * @param array $custname  Previous Field array
+     *
+     * @return array Array with quantity field
+     */
+    public function getQuantityField($custname)
+    {
+        return array_merge(
+            $custname,
+            array(
+                array(
+                    'id' => 'txtQty',
+                    'class' => 'wdm-modal_text quantity-field',
+                    'type' => 'text',
+                    'placeholder' => __('Product Quantity', 'quoteup'),
+                    'required' => 'yes',
+                    'required_message' => __('Please Enter Quantity', 'quoteup'),
+                    'validation' => '^[0-9]*$',
+                    'validation_message' => __('Please Enter Valid Quantity', 'quoteup'),
+                    'include_in_admin_mail' => 'yes',
+                    'include_in_customer_mail' => 'yes',
+                    'include_in_quote_form' => 'yes',
+                    'label' => __('Product Quantity', 'quoteup'),
+                    'value' => '',
+                ),
+                )
+        );
+    }
+
+    /**
+     * This function is used to add upload File field in form.
+     *
+     * @param array $form_data Settings stored in
+     * @param array $custname  Previous Field array
+     *
+     * @return array Array with quantity field
+     */
+    public function getUploadField($form_data, $custname)
+    {
+        $attachReq = 'no';
+
+        $attachReq = $this->attachMandatory($attachReq, $form_data);
+        $label = isset($form_data[ 'attach_field_label' ]) ? $form_data[ 'attach_field_label' ] : __('Attach File', 'quoteup');
+        if($label == "")
+        {
+            $label = __('Attach File', 'quoteup');
+        }
+        return array_merge(
+            $custname,
+            array(
+                array(
+                    'id' => 'wdmFileUpload',
+                    'class' => 'wdm-modal_text upload-field',
+                    'type' => 'file',
+                    'placeholder' => __('Add File', 'quoteup'),
+                    'required' => $attachReq,
+                    'required_message' => __('Please Upload minimum 1 and maximum 10 Files', 'quoteup'),
+                    'validation' => '',
+                    'validation_message' => __('Please Upload Valid File', 'quoteup'),
+                    'include_in_admin_mail' => 'yes',
+                    'include_in_customer_mail' => 'yes',
+                    'include_in_quote_form' => 'yes',
+                    'label' => $label,
+                    'value' => '',
+                ),
+                )
+        );
+    }
+
     //creating custom fields array
     public function createCustomFields()
     {
+        $this->fields = array();
+        $custname = array();
         $default_vals = array('show_after_summary' => 1,
             'button_CSS' => 0,
             'pos_radio' => 0,
@@ -574,70 +1025,29 @@ class QuoteUpAddCustomField
             }
         } else {
             if (isset($_COOKIE[ 'wdmusername' ])) {
-                $name = $_COOKIE[ 'wdmusername' ];
+                $name = filter_var($_COOKIE[ 'wdmusername' ], FILTER_SANITIZE_STRING);
             }
             if (isset($_COOKIE[ 'wdmuseremail' ])) {
-                $email = $_COOKIE[ 'wdmuseremail' ];
+                $email = filter_var($_COOKIE[ 'wdmuseremail' ], FILTER_SANITIZE_EMAIL);
             }
         }
-        $custname = array(
-            array(
-                'id' => 'custname',
-                'class' => 'wdm-modal_text',
-                'type' => 'text',
-                'placeholder' => __('Name', 'quoteup'),
-                'required' => 'yes',
-                'required_message' => __('Please Enter Name', 'quoteup'),
-                'validation' => '^[a-zA-Z\u00C0-\u00ff ]+$',
-                'validation_message' => __('Please Enter Valid Name', 'quoteup'),
-                'include_in_admin_mail' => 'yes',
-                'include_in_customer_mail' => 'no',
-                'label' => 'Customer Name',
-                'value' => $name,
-            ),
-            array(
-                'id' => 'txtemail',
-                'class' => 'wdm-modal_text',
-                'type' => 'text',
-                'placeholder' => __('Email', 'quoteup'),
-                'required' => 'yes',
-                'required_message' => __('Please Enter Email', 'quoteup'),
-                'validation' => '^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$',
-                'validation_message' => __('Please Enter Valid Email Address', 'quoteup'),
-                'include_in_admin_mail' => 'yes',
-                'include_in_customer_mail' => 'no',
-                'label' => 'Email',
-                'value' => $email,
-            ),
-        );
-        if (isset($form_data[ 'enable_telephone_no_txtbox' ])) {
-            if ($form_data[ 'enable_telephone_no_txtbox' ] == '1') {
-                $ph_req = 'no';
-
-                $ph_req = $this->phoneMandatory($ph_req, $form_data);
-                
-
-                $custname = array_merge(
-                    $custname,
-                    array(
-                    array(
-                        'id' => 'txtphone',
-                        'class' => 'wdm-modal_text',
-                        'type' => 'text',
-                        'placeholder' => __('Phone Number', 'quoteup'),
-                        'required' => $ph_req,
-                        'required_message' => __('Please Enter Phone Number', 'quoteup'),
-                        'validation' => '^(\([2-9]|[2-9])(\d{2}|\d{2}\))(-|.|\s)?\d{3}(-|.|\s)?\d{4}$',
-                        'validation_message' => __('Please Enter Valid Telephone No', 'quoteup'),
-                        'include_in_admin_mail' => 'yes',
-                        'include_in_customer_mail' => 'no',
-                        'label' => 'Phone Number',
-                        'value' => '',
-                    ),
-                    )
-                );
-            }
+        if (is_admin()) {
+            $custname = $this->getCustNameEmail('', '');
+        } else {
+            $custname = $this->getCustNameEmail($name, $email);
         }
+        $custname = $this->getTelephoneField($form_data, $custname);
+        $custname = $this->getDateField($form_data, $custname);
+
+        if (isset($form_data['enable_disable_mpe']) && $form_data['enable_disable_mpe'] != 1 && !is_admin()) {
+            $custname = $this->getQuantityField($custname);
+        }
+
+
+        if (isset($form_data['enable_attach_field']) && $form_data['enable_attach_field'] == 1) {
+            $custname = $this->getUploadField($form_data, $custname);
+        }
+
         $custname = array_merge(
             $custname,
             array(
@@ -652,9 +1062,16 @@ class QuoteUpAddCustomField
                 'validation_message' => __('Please Enter Valid Subject', 'quoteup'),
                 'include_in_admin_mail' => 'yes',
                 'include_in_customer_mail' => 'no',
-                'label' => 'Subject',
+                'include_in_quote_form' => 'yes',
+                'label' => __('Subject', 'quoteup'),
                 'value' => '',
             ),
+            )
+        );
+
+        $custname = array_merge(
+            $custname,
+            array(
             array(
                 'id' => 'txtmsg',
                 'class' => 'wdm-modal_textarea',
@@ -662,11 +1079,12 @@ class QuoteUpAddCustomField
                 'placeholder' => __('Message', 'quoteup'),
                 'required' => 'yes',
                 'required_message' => __('Please Enter Message', 'quoteup'),
-                'validation' => '',    //  ([\w\W]{15,500}) validation for 15 to 500 characters if needed in future
+                'validation' => '',
                 'validation_message' => __('Message length must be between 15 to 500 characters', 'quoteup'),
                 'include_in_admin_mail' => 'yes',
                 'include_in_customer_mail' => 'yes',
-                'label' => 'Message',
+                'include_in_quote_form' => 'yes',
+                'label' => __('Message', 'quoteup'),
                 'value' => '',
             ),
             )
@@ -689,7 +1107,6 @@ class QuoteUpAddCustomField
                 }
             }
         }
-        //$this->fields = apply_filters ('quoteup_fields_array', $custname);
     }
 
     public function phoneMandatory($ph_req, $form_data)
@@ -700,8 +1117,32 @@ class QuoteUpAddCustomField
                 $ph_req = 'yes';
             }
         }
-        return $ph_req;
 
+        return $ph_req;
+    }
+
+    public function dateMandatory($dt_req, $form_data)
+    {
+        if (isset($form_data[ 'make_date_mandatory' ])) {
+            $phone_mandate = $form_data[ 'make_date_mandatory' ];
+            if ($phone_mandate == 1) {
+                $dt_req = 'yes';
+            }
+        }
+
+        return $dt_req;
+    }
+
+    public function attachMandatory($attachReq, $form_data)
+    {
+        if (isset($form_data[ 'make_attach_mandatory' ])) {
+            $attach_mandate = $form_data[ 'make_attach_mandatory' ];
+            if ($attach_mandate == 1) {
+                $attachReq = 'yes';
+            }
+        }
+
+        return $attachReq;
     }
 
     //get custom fields array
@@ -733,10 +1174,27 @@ class QuoteUpAddCustomField
         if ($val[ 'id' ] == 'custname' && $val[ 'include_in_admin_mail' ] == 'yes') {
             $email = "
            <tr >
-            <th style='width:25%;text-align:left'>".__('Customer Name', 'quoteup')." </th>
-                <td style='width:75%'>: ".stripslashes($_POST[ $val[ 'id' ] ]).'</td>
+            <th style='width:35%;text-align:left'>".__('Customer Name', 'quoteup')." </th>
+                <td style='width:65%'>: ".stripslashes($_POST[ $val[ 'id' ] ]).'</td>
            </tr>';
         }
+
+        return $email;
+    }
+
+    private function getOtherFields($val)
+    {
+        $email = '';
+        if ($val[ 'id' ] != 'custname' && $val[ 'id' ] != 'txtemail' && $val[ 'id' ] != 'txtphone' && $val[ 'id' ] != 'txtsubject' && $val[ 'id' ] != 'txtmsg' && $val[ 'id' ] != 'txtdate' && $val[ 'id' ] != 'wdmFileUpload') {
+            if ($val[ 'include_in_admin_mail' ] == 'yes') {
+                $email .= "
+           <tr >
+            <th style='width:35%;text-align:left'>".__($val[ 'label' ], 'quoteup')."</th>
+            <td style='width:65%'>: ".stripslashes($_POST[ $val[ 'id' ] ]).'</td>
+           </tr>';
+            }
+        }
+
         return $email;
     }
 
@@ -744,40 +1202,36 @@ class QuoteUpAddCustomField
     {
         $email = '';
         $email .= $this->custnameID($val);
-        
+
         if ($val[ 'id' ] == 'txtemail' && $val[ 'include_in_admin_mail' ] == 'yes') {
             $email .= "
            <tr >
-            <th style='width:25%;text-align:left'>".__('Customer Email', 'quoteup')." </th>
-                <td style='width:75%'>: ".stripslashes($_POST[ $val[ 'id' ] ]).'</td>
+            <th style='width:35%;text-align:left'>".__('Customer Email', 'quoteup')." </th>
+                <td style='width:65%'>: ".stripslashes($_POST[ $val[ 'id' ] ]).'</td>
            </tr>';
         }
         if ($val[ 'id' ] == 'txtphone' && $val[ 'include_in_admin_mail' ] == 'yes') {
             $email .= "
            <tr >
-            <th style='width:25%;text-align:left'>".__('Telephone', 'quoteup')." </th>
-                <td style='width:75%'>: ".stripslashes($_POST[ $val[ 'id' ] ]).'</td>
+            <th style='width:35%;text-align:left'>".__('Telephone', 'quoteup')." </th>
+                <td style='width:65%'>: ".stripslashes($_POST[ $val[ 'id' ] ]).'</td>
            </tr>';
         }
         if ($val[ 'id' ] == 'txtmsg' && $val[ 'include_in_admin_mail' ] == 'yes') {
             $email .= "
            <tr >
-            <th style='width:25%;text-align:left'>".__('Message', 'quoteup')." </th>
-                <td style='width:75%'>: ".stripslashes($_POST[ $val[ 'id' ] ]).'</td>
+            <th style='width:35%;text-align:left'>".__('Message', 'quoteup')." </th>
+                <td style='width:65%'>: ".stripslashes($_POST[ $val[ 'id' ] ]).'</td>
            </tr>';
         }
-
-        if ($val[ 'id' ] != 'custname' && $val[ 'id' ] != 'txtemail' && $val[ 'id' ] != 'txtphone' && $val[ 'id' ] != 'txtsubject' && $val[ 'id' ] != 'txtmsg') {
-            if ($val[ 'include_in_admin_mail' ] == 'yes') {
-                $email .= "
+        if ($val[ 'id' ] == 'txtdate' && $val[ 'include_in_admin_mail' ] == 'yes') {
+            $email .= "
            <tr >
-            <th style='width:25%;text-align:left'>".__($val[ 'label' ], 'quoteup')."</th>
-            <td style='width:75%'>: ".stripslashes(isset($_POST[ $val[ 'id' ] ]) ? $_POST[ $val[ 'id' ] ] : '').'</td>
+            <th style='width:35%;text-align:left'>".__($val[ 'label' ], 'quoteup')." </th>
+                <td style='width:65%'>: ".stripslashes($_POST[ $val[ 'id' ] ]).'</td>
            </tr>';
-            }
         }
-
-        return $email;
+        return $email.$this->getOtherFields($val);
     }
 
     public function addCustomFieldsAdminEmail($email_content)
@@ -788,7 +1242,7 @@ class QuoteUpAddCustomField
             unset($key);
         }
 
-        return $email_content . $email;
+        return $email_content.$email;
     }
 
     // fetching meta fields header for data table
@@ -819,12 +1273,28 @@ class QuoteUpAddCustomField
         $results = $wpdb->get_results($sql);
         if (count($results) > 0) {
             foreach ($results as $key => $v) {
+                if ($v->meta_key == 'Product Quantity' || $v->meta_key == 'quotation_lang_code' || substr($v->meta_key, 0, 1) === '_' ) {
+                    continue;
+                }
+
+                if ($v->meta_key == 'enquiry_lang_code') {
+                    if (quoteupIsWpmlActive()) {
+                        $currentLanguageName = icl_get_languages('skipmissing=0');
+                        $currentLanguageName = isset($currentLanguageName[$v->meta_value]['translated_name']) ? $currentLanguageName[$v->meta_value]['translated_name'] : $currentLanguageName[$v->meta_value]['native_name'];
+
+                        $v->meta_key = 'Enquiry Language';
+                        $v->meta_value = $currentLanguageName;
+                    } else {
+                        continue;
+                    }
+                }
+
                 $this->meta_key[] = $v->meta_key;
                 $meta_key_name = apply_filters('pep_meta_key_header_in_table', $v->meta_key);
                 $meta_key_name = apply_filters('quoteup_meta_key_header_in_table', $meta_key_name);
                 $custom_field_data .= "<div class='wdm-user-custom-info'>";
-                $custom_field_data .= "<input type='text' value='" . $v->meta_value ."' class='wdm-input-custom-info wdm-input' disabled required>";
-                $custom_field_data .= '<label placeholder="' . $meta_key_name . '" alt="' . $meta_key_name .'"></label></div>';
+                $custom_field_data .= "<input type='text' value='".$v->meta_value."' class='wdm-input-custom-info wdm-input' disabled required>";
+                $custom_field_data .= '<label placeholder="'.$meta_key_name.'" alt="'.$meta_key_name.'"></label></div>';
                 unset($key);
             }
         }
@@ -832,20 +1302,17 @@ class QuoteUpAddCustomField
         echo $custom_field_data;
     }
     /*
- * Find a value associated with meta key of particular enquiry
- *
- * @param int $enquiry_id ID of enquiry
- * @param string $meta_key Meta Key whose value to be found
- * @return mixed If value is found, it is returned. Else NULL is returned.
- */
-
+     * Find a value associated with meta key of particular enquiry
+     *
+     * @param int $enquiry_id ID of enquiry
+     * @param string $meta_key Meta Key whose value to be found
+     * @return mixed If value is found, it is returned. Else NULL is returned.
+     */
     public static function quoteupGetCustomFieldData($enquiry_id, $meta_key)
     {
         global $wpdb;
         $tbl = $wpdb->prefix.'enquiry_meta';
-        $result = $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM {$tbl} WHERE meta_key LIKE %s AND enquiry_id = %d", $meta_key, $enquiry_id));
-
-        return $result;
+        return $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM {$tbl} WHERE meta_key LIKE %s AND enquiry_id = %d", $meta_key, $enquiry_id));
     }
 
     // fetching meta fields data for data table
@@ -854,10 +1321,7 @@ class QuoteUpAddCustomField
         global $wpdb;
         $tbl = $wpdb->prefix.'enquiry_meta';
         $data = '';
-
-        //echo "<pre>";print_r($this->meta_key);echo "</pre>";exit;
         $term = $this->meta_key;
-        //echo "<pre>";print_r($term);echo "</pre>";exit;
         $temp = '';
         if (count($term) > 0) {
             foreach ($term as $key => $v) {
@@ -895,45 +1359,19 @@ class QuoteUpAddCustomField
         $wpdb->query($query);
     }
 
-    // create enquiry_meta table
-    public function createEnquiryMetaTable()
-    {
-        global $wpdb;
-        $table_name = $wpdb->prefix.'enquiry_meta';
-        $max_index_length = 191;
-        $charset_collate = '';
-
-        if (! empty($wpdb->charset)) {
-               $charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
-        }
-
-        if (! empty($wpdb->collate)) {
-               $charset_collate .= " COLLATE $wpdb->collate";
-        }
-
-        $sql = 'CREATE TABLE IF NOT EXISTS '.$table_name.' (
-        meta_id INT NOT NULL AUTO_INCREMENT,
-		enquiry_id int,
-		meta_key varchar(500),
-		meta_value varchar(500),
-		PRIMARY KEY  (meta_id),
-                KEY enquiry_id (enquiry_id),
-                KEY meta_key (meta_key('. $max_index_length . '))
-                )' . $charset_collate. ';';
-        dbDelta($sql);
-    }
-
     public function addCustomFieldsCustomerEmail($msg)
     {
         $email = $msg;
-        //echo "<pre>";print_r($this->fields);echo "</pre>";exit;
         foreach ($this->fields as $key => $v) {
+            if ($v[ 'id' ] == "wdmFileUpload") {
+                continue;
+            }
             if ($v[ 'include_in_customer_mail' ] == 'yes') {
                 $email .= "
-		   <tr >
-			<th style='width:25%;text-align:left'>".__($v[ 'label' ], 'quoteup')." </th>
-			    <td style='width:75%'>: ".stripslashes($_POST[ $v[ 'id' ] ]).'</td>
-		   </tr>';
+           <tr >
+            <th style='width:35%;text-align:left'>".__($v[ 'label' ], 'quoteup')." </th>
+                <td style='width:65%'>: ".stripslashes($_POST[ $v[ 'id' ] ]).'</td>
+           </tr>';
             }
             unset($key);
         }
@@ -942,4 +1380,4 @@ class QuoteUpAddCustomField
     }
 }
 
-$quoteup_add = new QuoteUpAddCustomField();
+QuoteUpAddCustomField::getInstance();

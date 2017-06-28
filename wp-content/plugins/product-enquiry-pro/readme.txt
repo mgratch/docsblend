@@ -2,9 +2,9 @@
 Contributors: WisdmLabs
 Tags: Enquiry for WooCommerce, Product Enquiry WooCommerce, WooCommerce Add-On
 Requires at least: 4.4.0
-Tested up to: 4.5.3
-Woocommerce tested up to : 2.6.4
-Stable tag: 4.1.0
+Tested up to: 4.7.5
+Woocommerce tested up to : 3.0.7
+Stable tag: 4.5.0
 License: GPL2
 
 The Product Enquiry Pro for WooCommerce adds a 'Make an enquiry' or a 'Request a Quote' button to every WooCommerce Product Page, allowing a potential customer to make an enquiry or request a quote for one or multiple products. You can view these enquiries and quote requests made right in your dashboard, and filter enquiry and quotation records to analyse product demands.
@@ -113,6 +113,73 @@ A. When ‘Save and Preview’ button is clicked for the first time after instal
 A. when you disable or enable price for all products make sure you check global settings to apply those changes on all products.
 
 == Changelog ==
+= 4.5.0 =
+* Feature: Added Google ReCaptcha to the form to prevent spam
+* Feature: Added Search Field on the enquiry listing page to quick search a particular client or quote request
+* Fix: Hide the filters on enquiry listing page when there are no enquiries of that type under it
+* Fix: Display number of new enquiries on enquiry listing page
+* Fix: Jump to checkout page when clicked on approve. No need to enter the email address associated with the quote request with the condition that quote is approved by clicking on the link in the email and not the pdf.
+* Fix: Made the floating enquiry cart baloon sticky
+* Fix: In the email settings, if ‘Mail to Admin’ and/or ‘Mail to Author’ is checked, then allow user to save email setting without any email address in the recipient field
+* Fix: Removed telephone number validation to support all kinds of telephone number formats.
+
+
+
+= 4.4.0 =
+* Feature: Attach Button on form which allows sending files to admin
+* Feature: Having a PDF Quote as an attachment in the email sent to customers is now optional. Quotation will be displayed in the email body with link to checkout page.
+* Feature: Screen Options added to set the number of items on enquiry listing page.
+* Fix: Allow adding a second variation to the enquiry cart after the first one has been added.
+* Fix: New and improved enquiry email template
+* Fix: Common template for Single and Multiproduct enquiry emails.
+* Fix: Create templating of Email Table.
+* Fix: Text changes for ease of understanding.
+* Fix: Browser page title changed to 'edit enquiry' for ease of switching back to the right tab.
+* Fix: Fixed WPML compatibility issues
+* Fix: Stored enquiry language as site language even when WPML is not activated to avoid future compatibility issues.
+* Fix: Fixed minor loading issuess.
+* Fix: 500 Characters Remaining text now translation ready.
+
+= 4.3.1 =
+* Feature: Now Compatible with php7+
+* Fix: Add to cart issue on WooCommerce 3.0 resolved. Button now being hidden when disabled through bulk actions
+* Fix: Font Color on single product enquiry can be changed
+* Fix: Quantity now being sent in the enquiry email to the admin
+4.4
+* Fix: Variable product price now being applied according to price in quotation
+* Fix: Decimal numbers will not be accepted in quantity field
+* Fix: Subject being sent twice if field left blank, now resolved
+* Fix: Variable Product Prices weren't being displayed after WooCommerce 3.0 update, now resolved.
+* Fix: Price validation on create quote page. Negative prices will not be accepted now.
+* Fix: Quantity Validation in Create Quote Page. Negative values will not be accepted now.
+* Fix: Solved all other validation issues.
+
+= 4.3.0 =
+* Feature: Create New quote from Dashboard.
+* Feature: Allow to create quote of sold individually product with more than 1 product.
+* Feature: Added functionality to update existing enquiry and create quote.
+* Fix: Compatiblity with woocommerce 3.0
+
+= 4.2.0 =
+* Feature: Added Quantity text box in single product enquiry form.
+* Feature: Added Shortcode to display enquiry button on any page.
+* Feature: Added enquiry support for all types of products (quotation system support available only for simple and variable product types).
+* Feature: Added character limit of 500 to the message section.
+* Fix: Made enquiry cart page and approval/rejection page responsive.
+* Fix: Added date field validations on the front end.
+* Fix: Fixed issues with WPML compatiblity.
+
+= 4.1.1 =
+* Feature - Added a setting for custom label for 'Enquiry' and 'Quote'.
+* Feature - Added a setting for custom label for 'View Enquiry/Quote Cart'.
+* Feature - Added a setting for custom label for 'Approve' and 'Reject' button.
+* Feature - Added a setting for message to be displayed after quote rejection.
+* Feature - Added a setting to add date field with custom date label on the form.
+* Fix - Made edit quote page responsive.
+* Fix - Changed position of expiration date.
+* Fix - Added support for woocommerce 2.4.
+* Fix - Added support for variations fetched through ajax.
+
 = 4.1.0 =
 * Feature - Added support for all variations of variable products.
 * Feature - Provided bulk actions on products listing page for to 'enable/disable enquiry', 'show/hide price' and 'enable/disable add to cart'.
