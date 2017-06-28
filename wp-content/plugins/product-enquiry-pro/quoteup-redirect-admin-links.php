@@ -1,8 +1,9 @@
 <?php
 function quoteupGetAddress()
 {
-            // return the full address
-            return quoteupGetProtocol().'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+    // return the full address
+	$url = isset($_SERVER['HTTP_HOST']) && isset($_SERVER['REQUEST_URI']) ? quoteupGetProtocol().'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] : false;
+	return $url;
 }
         
 function quoteupGetProtocol()

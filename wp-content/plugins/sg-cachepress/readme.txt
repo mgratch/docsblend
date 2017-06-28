@@ -1,17 +1,21 @@
-=== SG CachePress ===
-Contributors: Hristo Sg, danielkanchev, ivanyordanov
+=== SG Optimizer ===
+Contributors: Hristo Sg, danielkanchev, ivanyordanov, siteground
 Tags: nginx, caching, speed, memcache, memcached, performance, siteground, nginx, supercacher
 Requires at least: 3.0.1
-Tested up to: 4.6
+Tested up to: 4.7
 Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The SG CachePress is a plugin that allows you to use the SiteGround dynamic cache and Memcached to optimize the performance of your WordPress.
+The SG Optimizer is designed to link WordPress with all SiteGround Performance services.
 
 == Description ==
 
-The main functionality of SG CachePress is to purge your dynamic cache whenever your content updates. For example, when you create a new post, someone comments your articles, etc. In addition to that, if you have a working Memcached service on your server, the plugin will allow you to easily configure and enable WordPress to use it.
+This plugin is designed to link WordPress with the SiteGround Performance services. It WILL NOT WORK on another hosting provider. The SG Optimizer plugin has few different parts handling speciffic performance optimizations:
+
+= SuperCacher Config =
+
+The main functionality of SuperCacher part of the plugin is to purge your dynamic cache whenever your content updates. For example, when you create a new post, someone comments your articles, etc. In addition to that, if you have a working Memcached service on your server, the plugin will allow you to easily configure and enable WordPress to use it.
 
 There is public Purge function - sg_cachepress_purge_cache, which can be used by other plugins/themes. Example usage:
 
@@ -19,11 +23,16 @@ if (function_exists('sg_cachepress_purge_cache')) {
 sg_cachepress_purge_cache();
 }
 
+= HTTPS Config =
+
+The HTTPS Config allows you to force SSL usage on your site. It will redirect your entire traffic over secure connections and will fix mixed content issues. A side benefit of switching on the HTTPS is the automatic use of the HTTP2 protocol and its performance benefits. 
+
 = Requirements =
 
 In order to work correctly, this plugin requires that your server meets the following criteria:
 
-* Your SiteGround SuperCacher enabled
+* PHP 5.4
+* SiteGround account
 * If you're not hosted with SiteGround this plugin WILL NOT WORK  because it relies on a specific server configuration
 
 == Installation ==
@@ -59,7 +68,32 @@ This field allows you to exclude URLs from the cache. This means that if you nee
 = Memcached Settings =
 * Enable Memcached - Store in the server's memory (using Memcached) frequently executed queries to the database for a faster access on a later use.
 
+= HTTPS Configuration =
+Force HTTPS on/off -- enable or disable the the https redirect for your whole site and the rewriting of the resource links from http to https.
+
 == Changelog ==
+
+= Version 3.0.4 =
+* Improved Certficiate check
+
+= Version 3.0.4 =
+* Fixed bug with unwrittable .htaccess
+
+= Version 3.0.3 =
+* Fixed bug in adding CSS files
+
+= Version 3.0.2 =
+* User-agent added to the SSL availability check
+
+= Version 3.0.1 =
+* PHP Compatibility fixes
+
+= Version 3.0.0 =
+
+* Plugin renamed to SG Optimizer
+* Interface split into multiple screens
+* HTTPS Force functionality added which will reconfigure WordPress, make an .htaccess redirect to force all the traffic through HTTPS and fixes any potential insecure content issues
+* Plugin prepared for PHP version compatibility checker and changer tool
 
 = Version 2.3.11 =
 * Added public purge function

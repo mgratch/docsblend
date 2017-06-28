@@ -204,7 +204,7 @@ if ( ! class_exists( 'SP_Admin' ) ) :
 		 */
 		public function custom_product_data_tab( $tabs ) {
 			if ( ! current_user_can( 'manage_woocommerce' ) ) {
-				return;
+				return $tabs;
 			}
 
 			$tabs['storefront'] = array(

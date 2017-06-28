@@ -457,7 +457,11 @@ if ( ! class_exists( 'SP_Designer' ) ) :
 
 				// Font family
 				if ( isset( $css_properties['fontFamily'] ) && '' !== $css_properties['fontFamily'] ) {
-					$output .= 'font-family:' . esc_attr( $css_properties['fontFamily'] ) . ';';
+					if ( 'Default' === $css_properties['fontFamily'] ) {
+						$output .= 'font-family:inherit;';
+					} else {
+						$output .= 'font-family:' . esc_attr( $css_properties['fontFamily'] ) . ';';
+					}
 				}
 
 				// Letter spacing
@@ -760,9 +764,19 @@ if ( ! class_exists( 'SP_Designer' ) ) :
 				'name'     => __( 'Header search', 'storefront-powerpack' ),
 			);
 
+			$map['navigation-wrapper'] = array(
+				'selector' => '.storefront-primary-navigation',
+				'name'     => __( 'Navigation wrapper', 'storefront-powerpack' ),
+			);
+
 			$map['main-navigation'] = array(
 				'selector' => '.main-navigation',
 				'name'     => __( 'Main navigation', 'storefront-powerpack' ),
+			);
+
+			$map['main-navigation-link'] = array(
+				'selector' => '.main-navigation ul li a',
+				'name'     => __( 'Main navigation link', 'storefront-powerpack' ),
 			);
 
 			$map['secondary-navigation'] = array(
@@ -775,7 +789,7 @@ if ( ! class_exists( 'SP_Designer' ) ) :
 				'name'     => __( 'Header cart', 'storefront-powerpack' ),
 			);
 
-			// Breadcrumb.
+			// Breadcrumb
 			$map['woocommerce-breadcrumb'] = array(
 				'selector' => '.woocommerce-breadcrumb',
 				'name'     => __( 'Breadcrumb', 'storefront-powerpack' ),
@@ -786,7 +800,7 @@ if ( ! class_exists( 'SP_Designer' ) ) :
 				'name'     => __( 'Breadcrumb link', 'storefront-powerpack' ),
 			);
 
-			// Main.
+			// Main
 			$map['site-main'] = array(
 				'selector' => '.site-main',
 				'name'     => __( 'Main content', 'storefront-powerpack' ),
@@ -806,6 +820,11 @@ if ( ! class_exists( 'SP_Designer' ) ) :
 			$map['sidebar-widgets'] = array(
 				'selector' => '.widget-area .widget',
 				'name'     => __( 'Sidebar Widgets', 'storefront-powerpack' ),
+			);
+
+			$map['widget-title'] = array(
+				'selector' => '.widget .widget-title',
+				'name'     => __( 'Widget title', 'storefront-powerpack' ),
 			);
 
 			// Footer
@@ -840,13 +859,13 @@ if ( ! class_exists( 'SP_Designer' ) ) :
 				'name'     => __( 'Post Meta', 'storefront-powerpack' ),
 			);
 
-			// Comments / Reviews.
+			// Comments / Reviews
 			$map['comments'] = array(
 				'selector' => '#comments .comment-list .comment-content .comment-text, #reviews .commentlist li .comment_container',
 				'name'     => __( 'Comment / Review content', 'storefront-powerpack' ),
 			);
 
-			// Buttons.
+			// Buttons
 			$map['button'] = array(
 				'selector' => '.added_to_cart, .button, button, input[type=button], input[type=reset], input[type=submit]',
 				'name'     => __( 'Button', 'storefront-powerpack' ),

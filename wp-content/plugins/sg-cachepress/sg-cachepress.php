@@ -7,9 +7,9 @@
  * @link              http://www.siteground.com/
  *
  * @wordpress-plugin
- * Plugin Name:       SG CachePress
- * Description:       Through the settings of this plugin you can manage how your Wordpress interracts with NGINX and Memcached.
- * Version:           2.3.11
+ * Plugin Name:       SG Optimizer
+ * Description:       This plugin will link your WordPress application with all the performance optimizations provided by SiteGround
+ * Version:           3.0.5
  * Author:            SiteGround
  * Text Domain:       sg-cachepress
  * Domain Path:       /languages
@@ -34,6 +34,9 @@ require plugin_dir_path( __FILE__ ) . 'class-sg-cachepress-environment.php';
 require plugin_dir_path( __FILE__ ) . 'class-sg-cachepress-supercacher.php';
 require plugin_dir_path( __FILE__ ) . 'class-sg-cachepress-memcache.php';
 require plugin_dir_path( __FILE__ ) . 'class-sg-cachepress-admin.php';
+require plugin_dir_path( __FILE__ ) . 'class-sg-cachepress-phpversion-checker.php';
+require plugin_dir_path( __FILE__ ) . 'php-compatibility-checker/sg-wpengine-phpcompat.php';
+require plugin_dir_path( __FILE__ ) . 'class-sg-cachepress-ssl.php';
 
 
 // Register hooks that are fired when the plugin is activated, deactivated, and uninstalled, respectively.
@@ -74,7 +77,9 @@ function sg_cachepress_start() {
 	$sg_cachepress_memcache       = new SG_CachePress_Memcache( $sg_cachepress_options, $sg_cachepress_environment );
 	$sg_cachepress_supercacher    = new SG_CachePress_Supercacher( $sg_cachepress_options, $sg_cachepress_environment );
 	$sg_cachepress                = new SG_CachePress( $sg_cachepress_options);
-
+        $sg_cachepress_phpversion_checker    		= new SG_CachePress_PHPVersionChecker( $sg_cachepress_options );
+        
+        $sg_cachepress_phpversion_checker->run();
 	$sg_cachepress->run();
 	$sg_cachepress_admin->run();
 

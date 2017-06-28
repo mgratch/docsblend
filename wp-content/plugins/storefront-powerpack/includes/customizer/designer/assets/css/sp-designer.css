@@ -4,25 +4,48 @@
 /**
  * Fake panel.
  */
-#customize-theme-controls .accordion-section-content.sp-designer-control-settings-visible {
-  left: 0;
-  overflow: visible; }
-  #customize-theme-controls .accordion-section-content.sp-designer-control-settings-visible .sp-designer-selector-content-visible {
-    left: 100%;
-    visibility: visible;
-    display: block; }
+#customize-theme-controls {
+  /* WordPress 4.7 */ }
+  #customize-theme-controls .accordion-section-content.sp-designer-control-settings-visible:not(.customize-pane-child) {
+    left: 0;
+    overflow: visible; }
+    #customize-theme-controls .accordion-section-content.sp-designer-control-settings-visible:not(.customize-pane-child) .sp-designer-selector-content-visible {
+      left: 100%;
+      visibility: visible;
+      display: block; }
+  #customize-theme-controls .accordion-section-content.customize-pane-child.sp-designer-control-settings-visible {
+    overflow: visible;
+    -webkit-transform: translateX(-100%);
+    -ms-transform: translateX(-100%);
+    transform: translateX(-100%); }
+    #customize-theme-controls .accordion-section-content.customize-pane-child.sp-designer-control-settings-visible .sp-designer-selector-content-visible {
+      left: 100%;
+      visibility: visible;
+      display: block; }
 
-.sp-accordion-section-content {
+.rtl #customize-theme-controls {
+  /* WordPress 4.7 */ }
+  .rtl #customize-theme-controls .accordion-section-content.sp-designer-control-settings-visible:not(.customize-pane-child) {
+    right: 0; }
+    .rtl #customize-theme-controls .accordion-section-content.sp-designer-control-settings-visible:not(.customize-pane-child) .sp-designer-selector-content-visible {
+      right: 100%; }
+  .rtl #customize-theme-controls .accordion-section-content.customize-pane-child.sp-designer-control-settings-visible {
+    overflow: visible;
+    -webkit-transform: translateX(100%);
+    -ms-transform: translateX(100%);
+    transform: translateX(100%);
+    right: 0; }
+    .rtl #customize-theme-controls .accordion-section-content.customize-pane-child.sp-designer-control-settings-visible .sp-designer-selector-content-visible {
+      right: 100%; }
+
+/* < WordPress 4.7 */
+.sp-accordion-section-content:not(.customize-pane-child) {
   -webkit-transition: .18s left ease-in-out;
   transition: .18s left ease-in-out; }
 
-.sp-designer-selector-content {
-  display: none;
-  visibility: hidden;
-  position: absolute;
-  top: 0;
-  left: 300%;
-  width: 100%; }
+.rtl .sp-accordion-section-content:not(.customize-pane-child) {
+  -webkit-transition: .18s right ease-in-out;
+  transition: .18s right ease-in-out; }
 
 /**
  * Fake panel styling.
@@ -64,6 +87,27 @@
   .customize-control-sp_designer_css:last-child .sp-designer-selector-title {
     border-bottom-color: #ddd; }
 
+/* WordPress 4.7 */
+.accordion-section-content.customize-pane-child .customize-control-sp_designer_css .sp-designer-selector-title {
+  border-left: 4px solid #fff;
+  border-bottom: 1px solid #ddd;
+  color: #555d66;
+  -webkit-transition: .15s color ease-in-out, .15s background-color ease-in-out, .15s border-color ease-in-out;
+  transition: .15s color ease-in-out, .15s background-color ease-in-out, .15s border-color ease-in-out; }
+  .accordion-section-content.customize-pane-child .customize-control-sp_designer_css .sp-designer-selector-title:after {
+    color: #a0a5aa; }
+  .accordion-section-content.customize-pane-child .customize-control-sp_designer_css .sp-designer-selector-title:hover, .accordion-section-content.customize-pane-child .customize-control-sp_designer_css .sp-designer-selector-title:focus {
+    color: #0073aa;
+    background: #f3f3f5;
+    border-left-color: #0073aa; }
+    .accordion-section-content.customize-pane-child .customize-control-sp_designer_css .sp-designer-selector-title:hover:after, .accordion-section-content.customize-pane-child .customize-control-sp_designer_css .sp-designer-selector-title:focus:after {
+      color: #0073aa; }
+
+.rtl .sp-designer-selector-title:after {
+  content: "\f341";
+  right: auto;
+  left: 10px; }
+
 .sp-add-a-style-active .customize-control-sp_designer_css {
   position: relative; }
   .sp-add-a-style-active .customize-control-sp_designer_css:after {
@@ -77,6 +121,12 @@
     z-index: 10; }
 
 .sp-designer-selector-content {
+  display: none;
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 300%;
+  width: 100%;
   padding: 12px;
   box-sizing: border-box;
   overflow-y: scroll; }
@@ -84,6 +134,10 @@
     margin-bottom: 15px; }
   .sp-designer-selector-content .customize-control-title {
     margin-bottom: 10px; }
+
+/* WordPress 4.7 */
+.sp-accordion-section-content.customize-pane-child .sp-designer-selector-content {
+  overflow-y: visible; }
 
 /**
  * CSS property groups

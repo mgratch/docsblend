@@ -6,8 +6,49 @@ jQuery( function ($) {
 	jQuery('#sg-cachepress-memcached-toggle').on('click.sg-cachepress', function(event){event.preventDefault();sg_cachepress_toggle_option('memcached');});
 	jQuery('#sg-cachepress-autoflush-cache-toggle').on('click.sg-cachepress', function(event){event.preventDefault();sg_cachepress_toggle_option('autoflush-cache');});
 	jQuery('#sg-cachepress-blacklist').on('click.sg-cachepress', sg_cachepress_save_blacklist);
+    jQuery('#sg-cachepress-phpversion-check').on('click.sg-cachepress', sg_cachepress_phpversion_check);       
 });
 var sg_cachepress_toggle_in_progress = false;
+var sg_cachepress_toggle_ssl_in_progress = false;
+
+
+/**
+ * 0 - disabled
+ * 1 - enabled
+ * or error message
+ */
+jQuery('#sg-cachepress-ssl-toggle').on('click.sg-cachepress', function(event){    
+    event.preventDefault();
+    if (sg_cachepress_toggle_ssl_in_progress) {
+        return;
+    }   	
+    sg_cachepress_toggle_ssl_in_progress = true;
+    
+    var $ajaxArgs = {
+            action:  'sg-cachepress-ssl-toggle',
+            objects: 'all'
+    };
+
+    jQuery.post(ajaxurl, $ajaxArgs).done(function(data){
+        sg_cachepress_toggle_ssl_in_progress = false;
+        jQuery('#sg-cachepress-ssl-text').show();
+        jQuery('#sg-cachepress-ssl-error').hide();
+        
+        if (data === '0') {
+            //HTTP
+            jQuery('#sg-cachepress-ssl-toggle').removeClass('toggleon').addClass('toggleoff', 1000);
+            location.href = 'http:' + window.location.href.substring(window.location.protocol.length);
+        } else if (data === '1') {
+            //HTTPS
+            jQuery('#sg-cachepress-ssl-toggle').removeClass('toggleoff').addClass('toggleon', 1000);
+            location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+        } else {
+            jQuery('#sg-cachepress-ssl-text').hide();
+            jQuery('#sg-cachepress-ssl-error').html(sgCachePressL10n.ssl_toggle_failed).show();	
+        }        
+    });
+});
+ 
 /**
  * Update a setting parameter
  *
@@ -18,34 +59,35 @@ var sg_cachepress_toggle_in_progress = false;
  * @param {jQuery.event} event
  */
 function sg_cachepress_toggle_option(optionName) {
-	if (sg_cachepress_toggle_in_progress)
-		return;
-	
-	sg_cachepress_toggle_in_progress = true;
-	var $ajaxArgs;
-	$ajaxArgs = {
-		action:  'sg-cachepress-parameter-update',
-		parameterName: optionName,
-		objects: 'all'
-	};
-	jQuery.post(ajaxurl, $ajaxArgs).done(function(data){
-		sg_cachepress_toggle_in_progress = false;
-		jQuery('#sg-cachepress-'+optionName+'-text').show();
-		jQuery('#sg-cachepress-'+optionName+'-error').hide();
-		if (data == 1) 
-		{
-			jQuery('#sg-cachepress-'+optionName+'-toggle').removeClass('toggleoff').addClass('toggleon', 1000);
-			return;
-		}
-		if (data == 0)
-		{
-			jQuery('#sg-cachepress-'+optionName+'-toggle').removeClass('toggleon').addClass('toggleoff', 1000);
-			return;
-		}
-			
-		jQuery('#sg-cachepress-'+optionName+'-text').hide();
-		jQuery('#sg-cachepress-'+optionName+'-error').html(data).show();		
-		});
+    if (sg_cachepress_toggle_in_progress) {
+            return;
+    }
+
+    sg_cachepress_toggle_in_progress = true;
+    var $ajaxArgs;
+    $ajaxArgs = {
+            action:  'sg-cachepress-parameter-update',
+            parameterName: optionName,
+            objects: 'all'
+    };
+    jQuery.post(ajaxurl, $ajaxArgs).done(function(data){
+        sg_cachepress_toggle_in_progress = false;
+        jQuery('#sg-cachepress-'+optionName+'-text').show();
+        jQuery('#sg-cachepress-'+optionName+'-error').hide();
+        if (data == 1) 
+        {
+            jQuery('#sg-cachepress-'+optionName+'-toggle').removeClass('toggleoff').addClass('toggleon', 1000);
+            return;
+        }
+        if (data == 0)
+        {
+            jQuery('#sg-cachepress-'+optionName+'-toggle').removeClass('toggleon').addClass('toggleoff', 1000);
+            return;
+        }
+
+        jQuery('#sg-cachepress-'+optionName+'-text').hide();
+        jQuery('#sg-cachepress-'+optionName+'-error').html(data).show();		
+    });
 }
 
 /**
@@ -72,6 +114,30 @@ function sg_cachepress_save_blacklist(event) {
 		jQuery('#sg-cachepress-blacklist').removeAttr('disabled').attr('value', sgCachePressL10n.updated);
 		});
 }
+
+/**
+ * Find optimal PHP version
+ *
+ * @since 2.3.11
+ *
+ * @function
+ *
+ * @param {jQuery.event} event
+ */
+function sg_cachepress_phpversion_check(event) {
+	event.preventDefault();
+	var $ajaxArgs;
+	$ajaxArgs = {
+		action:  'sg-cachepress-phpversion-check',
+		objects: 'all'
+	};
+	jQuery(event.target).attr('disabled','disabled').attr('value', sgCachePressL10n.phpversion_checking);   
+	jQuery.post(ajaxurl, $ajaxArgs).done(function(){
+            jQuery('#sg-cachepress-phpversion-check').removeAttr('disabled').attr('value', sgCachePressL10n.phpversion_check);
+	});
+}
+
+
 /**
  * Start the purge procedure from a button click.
  *

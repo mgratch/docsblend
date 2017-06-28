@@ -1,7 +1,8 @@
-.woocommerce-checkout.sp-distraction-free-checkout .site-header {
+.woocommerce-checkout.sp-distraction-free-checkout .site-header .site-logo-link {
   margin-bottom: 2.618em; }
-  .woocommerce-checkout.sp-distraction-free-checkout .site-header .site-logo-link {
-    margin-bottom: 2.618em; }
+
+.woocommerce-checkout.sp-distraction-free-checkout .site-content {
+  padding-top: 2.617924em; }
 
 .woocommerce-checkout.sp-distraction-free-checkout.page-template-default .content-area {
   width: 65.2173913043%;

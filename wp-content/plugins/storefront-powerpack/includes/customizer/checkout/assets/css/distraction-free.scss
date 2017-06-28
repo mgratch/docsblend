@@ -1,13 +1,16 @@
 @import 'susy';
 @import '../../themes/storefront/assets/sass/utils/variables';
+@import '../../themes/storefront/assets/sass/vendors/modular-scale';
 
 .woocommerce-checkout.sp-distraction-free-checkout {
 	.site-header {
-		margin-bottom: 2.618em;
-
 		.site-logo-link {
 			margin-bottom: 2.618em;
 		}
+	}
+
+	.site-content {
+		padding-top: ms(5);
 	}
 
 	&.page-template-default {

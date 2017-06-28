@@ -21,8 +21,11 @@ abstract class WC_Gateway_Paypal_Braintree_Subscription extends WC_Gateway_Paypa
 			'subscription_amount_changes',
 			'subscription_date_changes',
 			'multiple_subscriptions',
-			'subscription_payment_method_change_admin',
-			'subscription_payment_method_change_customer',
+			'subscription_payment_method_change_admin'
+			// NOTE: PayPal Braintree does NOT support $0 transactions so we
+			// must NOT enable subscription_payment_method_change_customer
+			// because Subscriptions requires that the gateway allow zero amount
+			// transactions for that to work
 			)
 		);
 
@@ -34,13 +37,21 @@ abstract class WC_Gateway_Paypal_Braintree_Subscription extends WC_Gateway_Paypa
 	}
 
 	/**
-	 * Check if order contains subscriptions.
+	 * Check if order contains subscriptions, is renewal order, or subscription.
 	 *
 	 * @param  int $order_id
 	 * @return bool
 	 */
 	protected function order_contains_subscription( $order_id ) {
-		return function_exists( 'wcs_order_contains_subscription' ) && ( wcs_order_contains_subscription( $order_id ) || wcs_order_contains_renewal( $order_id ) );
+		if ( ! function_exists( 'wcs_order_contains_subscription' ) ) {
+			return false;
+		}
+
+		return (
+			wcs_order_contains_subscription( $order_id )
+			|| wcs_order_contains_renewal( $order_id )
+			|| wcs_is_subscription( $order_id )
+		);
 	}
 
 	/**
@@ -170,7 +181,7 @@ abstract class WC_Gateway_Paypal_Braintree_Subscription extends WC_Gateway_Paypa
 			// We have a customer id now, so let's do the sale and store the payment method in the vault.
 			$result = $gateway->transaction()->sale( $sale_args );
 			if ( ! $result->success ) {
-				$notice = sprintf( __( 'Error: PayPal Powered by Braintree was unable to complete the transaction. Please try again later or use another means of payment. Reason: %s', 'woocommerce-gateway-paypal-braintree' ), $error_message );
+				$notice = sprintf( __( 'Error: PayPal Powered by Braintree was unable to complete the transaction. Please try again later or use another means of payment. Reason: %s', 'woocommerce-gateway-paypal-braintree' ), $result->message );
 				wc_add_notice( $notice, 'error' );
 				$this->log( __FUNCTION__, "Error: Unable to complete transaction. Reason: {$result->message}" );
 				return false;
@@ -266,7 +277,7 @@ abstract class WC_Gateway_Paypal_Braintree_Subscription extends WC_Gateway_Paypa
 			),
 		);
 
-		return $sale_args;
+		return apply_filters( 'wc_gateway_paypal_braintree_sale_args', $sale_args );
 	}
 
 	/**
@@ -303,18 +314,18 @@ abstract class WC_Gateway_Paypal_Braintree_Subscription extends WC_Gateway_Paypa
 		) );
 
 		// Process the sale with the stored token and customer
-		$sale_args = array(
-			'amount' => $amount_to_charge,
+		$sale_args = apply_filters( 'wc_gateway_paypal_braintree_sale_args', array(
+			'amount'             => $amount_to_charge,
 			'paymentMethodToken' => $payment_method_token,
-			'recurring' => true,
-			'customerId' => $braintree_customer_id,
-			'channel' => 'WooThemes_BT', // aka BN tracking code
-			'orderId' => $order->id,
-			'options' => array(
-				'submitForSettlement' => true,
-				'storeInVaultOnSuccess' => true
-			)
-		);
+			'recurring'          => true,
+			'customerId'         => $braintree_customer_id,
+			'channel'            => 'WooThemes_BT', // aka BN tracking code
+			'orderId'            => $order->id,
+			'options'            => array(
+				'submitForSettlement'   => true,
+				'storeInVaultOnSuccess' => true,
+			),
+		) );
 
 		try {
 			$result = $gateway->transaction()->sale( $sale_args );

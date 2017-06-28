@@ -26,6 +26,7 @@ if ( ! class_exists( 'SP_Frontend_Header' ) ) :
 		public function __construct() {
 			add_action( 'wp', array( $this, 'add_custom_header' ), 99 );
 			add_action( 'wp_enqueue_scripts', array( $this, 'scripts' ), 99 );
+			add_action( 'body_class', array( $this, 'body_classes' ) );
 		}
 
 		/**
@@ -36,6 +37,13 @@ if ( ! class_exists( 'SP_Frontend_Header' ) ) :
 		 */
 		public function scripts() {
 			wp_enqueue_style( 'sp-header-frontend', plugins_url( 'assets/css/sp-header-frontend.css', __FILE__ ), '', storefront_powerpack()->version );
+
+			if ( true === get_theme_mod( 'sp_header_sticky' ) ) {
+				$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+				wp_enqueue_script( 'sp-sticky-script', plugins_url( '/assets/js/sp-sticky-header' . $suffix . '.js', __FILE__ ), array( 'jquery' ), storefront_powerpack()->version );
+
+				wp_enqueue_style( 'sp-sticky-header', plugins_url( 'assets/css/sp-sticky-header.css', __FILE__ ), '', storefront_powerpack()->version );
+			}
 		}
 
 		/**
@@ -53,8 +61,6 @@ if ( ! class_exists( 'SP_Frontend_Header' ) ) :
 
 			remove_all_actions( 'storefront_header' );
 
-			add_action( 'body_class', array( $this, 'body_classes' ) );
-
 			add_action( 'storefront_header', array( $this, 'custom_header' ) );
 		}
 
@@ -65,7 +71,16 @@ if ( ! class_exists( 'SP_Frontend_Header' ) ) :
 		 * @return array Body classes
 		 */
 		public function body_classes( $classes ) {
-			$classes[] = 'sp-header-active';
+			$header_customizer = get_theme_mod( 'sp_header_setting' );
+			$sticky_header     = get_theme_mod( 'sp_header_sticky' );
+
+			if ( $header_customizer && ! empty( $header_customizer ) ) {
+				$classes[] = 'sp-header-active';
+			}
+
+			if ( true === $sticky_header ) {
+				$classes[] = 'sp-header-sticky';
+			}
 
 			return $classes;
 		}

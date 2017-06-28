@@ -175,9 +175,16 @@
 			this.container.closest( '.accordion-section-content' ).addClass( 'sp-designer-control-settings-visible' );
 			this.container.find( '.sp-designer-selector-content' ).addClass( 'sp-designer-selector-content-visible' );
 
-			// Adjust control height on resize.
-			this._resizeContentHeight();
-			$( window ).on( 'resize.customizer-section', _.debounce( _.bind( this._resizeContentHeight, this ), 200 ) );
+			/*
+			 * Since WordPress 4.7 we no longer need to adjust the height of the
+			 * section. For backwards compatibility, this targets the `customize-pane-child`
+			 * class introduced in WordPress 4.7.
+			 */
+			if ( ! $( this.container.closest( '.accordion-section-content' ) ).hasClass( 'customize-pane-child' ) ) {
+				// Adjust control height on resize.
+				this._resizeContentHeight();
+				$( window ).on( 'resize.customizer-section', _.debounce( _.bind( this._resizeContentHeight, this ), 200 ) );
+			}
 		},
 
 		/**

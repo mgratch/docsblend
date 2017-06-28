@@ -172,10 +172,13 @@ if ( ! class_exists( 'SP_Frontend_Shop' ) ) :
 
 			/**
 			 * Load the infinite scroll script on appropriate pages if the setting is enabled.
+			 * Uses Jetpack's infinite scroll if available.
 			 */
-			if ( ( true === $infinite_scroll ) && ( is_shop() || is_product_taxonomy() || is_product_category() || is_product_tag() ) ) {
-				wp_enqueue_script( 'jscroll', plugins_url( '../../../assets/js/jquery.jscroll.min.js', __FILE__ ), array( 'jquery' ) );
-				wp_enqueue_script( 'jscroll-init', plugins_url( '../../../assets/js/jscroll-init.min.js', __FILE__ ), array( 'jscroll' ) );
+			if ( true === $infinite_scroll && ! ( class_exists( 'Jetpack' ) && Jetpack::is_module_active( 'infinite-scroll' ) ) ) {
+				if ( is_shop() || is_product_taxonomy() || is_product_category() || is_product_tag() ) {
+					wp_enqueue_script( 'jscroll', plugins_url( '../../../assets/js/jquery.jscroll.min.js', __FILE__ ), array( 'jquery' ) );
+					wp_enqueue_script( 'jscroll-init', plugins_url( '../../../assets/js/jscroll-init.min.js', __FILE__ ), array( 'jscroll' ) );
+				}
 			}
 		}
 

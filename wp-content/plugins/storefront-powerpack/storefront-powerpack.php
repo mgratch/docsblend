@@ -3,11 +3,11 @@
  * Plugin Name: Storefront Powerpack
  * Plugin URI: http://woothemes.com/products/storefront-powerpack/
  * Description: Up your game with Storefront Powerpack and get access to host of neat gadgets that enable effortless customisation of your Storefront.
- * Version: 1.1.0
+ * Version: 1.3.1
  * Author: WooThemes
  * Author URI: http://woothemes.com/
  * Requires at least: 4.4
- * Tested up to: 4.6
+ * Tested up to: 4.7.2
  *
  * Text Domain: storefront-powerpack
  * Domain Path: /languages/
@@ -86,74 +86,73 @@ final class Storefront_Powerpack {
 	 */
 	public function __construct() {
 		$this->token   = 'storefront-powerpack';
-		$this->version = '1.1.0';
-
-		/**
-		 * If Storefront is the active theme, and the extension hasn't been disabled via filter, load all the things.
-		 */
-		if ( 'storefront' === get_option( 'template' ) && apply_filters( 'storefront_powerpack_enabled', true ) ) {
-			$this->define_constants();
-			$this->init_hooks();
-		}
+		$this->version = '1.3.1';
+		$this->define_constants();
+		$this->init_hooks();
 	} // End __construct()
 
 	/**
 	 * Include required core files used in admin, the Customizer and on the frontend.
 	 */
 	public function includes() {
-		// Helpers
-		include_once( 'includes/class-sp-helpers.php' );
+		/**
+		 * If Storefront is the active theme, and the extension hasn't been disabled via filter, load all the things.
+		 */
+		if ( 'storefront' === get_option( 'template' ) && apply_filters( 'storefront_powerpack_enabled', true ) ) {
+			// Helpers
+			include_once( 'includes/class-sp-helpers.php' );
 
-		// Admin
-		include_once( 'includes/class-sp-admin.php' );
+			// Admin
+			include_once( 'includes/class-sp-admin.php' );
 
-		// Frontend Main Class
-		include_once( 'includes/class-sp-frontend.php' );
+			// Frontend Main Class
+			include_once( 'includes/class-sp-frontend.php' );
 
-		// Customizer Main Class
-		include_once( 'includes/class-sp-customizer.php' );
+			// Customizer Main Class
+			include_once( 'includes/class-sp-customizer.php' );
 
-		// Header
-		include_once( 'includes/customizer/header/customizer.php' );
-		include_once( 'includes/customizer/header/frontend.php' );
+			// Header
+			include_once( 'includes/customizer/header/customizer.php' );
+			include_once( 'includes/customizer/header/frontend.php' );
 
-		// Footer
-		include_once( 'includes/customizer/footer/customizer.php' );
-		include_once( 'includes/customizer/footer/frontend.php' );
+			// Footer
+			include_once( 'includes/customizer/footer/customizer.php' );
+			include_once( 'includes/customizer/footer/frontend.php' );
 
-		// Designer
-		include_once( 'includes/customizer/designer/class-sp-designer.php' );
+			// Designer
+			include_once( 'includes/customizer/designer/class-sp-designer.php' );
 
-		// Layout
-		include_once( 'includes/customizer/layout/customizer.php' );
-		include_once( 'includes/customizer/layout/frontend.php' );
+			// Layout
+			include_once( 'includes/customizer/layout/customizer.php' );
+			include_once( 'includes/customizer/layout/frontend.php' );
 
-		// Integrations
-		include_once( 'includes/class-sp-integrations.php' );
+			// Integrations
+			include_once( 'includes/class-sp-integrations.php' );
 
-		if ( class_exists( 'WooCommerce' ) ) {
-			// Checkout
-			include_once( 'includes/customizer/checkout/customizer.php' );
-			include_once( 'includes/customizer/checkout/frontend.php' );
-			include_once( 'includes/customizer/checkout/template.php' );
+			if ( class_exists( 'WooCommerce' ) ) {
+				// Checkout
+				include_once( 'includes/customizer/checkout/customizer.php' );
+				include_once( 'includes/customizer/checkout/frontend.php' );
+				include_once( 'includes/customizer/checkout/template.php' );
 
-			// Homepage
-			include_once( 'includes/customizer/homepage/customizer.php' );
-			include_once( 'includes/customizer/homepage/frontend.php' );
-			include_once( 'includes/customizer/homepage/template.php' );
+				// Homepage
+				include_once( 'includes/customizer/homepage/customizer.php' );
+				include_once( 'includes/customizer/homepage/frontend.php' );
+				include_once( 'includes/customizer/homepage/template.php' );
 
-			// Messages
-			include_once( 'includes/customizer/messages/customizer.php' );
-			include_once( 'includes/customizer/messages/frontend.php' );
+				// Messages
+				include_once( 'includes/customizer/messages/customizer.php' );
+				include_once( 'includes/customizer/messages/frontend.php' );
 
-			// Product Details
-			include_once( 'includes/customizer/product-details/customizer.php' );
-			include_once( 'includes/customizer/product-details/frontend.php' );
+				// Product Details
+				include_once( 'includes/customizer/product-details/customizer.php' );
+				include_once( 'includes/customizer/product-details/frontend.php' );
 
-			// Shop
-			include_once( 'includes/customizer/shop/customizer.php' );
-			include_once( 'includes/customizer/shop/frontend.php' );
-			include_once( 'includes/customizer/shop/template.php' );
+				// Shop
+				include_once( 'includes/customizer/shop/customizer.php' );
+				include_once( 'includes/customizer/shop/frontend.php' );
+				include_once( 'includes/customizer/shop/template.php' );
+			}
 		}
 	}
 
