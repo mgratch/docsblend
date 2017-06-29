@@ -339,6 +339,7 @@ final class Storefront_Title_Toggle {
 		if ( $title == 'true' ) {
 			remove_action( 'storefront_single_post', 'storefront_post_header' );
 			remove_action( 'storefront_page', 'storefront_page_header' );
+			remove_action( 'storefront_homepage', 'storefront_homepage_header' );
 
 			if ( is_page() ) {
 				add_action( 'storefront_page', 'storefront_stt_page_header' );
