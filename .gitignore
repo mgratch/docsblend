@@ -97,6 +97,9 @@ wp-content/object-cache.php
 *.asf
 *.wmv
 *.avi
+*.gz
+*.zip
+
 500.php
 default.html
 error_log
