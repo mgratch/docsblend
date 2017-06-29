@@ -97,3 +97,8 @@ wp-content/object-cache.php
 *.asf
 *.wmv
 *.avi
+500.php
+default.html
+error_log
+favicon.ico
+wp-cli.yml
