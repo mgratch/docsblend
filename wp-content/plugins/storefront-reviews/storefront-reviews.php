@@ -696,7 +696,7 @@ final class Storefront_Reviews {
 
 						$rating 		= intval( get_comment_meta( $review->comment_ID, 'rating', true ) );
 
-						$rating_html 	= $_product->get_rating_html( $rating );
+						$rating_html 	= wc_get_rating_html($rating);
 
 						$count++;
 

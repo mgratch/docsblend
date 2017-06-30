@@ -51,6 +51,13 @@ final class Theme_Customisations {
 		//change product archive redirect if there is only 1 product
 		add_filter( 'woocommerce_return_to_shop_redirect', array( $this, 'maybe_change_empty_cart_button_url' ) );
 
+		//add widget area(s)
+		add_action( 'widgets_init', array( $this, 'register_sidebar' ) );
+
+		//storefront powerpack header customizer filter
+		add_filter( 'sp_header_components', array( $this, 'add_extra_header_controls' ) );
+		//add_action( 'db_storefront_header_widget', array( $this, 'db_storefront_header_widget_render' ) );
+
 		//remove the storefront credit link
 		remove_action( 'storefront_footer', 'storefront_credit', 20 );
 
@@ -68,6 +75,29 @@ final class Theme_Customisations {
 
 		return $url;
 	}
+
+	public function register_sidebar(){
+		register_sidebar( array(
+			'name'          => __( 'Header Widget', 'storefront' ),
+			'id'            => 'header-widget',
+			'description'   => __( 'Add widgets here to appear in your header.', 'storefront' ),
+			'before_widget' => '<div id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</div>',
+			'before_title'  => '<span class="gamma widget-title">',
+			'after_title'   => '</span>'
+		) );
+    }
+
+	public function add_extra_header_controls( $components ) {
+
+		$components['header_widget'] = array(
+			'title' => __( 'Header Widget', 'storefront-powerpack' ),
+			'hook'  => 'db_storefront_header_widget'
+		);
+
+		return $components;
+	}
+
 
 	/**
 	 * Enqueue the CSS
@@ -88,6 +118,22 @@ final class Theme_Customisations {
 function theme_customisations_main() {
 	new Theme_Customisations();
 }
+
+function db_storefront_header_widget() {
+	if ( function_exists( 'storefront_is_woocommerce_activated' ) ) {
+		if ( storefront_is_woocommerce_activated() ) {
+			?>
+            <div class="storefront-header-widget">
+				<?php if ( is_active_sidebar( 'header-widget' ) ) : ?>
+					<?php dynamic_sidebar( 'header-widget' ); ?>
+				<?php endif; ?>
+            </div>
+			<?php
+		}
+
+	}
+}
+
 
 /**
  * Initialise the plugin
