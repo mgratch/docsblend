@@ -1,5 +1,9 @@
 *** USPS Shipping ***
 
+2017-08-23 - version 4.4.9
+* Fix - Issue where rates for American Samoa and United States Minor Outlying Islands are not showing up.
+* Tweak - Don't cache API response without rates and reduce cache expiration to 1 week (filter is available to override).
+
 2017-06-29 - version 4.4.8
 * Fix - Issue where "Restrict Media Mail to..." is not checked properly.
 

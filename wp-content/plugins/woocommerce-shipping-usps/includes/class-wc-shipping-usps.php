@@ -2,35 +2,191 @@
 /**
  * WC_Shipping_USPS class.
  *
+ * @package WC_Shipping_USPS
+ */
+
+/**
+ * Shipping method main class.
+ *
  * @version 4.4.0
  * @extends WC_Shipping_Method
  */
 class WC_Shipping_USPS extends WC_Shipping_Method {
 
-	private $endpoint        = 'http://production.shippingapis.com/shippingapi.dll';
+	/**
+	 * API endpoint.
+	 *
+	 * @var string
+	 */
+	private $endpoint = 'http://production.shippingapis.com/shippingapi.dll';
+
+	/**
+	 * Default user ID.
+	 *
+	 * @var string
+	 */
 	private $default_user_id = '150WOOTH2143';
-	private $domestic        = array( 'US', 'PR', 'VI', 'MH', 'FM', 'GU', 'MP' );
+
+	/**
+	 * Countries considered as domestic.
+	 *
+	 * @var array
+	 */
+	private $domestic = array( 'US', 'PR', 'VI', 'MH', 'FM', 'GU', 'MP', 'AS', 'UM' );
+
+	/**
+	 * Found rates.
+	 *
+	 * @var array
+	 */
 	private $found_rates;
+
+	/**
+	 * Flat rate boxes.
+	 *
+	 * @var array
+	 */
 	private $flat_rate_boxes;
+
+	/**
+	 * Flat rate pricing.
+	 *
+	 * @var array
+	 */
 	private $flat_rate_pricing;
+
+	/**
+	 * Services.
+	 *
+	 * @var array
+	 */
 	private $services;
+
+	/**
+	 * Origin postcode.
+	 *
+	 * @var string
+	 */
 	private $origin;
+
+	/**
+	 * Whether debug is enabled or not.
+	 *
+	 * @var bool
+	 */
 	private $debug;
+
+	/**
+	 * Whether flat rate boxes is enabled or not.
+	 *
+	 * Valid values are "yes" and "no".
+	 *
+	 * @var string
+	 */
 	private $enable_flat_rate_boxes;
+
+	/**
+	 * Shipping classes whose restricted to Media Mail.
+	 *
+	 * @var array
+	 */
 	private $mediamail_restriction;
+
+	/**
+	 * USPS user ID.
+	 *
+	 * @var string
+	 */
 	private $user_id;
+
+	/**
+	 * Packing method.
+	 *
+	 * Possible values are "per_item", "box_packing", and "weight_based".
+	 *
+	 * @var string
+	 */
 	private $packing_method;
+
+	/**
+	 * User defined boxes.
+	 *
+	 * @var array
+	 */
 	private $boxes;
+
+	/**
+	 * Defined services from setting.
+	 *
+	 * @var array
+	 */
 	private $custom_services;
+
+	/**
+	 * Rates to offer.
+	 *
+	 * Valid values are "all" and "cheapest".
+	 *
+	 * @var string
+	 */
 	private $offer_rates;
+
+	/**
+	 * Fallback rate amount if no matching rates from API.
+	 *
+	 * @var string
+	 */
 	private $fallback;
+
+	/**
+	 * Flat rate fee.
+	 *
+	 * @var string
+	 */
 	private $flat_rate_fee;
+
+	/**
+	 * Method to handle unpacked item.
+	 *
+	 * Possible values are "", "ignore", "fallback", and "abort".
+	 *
+	 * @var string
+	 */
 	private $unpacked_item_handling;
+
+	/**
+	 * Whether standard service (rates API) is enabled or not.
+	 *
+	 * @var bool
+	 */
 	private $enable_standard_services;
+
+	/**
+	 * Total cost of unpacked items.
+	 *
+	 * @var float
+	 */
 	private $unpacked_item_costs;
 
 	/**
-	 * Constructor
+	 * Transient's name for USPS API request.
+	 *
+	 * Saved the request params in property because transient need to created
+	 * in another method.
+	 *
+	 * @since 4.4.9
+	 * @version 4.4.9
+	 *
+	 * @see https://github.com/woocommerce/woocommerce-shipping-usps/issues/145
+	 *
+	 * @var string
+	 */
+	private $request_transient;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param int $instance_id Instance ID.
 	 */
 	public function __construct( $instance_id = 0 ) {
 		$this->id                 = 'usps';
@@ -49,10 +205,11 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * is_available function.
+	 * Chceks whether this shipping instance is available or not.
 	 *
-	 * @param array $package
-	 * @return bool
+	 * @param array $package Package to ship.
+	 *
+	 * @return bool True if available.
 	 */
 	public function is_available( $package ) {
 		if ( empty( $package['destination']['country'] ) ) {
@@ -63,14 +220,14 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * Initialize settings
+	 * Initialize settings.
 	 *
 	 * @version 4.4.0
 	 * @since 4.4.0
 	 * @return bool
 	 */
 	private function set_settings() {
-		// Define user set variables
+		// Define user set variables.
 		$this->title                    = $this->get_option( 'title', $this->method_title );
 		$this->origin                   = $this->get_option( 'origin', '' );
 		$this->user_id                  = $this->get_option( 'user_id', $this->default_user_id );
@@ -108,7 +265,7 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * Process settings on save
+	 * Process settings on save.
 	 *
 	 * @access public
 	 * @return void
@@ -120,7 +277,9 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * generate_services_html function.
+	 * HTML for services option.
+	 *
+	 * @return string HTML for services option.
 	 */
 	public function generate_services_html() {
 		ob_start();
@@ -129,7 +288,9 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * generate_box_packing_html function.
+	 * HTML for box packing option.
+	 *
+	 * @return string HTML for box packing option.
 	 */
 	public function generate_box_packing_html() {
 		ob_start();
@@ -155,11 +316,11 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * validate_box_packing_field function.
+	 * Validate box packing field.
 	 *
-	 * @access public
-	 * @param mixed $key
-	 * @return void
+	 * @param string $key Field's key.
+	 *
+	 * @return array Validated value.
 	 */
 	public function validate_box_packing_field( $key ) {
 		$boxes = array();
@@ -201,11 +362,11 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * validate_services_field function.
+	 * Validate services field.
 	 *
-	 * @access public
-	 * @param mixed $key
-	 * @return void
+	 * @param string $key Field's key.
+	 *
+	 * @return array Validated value.
 	 */
 	public function validate_services_field( $key ) {
 		$services         = array();
@@ -219,7 +380,7 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 			);
 
 			foreach ( $this->services[ $code ]['services'] as $key => $name ) {
-				// process sub sub services
+				// Process sub sub services.
 				if ( 0 === $key ) {
 					foreach ( $name as $subsub_service_key => $subsub_service ) {
 						$services[ $code ][ $key ][ $subsub_service_key ]['enabled'] = isset( $settings[ $key ][ $subsub_service_key ]['enabled'] ) ? true : false;
@@ -238,10 +399,7 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * clear_transients function.
-	 *
-	 * @access public
-	 * @return void
+	 * Clear transients used by this shipping method.
 	 */
 	public function clear_transients() {
 		global $wpdb;
@@ -250,10 +408,7 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * init_form_fields function.
-	 *
-	 * @access public
-	 * @return void
+	 * Initialize form fields.
 	 */
 	public function init_form_fields() {
 		$shipping_classes = array();
@@ -264,21 +419,21 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 		}
 
 		$this->instance_form_fields = array(
-			'title'            => array(
+			'title' => array(
 				'title'       => __( 'Method Title', 'woocommerce-shipping-usps' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-shipping-usps' ),
 				'default'     => __( 'USPS', 'woocommerce-shipping-usps' ),
 				'desc_tip'    => true,
 			),
-			'offer_rates'   => array(
-				'title'           => __( 'Offer Rates', 'woocommerce-shipping-usps' ),
-				'type'            => 'select',
-				'description'     => '',
-				'default'         => 'all',
-				'options'         => array(
-					'all'         => __( 'Offer the customer all returned rates', 'woocommerce-shipping-usps' ),
-					'cheapest'    => __( 'Offer the customer the cheapest rate only', 'woocommerce-shipping-usps' ),
+			'offer_rates' => array(
+				'title'        => __( 'Offer Rates', 'woocommerce-shipping-usps' ),
+				'type'         => 'select',
+				'description'  => '',
+				'default'      => 'all',
+				'options'      => array(
+					'all'      => __( 'Offer the customer all returned rates', 'woocommerce-shipping-usps' ),
+					'cheapest' => __( 'Offer the customer the cheapest rate only', 'woocommerce-shipping-usps' ),
 				),
 			),
 			'fallback' => array(
@@ -289,51 +444,51 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 				'default'     => '',
 				'placeholder' => __( 'Disabled', 'woocommerce-shipping-usps' ),
 			),
-			'flat_rates'          => array(
-				'title'           => __( 'Flat Rates', 'woocommerce-shipping-usps' ),
-				'type'            => 'title',
-				'description'     => __( 'These are USPS flat rate boxes services. They are not calculated using the USPS API.', 'woocommerce-shipping-usps' ),
+			'flat_rates' => array(
+				'title'       => __( 'Flat Rates', 'woocommerce-shipping-usps' ),
+				'type'        => 'title',
+				'description' => __( 'These are USPS flat rate boxes services. They are not calculated using the USPS API.', 'woocommerce-shipping-usps' ),
 			),
-			'enable_flat_rate_boxes'  => array(
-				'title'           => __( 'Flat Rate Boxes &amp; envelopes', 'woocommerce-shipping-usps' ),
-				'type'            => 'select',
-				'default'         => 'yes',
-				'options'         => array(
-					'yes'         => __( 'Yes - Enable flat rate services', 'woocommerce-shipping-usps' ),
-					'no'          => __( 'No - Disable flat rate services', 'woocommerce-shipping-usps' ),
-					'priority'    => __( 'Enable Priority flat rate services only', 'woocommerce-shipping-usps' ),
-					'express'     => __( 'Enable Express flat rate services only', 'woocommerce-shipping-usps' ),
+			'enable_flat_rate_boxes' => array(
+				'title'        => __( 'Flat Rate Boxes &amp; envelopes', 'woocommerce-shipping-usps' ),
+				'type'         => 'select',
+				'default'      => 'yes',
+				'options'      => array(
+					'yes'      => __( 'Yes - Enable flat rate services', 'woocommerce-shipping-usps' ),
+					'no'       => __( 'No - Disable flat rate services', 'woocommerce-shipping-usps' ),
+					'priority' => __( 'Enable Priority flat rate services only', 'woocommerce-shipping-usps' ),
+					'express'  => __( 'Enable Express flat rate services only', 'woocommerce-shipping-usps' ),
 				),
-				'description'     => __( 'Enable this option to offer shipping using USPS Flat Rate services. Items will be packed into the boxes/envelopes and the customer will be offered a single rate from these.', 'woocommerce-shipping-usps' ),
-				'desc_tip'    => true,
+				'description'  => __( 'Enable this option to offer shipping using USPS Flat Rate services. Items will be packed into the boxes/envelopes and the customer will be offered a single rate from these.', 'woocommerce-shipping-usps' ),
+				'desc_tip'     => true,
 			),
-			'flat_rate_express_title'           => array(
-				'title'           => __( 'Express Flat Rate Title', 'woocommerce-shipping-usps' ),
-				'type'            => 'text',
-				'description'     => '',
-				'default'         => '',
-				'placeholder'     => 'Priority Mail Express Flat Rate&#0174;',
+			'flat_rate_express_title' => array(
+				'title'       => __( 'Express Flat Rate Title', 'woocommerce-shipping-usps' ),
+				'type'        => 'text',
+				'description' => '',
+				'default'     => '',
+				'placeholder' => 'Priority Mail Express Flat Rate&#0174;',
 			),
-			'flat_rate_priority_title'           => array(
-				'title'           => __( 'Priority Flat Rate Title', 'woocommerce-shipping-usps' ),
-				'type'            => 'text',
-				'description'     => '',
-				'default'         => '',
-				'placeholder'     => 'Priority Mail Flat Rate&#0174;',
+			'flat_rate_priority_title' => array(
+				'title'       => __( 'Priority Flat Rate Title', 'woocommerce-shipping-usps' ),
+				'type'        => 'text',
+				'description' => '',
+				'default'     => '',
+				'placeholder' => 'Priority Mail Flat Rate&#0174;',
 			),
 			'flat_rate_fee' => array(
-				'title' 		=> __( 'Additional Fee', 'woocommerce' ),
-				'type' 			=> 'price',
-				'description'	=> __( 'Fee per-box excluding tax. Enter an amount, e.g. 2.50, or a percentage, e.g. 5%. Leave blank to disable.', 'woocommerce' ),
-				'default'		=> '',
+				'title'       => __( 'Additional Fee', 'woocommerce' ),
+				'type'        => 'price',
+				'description' => __( 'Fee per-box excluding tax. Enter an amount, e.g. 2.50, or a percentage, e.g. 5%. Leave blank to disable.', 'woocommerce' ),
+				'default'     => '',
 				'desc_tip'    => true,
 			),
-			'standard_rates'      => array(
-				'title'           => __( 'API Rates', 'woocommerce-shipping-usps' ),
-				'type'            => 'title',
-				'description'     => __( 'These are standard service rates pulled from the USPS API.', 'woocommerce-shipping-usps' ),
+			'standard_rates' => array(
+				'title'       => __( 'API Rates', 'woocommerce-shipping-usps' ),
+				'type'        => 'title',
+				'description' => __( 'These are standard service rates pulled from the USPS API.', 'woocommerce-shipping-usps' ),
 			),
-			'enable_standard_services'  => array(
+			'enable_standard_services' => array(
 				'title'       => __( 'Enable API Rates', 'woocommerce-shipping-usps' ),
 				'label'       => __( 'Retrieve Standard Service rates from the USPS API', 'woocommerce-shipping-usps' ),
 				'type'        => 'checkbox',
@@ -341,14 +496,14 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 				'desc_tip'    => true,
 				'description' => __( 'Enable non-flat rate services.', 'woocommerce-shipping-usps' ),
 			),
-			'origin'           => array(
+			'origin' => array(
 				'title'       => __( 'Origin Postcode (required)', 'woocommerce-shipping-usps' ),
 				'type'        => 'text',
 				'description' => __( 'Enter the postcode for the <strong>sender</strong>.', 'woocommerce-shipping-usps' ),
 				'default'     => '',
 				'desc_tip'    => true,
 			),
-			'shippingrates'  => array(
+			'shippingrates' => array(
 				'title'       => __( 'Shipping Rates', 'woocommerce-shipping-usps' ),
 				'type'        => 'select',
 				'default'     => 'ALL',
@@ -359,50 +514,50 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 				'desc_tip'    => true,
 				'description' => __( 'Choose which rates to show your customers: Standard retail or discounted commercial rates.', 'woocommerce-shipping-usps' ),
 			),
-			'packing_method'  => array(
-				'title'           => __( 'Parcel Packing Method', 'woocommerce-shipping-usps' ),
-				'type'            => 'select',
-				'default'         => '',
-				'class'           => 'packing_method',
-				'options'         => array(
-					'per_item'       => __( 'Default: Pack items individually', 'woocommerce-shipping-usps' ),
-					'box_packing'    => __( 'Recommended: Pack into boxes with weights and dimensions', 'woocommerce-shipping-usps' ),
-					'weight_based'    => __( 'Weight based: Regular sized items (< 12 inches) are grouped and quoted for weights only. Large items are quoted individually.', 'woocommerce-shipping-usps' ),
+			'packing_method' => array(
+				'title'            => __( 'Parcel Packing Method', 'woocommerce-shipping-usps' ),
+				'type'             => 'select',
+				'default'          => '',
+				'class'            => 'packing_method',
+				'options'          => array(
+					'per_item'     => __( 'Default: Pack items individually', 'woocommerce-shipping-usps' ),
+					'box_packing'  => __( 'Recommended: Pack into boxes with weights and dimensions', 'woocommerce-shipping-usps' ),
+					'weight_based' => __( 'Weight based: Regular sized items (< 12 inches) are grouped and quoted for weights only. Large items are quoted individually.', 'woocommerce-shipping-usps' ),
 				),
 			),
-			'boxes'  => array(
-				'type'            => 'box_packing',
+			'boxes' => array(
+				'type' => 'box_packing',
 			),
-			'unpacked_item_handling'   => array(
-				'title'           => __( 'Unpacked item handling', 'woocommerce-shipping-usps' ),
-				'type'            => 'select',
-				'description'     => '',
-				'default'         => 'all',
-				'options'         => array(
+			'unpacked_item_handling' => array(
+				'title'        => __( 'Unpacked item handling', 'woocommerce-shipping-usps' ),
+				'type'         => 'select',
+				'description'  => '',
+				'default'      => 'all',
+				'options'      => array(
 					''         => __( 'Get a quote for the unpacked item by itself', 'woocommerce-shipping-usps' ),
 					'ingore'   => __( 'Ignore the item - do not quote', 'woocommerce-shipping-usps' ),
 					'fallback' => __( 'Use the fallback price (above)', 'woocommerce-shipping-usps' ),
 					'abort'    => __( 'Abort - do not return any quotes for the standard services', 'woocommerce-shipping-usps' ),
 				),
 			),
-			'services'  => array(
-				'type'            => 'services',
+			'services' => array(
+				'type' => 'services',
 			),
-			'mediamail_restriction'        => array(
-				'title'           => __( 'Restrict Media Mail to...', 'woocommerce-shipping-usps' ),
-				'type'            => 'multiselect',
-				'class'           => 'chosen_select',
-				'css'             => 'width: 450px;',
-				'default'         => '',
-				'options'         => $shipping_classes,
-				'custom_attributes'      => array(
+			'mediamail_restriction' => array(
+				'title'                => __( 'Restrict Media Mail to...', 'woocommerce-shipping-usps' ),
+				'type'                 => 'multiselect',
+				'class'                => 'chosen_select',
+				'css'                  => 'width: 450px;',
+				'default'              => '',
+				'options'              => $shipping_classes,
+				'custom_attributes'    => array(
 					'data-placeholder' => __( 'No restrictions', 'woocommerce-shipping-usps' ),
 				),
 			),
 		);
 
 		$this->form_fields = array(
-			'user_id'           => array(
+			'user_id' => array(
 				'title'       => __( 'USPS User ID', 'woocommerce-shipping-usps' ),
 				'type'        => 'text',
 				'description' => sprintf( __( 'You can obtain a USPS user ID by %s, or just use ours by leaving the field blank. This is optional.', 'woocommerce-shipping-usps' ), '<a href="https://www.usps.com/business/web-tools-apis/welcome.htm">' . __( 'signing up on the USPS website', 'woocommerce-shipping-usps' ) . '</a>' ),
@@ -410,7 +565,7 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 				'placeholder' => $this->default_user_id,
 				'desc_tip'    => true,
 			),
-			'debug_mode'  => array(
+			'debug_mode' => array(
 				'title'       => __( 'Debug Mode', 'woocommerce-shipping-usps' ),
 				'label'       => __( 'Enable debug mode', 'woocommerce-shipping-usps' ),
 				'type'        => 'checkbox',
@@ -421,6 +576,11 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 		);
 	}
 
+	/**
+	 * Perform a request to check user ID validness.
+	 *
+	 * Error notice will displayed if user ID is invalid.
+	 */
 	public function test_user_id() {
 		if ( empty( $_POST['woocommerce_usps_user_id'] ) ) {
 			return;
@@ -466,8 +626,10 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * Get Parsed XML response
-	 * @param  string $xml
+	 * Get Parsed XML response.
+	 *
+	 * @param string $xml XML string.
+	 *
 	 * @return string|bool
 	 */
 	private function get_parsed_xml( $xml ) {
@@ -842,8 +1004,10 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * Generate shipping request for weights only
-	 * @param  array $package
+	 * Generate shipping request for weights only.
+	 *
+	 * @param array $package Package to ship.
+	 *
 	 * @return array
 	 */
 	private function weight_based_shipping( $package ) {
@@ -851,7 +1015,7 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 		$domestic                  = in_array( $package['destination']['country'], $this->domestic ) ? true : false;
 		$total_regular_item_weight = 0;
 
-		// Add requests for larger items
+		// Add requests for larger items.
 		foreach ( $package['contents'] as $item_id => $values ) {
 
 			if ( ! $values['data']->needs_shipping() ) {
@@ -916,7 +1080,7 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 			$requests[] = $request;
 		}
 
-		// Regular package
+		// Regular package.
 		if ( $total_regular_item_weight > 0 ) {
 			$max_package_weight = ( $domestic || 'MX' === $package['destination']['country'] ) ? 70 : 44;
 			$package_weights    = array();
@@ -971,9 +1135,17 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * Generate a package ID for the request
+	 * Generate a package ID for the request.
 	 *
-	 * Contains qty and dimension info so we can look at it again later when it comes back from USPS if needed
+	 * Contains qty and dimension info so we can look at it again later when it
+	 * comes back from USPS if needed.
+	 *
+	 * @param string $id     Package ID.
+	 * @param int    $qty    Quantity.
+	 * @param float  $l      Length.
+	 * @param float  $w      Width.
+	 * @param float  $h      Height.
+	 * @param float  $weight Weight.
 	 *
 	 * @return string
 	 */
@@ -982,13 +1154,13 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * box_shipping function.
+	 * Generate XML requests using box packing method.
 	 *
 	 * @version 4.4.7
 	 *
-	 * @access private
-	 * @param mixed $package
-	 * @return void
+	 * @param array $package Package to ship.
+	 *
+	 * @return array Array of XML requests.
 	 */
 	private function box_shipping( $package ) {
 		$requests = array();
@@ -1166,10 +1338,12 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * get_country_name function.
+	 * Get country name from given country code.
 	 *
-	 * @access private
-	 * @return void
+	 * @param string $code Country's code.
+	 *
+	 * @return bool|string False if country code is not found or string if there's
+	 *                     a match from a given country's code.
 	 */
 	private function get_country_name( $code ) {
 		$countries = apply_filters( 'usps_countries', array(
@@ -1261,7 +1435,7 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 			'GL' => 'Greenland',
 			'GD' => 'Grenada',
 			'GP' => 'Guadeloupe',
-			//'GU' => 'Guam', /* Guam is considered a country but USPS currently sees it as a state */
+			/*'GU' => 'Guam', // Guam is considered a country but USPS currently sees it as a state */
 			'GT' => 'Guatemala',
 			'GG' => 'Guernsey',
 			'GN' => 'Guinea',
@@ -1337,7 +1511,7 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 			'NO' => 'Norway',
 			'OM' => 'Oman',
 			'PK' => 'Pakistan',
-			'PS' => 'Israel', // Palestinian Territory, Occupied
+			'PS' => 'Israel', // Palestinian Territory, Occupied.
 			'PA' => 'Panama',
 			'PG' => 'Papua New Guinea',
 			'PY' => 'Paraguay',
@@ -1373,13 +1547,13 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 			'SB' => 'Solomon Islands',
 			'SO' => 'Somalia',
 			'ZA' => 'South Africa',
-			'GS' => 'Great Britain and Northern Ireland', // South Georgia and the South Sandwich Islands
+			'GS' => 'Great Britain and Northern Ireland', // South Georgia and the South Sandwich Islands.
 			'KR' => 'South Korea',
 			'ES' => 'Spain',
 			'LK' => 'Sri Lanka',
 			'SD' => 'Sudan',
 			'SR' => 'Suriname',
-			'SJ' => 'Norway', // Svalbard and Jan Mayen
+			'SJ' => 'Norway', // Svalbard and Jan Mayen.
 			'SZ' => 'Swaziland',
 			'SE' => 'Sweden',
 			'CH' => 'Switzerland',
@@ -1411,7 +1585,7 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 			'VE' => 'Venezuela',
 			'VN' => 'Vietnam',
 			'WF' => 'Wallis and Futuna Islands',
-			'EH' => 'Morocco', // Western Sahara
+			'EH' => 'Morocco', // Western Sahara.
 			'WS' => 'Samoa',
 			'YE' => 'Yemen',
 			'ZM' => 'Zambia',
@@ -1426,11 +1600,12 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	}
 
 	/**
-	 * calculate_flat_rate_box_rate function.
+	 * Calculate Flat Rate Box rate.
 	 *
-	 * @access private
-	 * @param mixed $package
-	 * @return void
+	 * @param array  $package  Package to ship.
+	 * @param string $box_type Box type.
+	 *
+	 * @return array
 	 */
 	private function calculate_flat_rate_box_rate( $package, $box_type = 'priority' ) {
 		$cost = 0;
@@ -1603,6 +1778,7 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 		$package_requests = $this->get_package_requests( $package );
 		$domestic         = in_array( $package['destination']['country'], $this->domestic ) ? true : false;
 
+		$response = null;
 		if ( $package_requests ) {
 			$response = $this->request_usps_standard_service( $package, $package_requests, $domestic );
 
@@ -1613,6 +1789,13 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 
 		// Ensure rates were found for all packages.
 		if ( $this->found_rates ) {
+
+			// Cache the response for one week if response contains rates.
+			if ( $this->request_transient && $response ) {
+				$transient_expiration = apply_filters( 'woocommerce_shipping_usps_transient_expiration', DAY_IN_SECONDS * 7 );
+				set_transient( $this->request_transient, $response, $transient_expiration );
+			}
+
 			foreach ( $this->found_rates as $key => $value ) {
 				if ( $value['packages'] < sizeof( $package_requests ) ) {
 					$this->debug( "Unsetting {$key} - too few packages." );
@@ -1636,10 +1819,13 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 	 * @param bool  $domestic         Whether domestic or not.
 	 */
 	private function request_usps_standard_service( $package, $package_requests, $domestic ) {
-		$api             = $domestic ? 'RateV4' : 'IntlRateV2';
-		$request         = $this->build_usps_standard_service_request( $package_requests, $domestic );
-		$transient       = 'usps_quote_' . md5( $request );
-		$cached_response = get_transient( $transient );
+		$api     = $domestic ? 'RateV4' : 'IntlRateV2';
+		$request = $this->build_usps_standard_service_request( $package_requests, $domestic );
+
+		// Need to save the transient's name because `set_transient` is called
+		// from another method.
+		$this->request_transient = 'usps_quote_' . md5( $request );
+		$cached_response         = get_transient( $this->request_transient );
 
 		$this->debug( 'USPS REQUEST: <pre>' . print_r( htmlspecialchars( $request ), true ) . '</pre>' );
 
@@ -1658,7 +1844,13 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 			$this->endpoint,
 			array(
 				'timeout' => 70,
-				'body'    => apply_filters( 'woocommerce_shipping_usps_request', $request, $api, $package_requests, $package ),
+				'body'    => apply_filters(
+					'woocommerce_shipping_usps_request',
+					$request,
+					$api,
+					$package_requests,
+					$package
+				),
 			)
 		);
 
@@ -1673,9 +1865,6 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 			'USPS RESPONSE: <pre style="height: 200px; overflow:auto;">%s</pre>',
 			print_r( htmlspecialchars( $response ), true )
 		) );
-
-		// Cache the response.
-		set_transient( $transient, $response, DAY_IN_SECONDS * 30 );
 
 		return $response;
 	}
