@@ -1,5 +1,9 @@
 *** Storefront Parallax Hero Changelog ***
 
+2017.09.21 - version 1.5.5
+* Fix - Storefront 2.2.0 compatibility.
+* Fix - Default heading color.
+
 2016.12.07 - version 1.5.4
 * Fix - Heading color when using the parallax shortcode.
 

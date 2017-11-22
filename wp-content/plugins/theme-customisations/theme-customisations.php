@@ -76,7 +76,7 @@ final class Theme_Customisations {
 		return $url;
 	}
 
-	public function register_sidebar(){
+	public function register_sidebar() {
 		register_sidebar( array(
 			'name'          => __( 'Header Widget', 'storefront' ),
 			'id'            => 'header-widget',
@@ -86,7 +86,7 @@ final class Theme_Customisations {
 			'before_title'  => '<span class="gamma widget-title">',
 			'after_title'   => '</span>'
 		) );
-    }
+	}
 
 	public function add_extra_header_controls( $components ) {
 
@@ -139,3 +139,10 @@ function db_storefront_header_widget() {
  * Initialise the plugin
  */
 add_action( 'plugins_loaded', 'theme_customisations_main' );
+
+
+//add_action( 'gform_after_submission_2', 'add_wc_coupon_after_submission', 10, 2 );
+
+function add_wc_coupon_after_submission( $entry, $form ) {
+	WC()->cart->add_discount( 'DOCSBLENDSUPPORT' );
+}

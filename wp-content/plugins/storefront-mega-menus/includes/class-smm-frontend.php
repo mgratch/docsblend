@@ -302,12 +302,18 @@ class SMM_Frontend {
 		}
 
 		// Get the widget instance options.
-		$widget_number				= preg_replace( '/[^0-9]/', '', $widget_id );
-		$options					= get_option( $wp_registered_widgets[ $widget_id ]['callback'][0]->option_name );
-		$instance					= $options[ $widget_number ];
-		$class						= get_class( $wp_registered_widgets[ $widget_id ]['callback'][0] );
-		$widgets_map				= $this->_widget_shortcode_get_widgets_map();
-		$_original_widget_position	= $widgets_map[ $widget_id ];
+		$widget_number = preg_replace( '/[^0-9]/', '', $widget_id );
+		$options       = get_option( $wp_registered_widgets[ $widget_id ]['callback'][0]->option_name );
+		$instance      = $options[ $widget_number ];
+		$class         = get_class( $wp_registered_widgets[ $widget_id ]['callback'][0] );
+		$widgets_map   = $this->_widget_shortcode_get_widgets_map();
+
+		// Maybe the widget is removed or deregistered.
+		if ( ! isset( $widgets_map[ $widget_id ] ) ) {
+			return;
+		}
+
+		$_original_widget_position = $widgets_map[ $widget_id ];
 
 		// Maybe the widget is removed or deregistered.
 		if ( ! $class ) {
@@ -319,15 +325,15 @@ class SMM_Frontend {
 		}
 
 		$params = array(
-			'name'			=> $wp_registered_sidebars[ $_original_widget_position ]['name'],
-			'id'			=> $wp_registered_sidebars[ $_original_widget_position ]['id'],
-			'description'	=> $wp_registered_sidebars[ $_original_widget_position ]['description'],
-			'before_widget'	=> $args['before_widget'],
-			'before_title'	=> $args['before_title'],
-			'after_title'	=> $args['after_title'],
-			'after_widget'	=> $args['after_widget'],
-			'widget_id'		=> $widget_id,
-			'widget_name'	=> $wp_registered_widgets[ $widget_id ]['name'],
+			'name'          => $wp_registered_sidebars[ $_original_widget_position ]['name'],
+			'id'            => $wp_registered_sidebars[ $_original_widget_position ]['id'],
+			'description'   => $wp_registered_sidebars[ $_original_widget_position ]['description'],
+			'before_widget' => $args['before_widget'],
+			'before_title'  => $args['before_title'],
+			'after_title'   => $args['after_title'],
+			'after_widget'  => $args['after_widget'],
+			'widget_id'     => $widget_id,
+			'widget_name'   => $wp_registered_widgets[ $widget_id ]['name'],
 		);
 
 		// Substitute HTML id and class attributes into before_widget.

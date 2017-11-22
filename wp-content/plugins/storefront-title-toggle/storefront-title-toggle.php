@@ -3,11 +3,11 @@
  * Plugin Name:			Title Toggle for Storefront Theme
  * Plugin URI:			https://wordpress.org/plugins/storefront-title-toggle/
  * Description:			Hide titles on a per post/page basis. Must be using the Storefront theme.
- * Version:				1.2.3
+ * Version:				1.2.4
  * Author:				Wooassist
  * Author URI:			http://wooassist.com/
  * Requires at least:	4.0.0
- * Tested up to:		4.7.3
+ * Tested up to:		4.8.2
  *
  * Text Domain: storefront-title-toggle
  * Domain Path: /languages/
@@ -339,11 +339,15 @@ final class Storefront_Title_Toggle {
 		if ( $title == 'true' ) {
 			remove_action( 'storefront_single_post', 'storefront_post_header' );
 			remove_action( 'storefront_page', 'storefront_page_header' );
-			remove_action( 'storefront_homepage', 'storefront_homepage_header' );
 
+			if ( is_front_page() ) {
+				remove_action( 'storefront_homepage', 'storefront_homepage_header', 10 );
+			}
 			if ( is_page() ) {
 				add_action( 'storefront_page', 'storefront_stt_page_header' );
 			}
+
+
 		}
 
 		if ( function_exists( 'is_woocommerce' ) ) {

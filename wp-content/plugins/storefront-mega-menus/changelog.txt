@@ -1,5 +1,8 @@
 *** Storefront Mega Menus Changelog ***
 
+2017.10.16 - version 1.5.0
+* Fix - Compatibility with the new WordPress 4.8 media widgets.
+
 2017.05.17 - version 1.4.2
 * Fix - Missing semicolon in preview file.
 

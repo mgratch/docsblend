@@ -3,7 +3,7 @@
  * Plugin Name: Storefront Parallax Hero
  * Plugin URI: http://woothemes.com/products/storefront-parallax-hero/
  * Description: Adds a hero component to the Storefront homepage template. Customise the component in the customizer and include it on additional pages using the included shortcode.
- * Version: 1.5.4
+ * Version: 1.5.5
  * Author: WooThemes
  * Author URI: http://woothemes.com/
  * Requires at least: 4.0.0
@@ -96,7 +96,7 @@ final class Storefront_Parallax_Hero {
 		$this->token 			= 'storefront-parallax-hero';
 		$this->plugin_url 		= plugin_dir_url( __FILE__ );
 		$this->plugin_path 		= plugin_dir_path( __FILE__ );
-		$this->version 			= '1.5.4';
+		$this->version 			= '1.5.5';
 
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 
@@ -278,12 +278,12 @@ final class Storefront_Parallax_Hero {
 	 * @return  void
 	 */
 	public function sph_script() {
-		global $post;
+		global $post, $storefront_version;
 
 		wp_enqueue_style( 'sph-styles', plugins_url( '/assets/css/style.css', __FILE__ ) );
 
 		$link_color 		= get_theme_mod( 'sph_hero_link_color', '#96588a' );
-		$sph_heading_color 	= get_theme_mod( 'sph_heading_color', '#96588a' );
+		$sph_heading_color 	= get_theme_mod( 'sph_heading_color', '#ffffff' );
 		$accent_color 		= get_theme_mod( 'storefront_accent_color', '#96588a' );
 
 		$sph_style = '
@@ -298,6 +298,14 @@ final class Storefront_Parallax_Hero {
 		.overlay.animated span:before {
 			background-color: ' . $accent_color . ';
 		}';
+
+		if ( version_compare( $storefront_version, '2.2.0', '<' ) ) {
+			$sph_style .= '
+			.page-template-template-homepage .site-main .sph-hero:first-child {
+				margin-top: -4.236em;
+			}
+			';
+		}
 
 		// Custom CSS for shortcodes
 		if ( $post && true === has_shortcode( $post->post_content, 'parallax_hero' ) ) {

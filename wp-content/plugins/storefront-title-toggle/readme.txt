@@ -2,7 +2,7 @@
 Contributors: wooassist
 Tags: title, remove, storefront, toggle
 Requires at least: 4.0.0
-Tested up to: 4.7.3
+Tested up to: 4.8.2
 Stable tag: 4.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -53,6 +53,10 @@ Yes.
 1. Metabox that will be displayed in the edit screen. This should be located below the content editor.
 
 == Changelog ==
+
+= 1.2.4 =
+* tested with WP version 4.8.2, WooCommerce 3.1.2 and Storefront 2.2.5
+* fixed hiding title on the static frontpage
 
 = 1.2.3 =
 * tested with WP version 4.7.3, WooCommerce 2.6.14 and Storefront 2.1.8

@@ -1,5 +1,9 @@
 *** USPS Shipping ***
 
+2017-09-20 - version 4.4.10
+* Add - WC minimum requirements to header.
+* Fix - Added new sub service First-Class Package Service - Retail™ so that it's displayed in service settings.
+
 2017-08-23 - version 4.4.9
 * Fix - Issue where rates for American Samoa and United States Minor Outlying Islands are not showing up.
 * Tweak - Don't cache API response without rates and reduce cache expiration to 1 week (filter is available to override).

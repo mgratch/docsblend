@@ -30,6 +30,7 @@
 		menuItemisTopLevel: false,
 		menuItemControl: null,
 		addWidgets: null,
+		widgetViews: [],
 		events: {
 			'click .smm-add-new-widget': 'toggleAddWidgets',
 			'click .smm-enable-mega-menu': 'enableCheckbox'
@@ -38,7 +39,7 @@
 		initialize: function() {
 			var self = this;
 
-			self.template = wp.template( 'smm-configurator' );
+			self.template     = wp.template( 'smm-configurator' );
 			self.configurator = self.$el.find( '.smm-gridstack' );
 
 			// Initialize gridstack.js
@@ -92,8 +93,8 @@
 			self.emptyConfigurator();
 
 			// Load items
-			self.menuItemID = megaMenu.item_id;
-			self.menuItemTitle = megaMenu.item_title;
+			self.menuItemID         = megaMenu.item_id;
+			self.menuItemTitle      = megaMenu.item_title;
 			self.menuItemisTopLevel = megaMenu.item_top_level;
 
 			// Open configurator
@@ -138,6 +139,12 @@
 		close: function() {
 			var self = this;
 
+			// Close any open widgets
+			this.configurator.find( '.smm-widget-content-visible' ).animate({ 'height': '40' }, 200, function() {
+				$( this ).removeClass( 'smm-widget-content-visible' );
+				$( this ).width( 'auto' );
+			});
+
 			// Close configurator
 			$( 'body' ).removeClass( 'smm-panel-visible' );
 
@@ -163,7 +170,7 @@
 			var self = this;
 
 			// Empty current item id
-			self.menuItemID = null;
+			self.menuItemID    = null;
 			self.menuItemTitle = '';
 
 			// Unbind widget watch
@@ -175,8 +182,13 @@
 				self.menuItemControl = null;
 			}
 
-			// Remove all the widgets
-			self.grid.remove_all();
+			// Detach widgets from Gridstack, but keep them in the DOM
+			_.each( self.grid.grid.nodes, function( node ) {
+				self.grid.remove_widget( node.el, false );
+
+				// Hide widget so that it doesn't show up in a different Mega Menu.
+				node.el.hide();
+			});
 		},
 
 		render: function() {
@@ -193,9 +205,12 @@
 
 			self.$el.find( '.smm-actions' ).html( self.template( data ) );
 
+			// Add widgets to grid
 			widgets = self.model.get( 'widgets' );
 
 			_.each( widgets.models, self.processWidget, self );
+
+			this.updateWidgets();
 
 			return self;
 		},
@@ -240,7 +255,7 @@
 		},
 
 		processWidget: function( widget ) {
-			var model, childWidgetItemView;
+			var model, childWidgetItemView, widgetExists;
 
 			if ( ! widget.id ) {
 				return;
@@ -253,6 +268,23 @@
 				this.model.get( 'widgets' ).add( widget );
 			}
 
+			// Widget view already exists?
+			widgetExists = _.find( this.widgetViews, function( widgetView ) {
+				if ( widgetView.id === widget.id ) {
+					return widgetView;
+				}
+
+				return false;
+			});
+
+			if ( widgetExists ) {
+				this.grid.add_widget( widgetExists.$el, this.model.get( 'x' ), this.model.get( 'y' ), this.model.get( 'w' ), this.model.get( 'h' ) );
+
+				// Display previously hidden widget
+				widgetExists.$el.show();
+				return;
+			}
+
 			childWidgetItemView = new api.SMM.WidgetView({
 				parent: this,
 				model: widget,
@@ -261,6 +293,10 @@
 			});
 
 			childWidgetItemView.render();
+
+			/* Save view to later be reused instead of creating new views each time a
+			widget needs to be added to the grid. */
+			this.widgetViews.push( childWidgetItemView );
 		},
 
 		updateWidgets: function() {

@@ -1951,6 +1951,7 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 					$quoted_service_name = sanitize_title( strip_tags( htmlspecialchars_decode( (string) $quote->{'MailService'} ) ) );
 
 					$code = strval( $quote->attributes()->CLASSID );
+					$cost = null;
 
 					if ( ! $domestic ) {
 						$code = strval( $quote->attributes()->ID );

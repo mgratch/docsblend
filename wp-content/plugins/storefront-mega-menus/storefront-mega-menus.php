@@ -3,7 +3,7 @@
  * Plugin Name:	Storefront Mega Menus
  * Plugin URI: https://woocommerce.com/products/storefront-mega-menus/
  * Description:	Create enhanced full width dropdowns that seamlessly tie into your Storefront powered WooCommerce shop.
- * Version:	1.4.2
+ * Version:	1.5.0
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
  * Requires at least: 4.3.0
@@ -89,7 +89,7 @@ final class Storefront_Mega_Menus {
 		$this->token		= 'storefront-mega-menus';
 		$this->plugin_url	= plugin_dir_url( __FILE__ );
 		$this->plugin_path	= plugin_dir_path( __FILE__ );
-		$this->version		= '1.4.2';
+		$this->version		= '1.5.0';
 
 		// Register activation hook.
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
@@ -137,7 +137,7 @@ final class Storefront_Mega_Menus {
 	 * @since 1.0.0
 	 */
 	public function __clone() {
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'storefront-mega-menus' ), '1.0.0' );
 	}
 
 	/**
@@ -146,7 +146,7 @@ final class Storefront_Mega_Menus {
 	 * @since 1.0.0
 	 */
 	public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'storefront-mega-menus' ), '1.0.0' );
 	}
 
 	/**

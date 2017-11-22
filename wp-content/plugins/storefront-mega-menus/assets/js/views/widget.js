@@ -42,9 +42,7 @@
 		},
 
 		render: function() {
-			var self = this,
-				$widgetForm,
-				updateWidgetDebounced;
+			var self = this;
 
 			if ( ! this.id ) {
 				throw new Error( 'Widget id was not defined.' );
@@ -64,7 +62,7 @@
 			}
 
 			// Grab the widget title
-			this.title = this.widget.container.find( '.widget-title' ).clone();
+			this.title = this.widget.container.find( '.widget-title' );
 
 			if ( $( this.title ).find( 'h4' ).length > 0 ) {
 				this.title = $( this.title ).find( 'h4' ).html();
@@ -76,9 +74,6 @@
 			}
 
 			this.title = $( '<h4>' ).append( this.title );
-
-			// Grab the widget form
-			$widgetForm = $( this.widget.container ).find( '.form' ).clone();
 
 			// Set min width for the widgets
 			this.$el.attr( 'data-gs-min-width', 2 );
@@ -95,47 +90,8 @@
 				)
 				.append( $( '<form/>' )
 						.attr( 'id', 'smm-save-widget' )
-						.append( $widgetForm )
 				)
 			);
-
-			// Hide submit button from widgets that support live previews
-			if ( this.widget.liveUpdateMode ) {
-				this.$el.find( '.button' ).hide();
-			}
-
-			updateWidgetDebounced = _.debounce( function( event ) {
-				self.doWidgetUpdate( event );
-			}, 250 );
-
-			$widgetForm.on( 'keydown', 'input', function( event ) {
-				if ( 13 === event.which ) { // Enter
-					event.preventDefault();
-					self.doWidgetUpdate( event );
-				}
-			} );
-
-			// Handle widgets that support live previews
-			$widgetForm.on( 'change input propertychange', ':input', function( event ) {
-				if ( ! self.widget.liveUpdateMode ) {
-					return;
-				}
-
-				if ( 'change' === event.type || ( this.checkValidity && this.checkValidity() ) ) {
-					updateWidgetDebounced( event );
-				}
-			} );
-
-			// Remove loading indicators when the setting is saved and the preview updates
-			this.widget.setting.previewer.channel.bind( 'synced', function() {
-				self.isUpdating( false );
-			} );
-
-			api.previewer.bind( 'widget-updated', function( updatedWidgetId ) {
-				if ( updatedWidgetId === self.widget.params.widget_id ) {
-					self.isUpdating( false );
-				}
-			} );
 
 			if ( ( ! this.model.get( 'x' ) ) && ( ! this.model.get( 'y' ) ) && ( ! this.model.get( 'w' ) ) && ( ! this.model.get( 'h' ) ) ) {
 
@@ -157,13 +113,59 @@
 		},
 
 		toggleForm: function() {
-			var $widget, $configurator, width, height, configuratorRightEdge, widgetRightEdge;
+			var self = this, $widget, $configurator, $widgetForm, updateWidgetDebounced, width, configuratorRightEdge, widgetRightEdge;
 
 			$configurator = $( '#smm-configurator' );
-			$widget = $configurator.find( '[data-widget-id="' + String( this.id ) + '"] .grid-stack-item-content' );
+			$widget = this.$el.find( '.grid-stack-item-content' );
+
+			if ( 0 === $widget.find( '#smm-save-widget' ).children().length ) {
+
+				// Grab the widget form
+				$widgetForm = $( this.widget.container ).find( '.widget-inside' );
+
+				// Append to Gridstack widget
+				$widget.find( '#smm-save-widget' ).append( $widgetForm );
+
+				// Hide submit button from widgets that support live previews
+				if ( this.widget.liveUpdateMode ) {
+					this.$el.find( '.widget-control-save' ).hide();
+				}
+
+				updateWidgetDebounced = _.debounce( function( event ) {
+					self.doWidgetUpdate( event );
+				}, 250 );
+
+				$widgetForm.find( '.form' ).on( 'keydown', 'input', function( event ) {
+					if ( 13 === event.which ) { // Enter
+						event.preventDefault();
+						self.doWidgetUpdate( event );
+					}
+				} );
+
+				// Handle widgets that support live previews
+				$widgetForm.find( '.form' ).on( 'change input propertychange', ':input', function( event ) {
+					if ( ! self.widget.liveUpdateMode ) {
+						return;
+					}
+
+					if ( 'change' === event.type || ( this.checkValidity && this.checkValidity() ) ) {
+						updateWidgetDebounced( event );
+					}
+				} );
+
+				// Remove loading indicators when the setting is saved and the preview updates
+				this.widget.setting.previewer.channel.bind( 'synced', function() {
+					self.isUpdating( false );
+				} );
+
+				api.previewer.bind( 'widget-updated', function( updatedWidgetId ) {
+					if ( updatedWidgetId === self.widget.params.widget_id ) {
+						self.isUpdating( false );
+					}
+				} );
+			}
 
 			if ( ! $widget.hasClass( 'smm-widget-content-visible' ) ) {
-
 				$( '.smm-widget-content-visible' ).not( $widget ).animate({ 'height': '40' }, 200, function() {
 					$( this ).removeClass( 'smm-widget-content-visible' );
 					$( this ).width( 'auto' );
@@ -198,12 +200,10 @@
 				*/
 				if ( width && 0 < width ) {
 					$widget.animate( { 'width': width }, 200, function() {
-						height = $widget.prop( 'scrollHeight' );
-						$widget.animate( { 'height': height }, 200 );
+						$widget.css( 'height', 'auto' );
 					} );
 				} else {
-					height = $widget.prop( 'scrollHeight' );
-					$widget.animate( { 'height': height }, 200 );
+					$widget.css( 'height', 'auto' );
 				}
 			} else {
 				$widget.animate({ 'height': '40' }, 200, function() {
@@ -217,32 +217,36 @@
 		doWidgetUpdate: function( event ) {
 			var self = this,
 				$widgetRoot,
-				$widgetContent,
-				$eventForm;
+				$widgetInside;
 
 			$widgetRoot = this.widget.container.find( '.widget:first' );
-			$widgetContent = $widgetRoot.find( '.widget-content:first' );
 
 			// Don't try to update if inputs have the same value
-			if ( this.widget._getInputs( $widgetContent ).serialize() === this.widget._getInputs( $( event.currentTarget ).closest( '.form' ).find( '.widget-content:first' ) ).serialize() ) {
+			if ( this.widget._getInputs( $widgetRoot.find( '.widget-inside:first' ) ).serialize() === this.widget._getInputs( this.$el.find( '.widget-inside:first' ) ).serialize() ) {
 				return;
 			}
 
 			// Remove form from widget content if it already exists.
-			if ( $widgetRoot.find( '.form' ) ) {
-				$widgetRoot.find( '.form' ).remove();
+			if ( $widgetRoot.find( '.widget-inside:first' ) ) {
+				$widgetRoot.find( '.widget-inside:first' ).remove();
 			}
 
-			$eventForm = $( event.currentTarget ).closest( '.form' ).clone();
+			$widgetInside = this.$el.find( '.widget-inside:first' ).clone();
 
 			// Make sure the select and textarea values also get cloned.
 			_.each( [ 'select', 'textarea' ], function( field ) {
-				$( event.currentTarget ).closest( '.form' ).find( field ).each( function( i ) {
-					$eventForm.find( field ).eq( i ).val( $( this ).val() );
+				self.$el.find( '.form' ).find( field ).each( function( i ) {
+					$widgetInside.find( field ).eq( i ).val( $( this ).val() );
 				});
 			});
 
-			$widgetRoot.find( '.widget-inside:first' ).prepend( $eventForm );
+			/*
+			Remove TinyMCE to prevent the editor from being rebuilt.
+			This is needed as of WordPress 4.8 and the new media widgets.
+			*/
+			$widgetInside.find( '.text-widget-fields' ).remove();
+
+			$widgetRoot.find( '.move-widget-area:first' ).after( $widgetInside );
 
 			this.isUpdating( true );
 

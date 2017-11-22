@@ -127,9 +127,6 @@
 		}
 
 		.smm-widgets-filter {
-			position: fixed;
-			top: 0;
-			z-index: 1;
 			width: 300px;
 			height: 46px;
 			padding: 8px 17px 7px 13px;
@@ -226,6 +223,9 @@
 			-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 			box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 			cursor: move;
+			bottom: auto;
+			width: auto;
+			height: 40px;
 
 			h4 {
 				padding: 10px 15px;
@@ -297,6 +297,14 @@
 					&:after {
 						content: '\f142';
 					}
+				}
+
+				.widget-inside {
+					display: block;
+					padding: 0;
+					border-color: transparent;
+					line-height: normal;
+					background: transparent;
 				}
 
 				.form {
