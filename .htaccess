@@ -1,5 +1,6 @@
 
 # BEGIN WordPress
+AddHandler application/x-httpd-php70 .php
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /

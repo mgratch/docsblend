@@ -33,6 +33,10 @@ wp-content/debug.log
 .gitattributes
 wp-content/object-cache.php
 
+# Bluehost Specific
+wp-content/mu-plugins/endurance-php-edge.php
+wp-content/mu-plugins/sso.php
+
 # wp core (as of 3.4.1)
 /db-config.php
 /index.php
