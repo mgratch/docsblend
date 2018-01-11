@@ -1,5 +1,9 @@
 *** USPS Shipping ***
 
+2017-12-13 - version 4.4.11
+* Fix - Added missing validation check for domestic "Package" type. Previously, it skips entirely which might causing First-Class Package Service - Retail™ not displayed on the list of available rates.
+* Update - WC tested up to version.
+
 2017-09-20 - version 4.4.10
 * Add - WC minimum requirements to header.
 * Fix - Added new sub service First-Class Package Service - Retail™ so that it's displayed in service settings.

@@ -1993,6 +1993,7 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 						} else {
 							// Enabled check.
 							if ( ! empty( $this->custom_services[ $rate_code ][ $code ] ) && ( true != $this->custom_services[ $rate_code ][ $code ]['enabled'] || empty( $this->custom_services[ $rate_code ][ $code ]['enabled'] ) ) ) {
+
 								continue;
 							}
 
@@ -2065,6 +2066,8 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 									}
 								break;
 								// Handle first class - there are multiple d0 rates and we need to handle size retrictions because the API doesn't do this for us!
+								//
+								// See https://www.usps.com/ship/preparing-domestic-shipments.htm.
 								case '0' :
 									$service_name = strip_tags( htmlspecialchars_decode( (string) $quote->{'MailService'} ) );
 
@@ -2104,6 +2107,12 @@ class WC_Shipping_USPS extends WC_Shipping_Method {
 											continue 2;
 										}
 									} elseif ( strstr( $service_name, 'Parcel' ) ) {
+										$girth = ( $package_width + $package_height ) * 2;
+
+										if ( $girth + $package_length > 108 ) {
+											continue 2;
+										}
+									} elseif ( strstr( $service_name, 'Package' ) ) {
 										$girth = ( $package_width + $package_height ) * 2;
 
 										if ( $girth + $package_length > 108 ) {

@@ -1,5 +1,8 @@
 *** WooCommerce Stamps.com shipping and API integration ***
 
+2017-12-15 - version 1.3.5
+* Update - WC 3.3 Compatibility
+
 2017-07-03 - version 1.3.4
 * Tweak - Add copy-to-clipboard link for truncated tracking number.
 

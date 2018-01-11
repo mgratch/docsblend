@@ -7,6 +7,10 @@
     margin: 0 auto;
     text-align: center;
     width: 100%; }
+    .woocommerce-checkout.sp-distraction-free-checkout .site-header .site-branding .custom-logo-link {
+      float: none; }
+    .woocommerce-checkout.sp-distraction-free-checkout .site-header .site-branding img {
+      display: inline; }
 
 .woocommerce-checkout.sp-distraction-free-checkout .site-content {
   padding-top: 2.617924em; }

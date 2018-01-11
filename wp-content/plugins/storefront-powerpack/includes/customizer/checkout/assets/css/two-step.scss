@@ -144,8 +144,10 @@
 		margin-left: 0;
 
 		> li {
-			display: none;
-			-webkit-backface-visibility: hidden;
+			&:not(:first-child) {
+				display: none;
+				-webkit-backface-visibility: hidden;
+			}
 		}
 	}
 

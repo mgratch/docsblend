@@ -92,7 +92,7 @@ if ( ! class_exists( 'SP_Frontend_Checkout' ) ) :
 			 * Load the distraction free checkout styles if the setting is enabled and the checkout is the current page.
 			 */
 			if ( true === $distraction_free && is_checkout() ) {
-				wp_enqueue_style( 'sp-distraction-free-checkout', SP_PLUGIN_URL . 'includes/customizer/checkout/assets/css/distraction-free.css', '', '1.0.0' );
+				wp_enqueue_style( 'sp-distraction-free-checkout', SP_PLUGIN_URL . 'includes/customizer/checkout/assets/css/distraction-free.css', '', storefront_powerpack()->version );
 				wp_style_add_data( 'sp-distraction-free-checkout', 'rtl', 'replace' );
 			}
 
@@ -100,7 +100,7 @@ if ( ! class_exists( 'SP_Frontend_Checkout' ) ) :
 			 * Load the general checkout styles if the checkout is the current page.
 			 */
 			if ( 'default' !== $checkout_layout && is_checkout() ) {
-				wp_enqueue_style( 'sp-distraction-free-checkout', SP_PLUGIN_URL . 'includes/customizer/checkout/assets/css/layout.css', '', '1.0.0' );
+				wp_enqueue_style( 'sp-checkout-layout', SP_PLUGIN_URL . 'includes/customizer/checkout/assets/css/layout.css', '', storefront_powerpack()->version );
 				wp_style_add_data( 'sp-checkout-layout', 'rtl', 'replace' );
 
 				// Disable the sticky payment javascript.
@@ -111,7 +111,7 @@ if ( ! class_exists( 'SP_Frontend_Checkout' ) ) :
 			 * Load the two-step checkout styles and flexslider if the setting is enabled and the checkout is the current page.
 			 */
 			if ( true === $two_step_checkout && is_checkout() ) {
-				wp_enqueue_style( 'sp-two-step-checkout', SP_PLUGIN_URL . 'includes/customizer/checkout/assets/css/two-step.css', '', '1.0.0' );
+				wp_enqueue_style( 'sp-two-step-checkout', SP_PLUGIN_URL . 'includes/customizer/checkout/assets/css/two-step.css', '', storefront_powerpack()->version );
 				wp_style_add_data( 'sp-two-step-checkout', 'rtl', 'replace' );
 				wp_enqueue_script( 'flexslider', SP_PLUGIN_URL . 'includes/customizer/checkout/assets/js/jquery.flexslider.min.js', array( 'jquery' ), '2.5.0' );
 

@@ -3,13 +3,15 @@
  * Plugin Name: WooCommerce Stamps.com API integration
  * Plugin URI: https://woocommerce.com/products/woocommerce-shipping-stamps/
  * Description: Stamps.com API integration for label printing. Requires server SOAP support.
- * Version: 1.3.4
+ * Version: 1.3.5
  * Author: WooCommerce
  * Author URI: https://woocommerce.com/
  * Text Domain: woocommerce-shipping-stamps
  * Domain Path: /languages
  *
  * Woo: 538435:b0e7af51937d3cdbd6779283d482b6e4
+ * WC tested up to: 3.3
+ * WC requires at least: 2.6
  *
  * Copyright: © 2009-2017 WooCommerce.
  * License: GNU General Public License v3.0
@@ -38,7 +40,7 @@ if ( ! is_woocommerce_active() ) {
  */
 woothemes_queue_update( plugin_basename( __FILE__ ), 'b0e7af51937d3cdbd6779283d482b6e4', '538435' );
 
-define( 'WC_STAMPS_INTEGRATION_VERSION', '1.3.4' );
+define( 'WC_STAMPS_INTEGRATION_VERSION', '1.3.5' );
 
 /**
  * WC_Stamps_Integration class.

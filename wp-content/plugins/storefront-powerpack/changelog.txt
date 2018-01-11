@@ -1,5 +1,11 @@
 *** Storefront Powerpack Changelog ***
 
+2017.12.04 - version 1.4.4
+* Fix - Center logo on distraction free checkout.
+* Fix - Conflict between checkout layout options and distraction free checkout.
+* Fix - Two-step checkout and Select2.
+* Fix - Add body class to increase the Designer CSS output specificity.
+
 2017.09.25 - version 1.4.3
 * Tweak - Use absolute paths on assets enqueues for better compatibility with other plugins.
 

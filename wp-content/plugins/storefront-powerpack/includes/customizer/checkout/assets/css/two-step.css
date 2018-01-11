@@ -107,7 +107,7 @@
       clear: both;
       content: "";
       display: table; }
-    .checkout-slides .sp-two-step-checkout > li {
+    .checkout-slides .sp-two-step-checkout > li:not(:first-child) {
       display: none;
       -webkit-backface-visibility: hidden; }
   .checkout-slides .flex-disabled {

@@ -34,6 +34,7 @@ if ( ! class_exists( 'SP_Designer' ) ) :
 			add_action( 'customize_preview_init', array( $this, 'customize_preview_init' ) );
 			add_action( 'wp_head', array( $this, 'frontend' ), 9999 );
 			add_action( 'wp_enqueue_scripts', array( $this, 'frontend_google_fonts' ) );
+			add_filter( 'body_class', array( $this, 'body_class' ) );
 		}
 
 		/**
@@ -423,6 +424,25 @@ if ( ! class_exists( 'SP_Designer' ) ) :
 		}
 
 		/**
+		 * Custom body class added when the Designer is in use.
+		 *
+		 * @access  public
+		 * @since   1.4.4
+		 * @return  array Body classes
+		 */
+		public function body_class( $classes ) {
+			$selectors = get_theme_mod( 'sp_designer_css_data' );
+
+			if ( ! $selectors || ! is_array( $selectors ) ) {
+				return $classes;
+			}
+
+			$classes[] = 'sp-designer';
+
+			return $classes;
+		}
+
+		/**
 		 * Outputs the custom styles to the frontend.
 		 *
 		 * @access  public
@@ -436,6 +456,9 @@ if ( ! class_exists( 'SP_Designer' ) ) :
 				return;
 			}
 
+			// Body class to add as a prefix to all selectors.
+			$sp_body_class = apply_filters( 'sp_designer_body_class', '.sp-designer' );
+
 			$output = '';
 
 			foreach ( $selectors as $id => $css_properties ) {
@@ -443,8 +466,14 @@ if ( ! class_exists( 'SP_Designer' ) ) :
 					continue;
 				}
 
+				if ( 'body' === $css_properties['selector'] ) {
+					$selector = 'body' . $sp_body_class;
+				} else {
+					$selector = $sp_body_class . ' ' . $css_properties['selector'];
+				}
+
 				// Selector - start
-				$output .= $css_properties['selector'] . '{';
+				$output .= $selector . '{';
 
 				// Font size
 				if ( isset( $css_properties['fontSize'] ) && '' !== $css_properties['fontSize'] ) {
